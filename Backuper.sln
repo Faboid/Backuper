@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackuperLibrary", "BackuperLibrary\BackuperLibrary.csproj", "{23846E09-7850-4DD3-84DE-4BC5A419BF5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23846E09-7850-4DD3-84DE-4BC5A419BF5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23846E09-7850-4DD3-84DE-4BC5A419BF5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23846E09-7850-4DD3-84DE-4BC5A419BF5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23846E09-7850-4DD3-84DE-4BC5A419BF5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF6AF0FA-B02B-40BF-A4CA-6B5A8C03ED77}
+	EndGlobalSection
+EndGlobal
