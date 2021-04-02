@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,34 +8,53 @@ using System.Threading.Tasks;
 namespace BackuperLibrary {
     public static class Backup {
 
-        static private object locker;
+        public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {
+            //get all directories
+            var directories = GetAllDirectories(from);
+            //get all files
+            var files = GetAllFiles(directories);
 
-        public static void NewBackup(string from, string to, string name, int maxVersions) {
+            //create all the needed directories
+            CreateAllDirectories(directories, from.FullName, to.FullName);
+            //copy the files to the new location
+            CreateAllFiles(files, from.FullName, to.FullName);
+        }
 
-            lock(locker) {
-                if(!AreDifferent(from, GetLatestVersion(to))) {
-                    ActBackup(from, to, name, maxVersions);
-                }
+        private static void CreateAllDirectories(List<DirectoryInfo> source, string from, string to) {
+            foreach(DirectoryInfo directoryFrom in source) {
+                DirectoryInfo directoryTo = new DirectoryInfo(directoryFrom.FullName.Replace(from, to));
+
+                Directory.CreateDirectory(directoryTo.FullName);
             }
-            //NotifyUserAboutCompletion();
         }
 
-        public static bool AreDifferent(string from, string to) {
-            throw new NotImplementedException();
+        private static void CreateAllFiles(List<FileInfo> source, string from, string to) {
+            foreach(FileInfo fileFrom in source) {
+                FileInfo fileTo = new FileInfo(fileFrom.FullName.Replace(from, to));
+
+                File.Copy(fileFrom.FullName, fileTo.FullName);
+            }
         }
 
-        public static void ActBackup(string from, string to, string name, int maxVersions) {
-            throw new NotImplementedException();
+        private static List<DirectoryInfo> GetAllDirectories(DirectoryInfo source) {
+            List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
+            var directories = source.GetDirectories();
 
-            //string newTo = CreateNewBackupVersion(to, name, DateTime.Now);
-            //CopyDirectory(from, newTo);
-            //DeleteOldVersionsIfTooMany(to, maxVersions);
+            foreach(DirectoryInfo directory in directories) {
+                allDirectories.AddRange(GetAllDirectories(directory));
+            }
+
+            return allDirectories;
         }
 
-        public static string GetLatestVersion(string to) {
-            throw new NotImplementedException();
+        private static List<FileInfo> GetAllFiles(List<DirectoryInfo> source) {
+            List<FileInfo> files = new List<FileInfo>();
 
-            //iterates through all directories(versions) and get the most recent one
+            foreach(DirectoryInfo directory in source) {
+                files.AddRange(directory.GetFiles());
+            }
+
+            return files;
         }
 
     }
