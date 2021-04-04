@@ -38,6 +38,7 @@ namespace BackuperLibrary {
 
         private static List<DirectoryInfo> GetAllDirectories(DirectoryInfo source) {
             List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
+            allDirectories.Add(source);
             var directories = source.GetDirectories();
 
             foreach(DirectoryInfo directory in directories) {

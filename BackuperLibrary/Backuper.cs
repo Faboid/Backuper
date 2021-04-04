@@ -8,7 +8,7 @@ using System.IO;
 namespace BackuperLibrary {
     public class Backuper {
 
-        public Backuper(string from, string to, string name, int maxVersions) {
+        public Backuper(string from, string name, int maxVersions) {
 
             if(!Directory.Exists(from)) {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
@@ -19,20 +19,18 @@ namespace BackuperLibrary {
 
 
             From = from;
-            To = to;
             Name = name;
             MaxVersions = maxVersions;
+            To = PathBuilder.GetToPath(Name);
 
             //if the main folder hasn't been created, create it
-            if(!Directory.Exists(to)) {
-                Directory.CreateDirectory(to);
+            if(!Directory.Exists(To)) {
+                Directory.CreateDirectory(To);
             }
         }
 
         public string Name { get; private set; }
         public string From { get; private set; }
-
-        //todo - centralize all "To" to a general path, then build unique paths through the use of "Name"
         public string To { get; private set; }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
@@ -60,6 +58,19 @@ namespace BackuperLibrary {
 
             //copy "from" to the new folder
             Backup.CopyAndPaste(new DirectoryInfo(From), new DirectoryInfo(path));
+
+            //check if there are too many versions and, if there are, delete the oldest ones
+            CleanUpExtraVersions();
+        }
+
+        private void CleanUpExtraVersions() {
+            var versions = Directory.GetDirectories(To);
+            List<string> orderedVersions = versions.OrderBy(x => Directory.GetCreationTime(x)).ToList();
+
+            while(orderedVersions.Count() > MaxVersions) {
+                Directory.Delete(orderedVersions.First());
+                orderedVersions.Remove(orderedVersions.First());
+            }
         }
 
         private static string ChangeFormat(string input) {

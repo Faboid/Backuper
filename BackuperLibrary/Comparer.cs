@@ -24,7 +24,7 @@ namespace BackuperLibrary {
         public static string GetLatestVersion(string path) {
             //iterates through all directories(versions) and get the most recent one
 
-            string[] versions = Directory.GetFiles(path);
+            string[] versions = Directory.GetDirectories(path);
             
             if(versions.Length == 0) { return null; }
 
