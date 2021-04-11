@@ -8,6 +8,9 @@ using System.IO;
 namespace BackuperLibrary {
     public class Backuper {
 
+        public const string ALREADY_UPDATED_MESSAGE = "The backup's version is already updated.";
+        public const string SUCCESSFUL_BACKUP_MESSAGE = "The backup has been completed successfully.";
+
         public Backuper(string from, string name, int maxVersions) {
 
             if(!Directory.Exists(from)) {
@@ -35,14 +38,24 @@ namespace BackuperLibrary {
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
 
+        public string EraseBackups() {
+            try {
+                var directory = new DirectoryInfo(To);
+                directory.Delete(true);
+                return $"The backups of {Name} have been deleted successfully.";
+            } catch (Exception ex) {
+                return $"There was an error: {Environment.NewLine} {ex.Message}";
+            }
+        }
+
         public string MakeBackup() {
             if(IsUpdated) {
-                return "The backup's version is already updated.";
+                return ALREADY_UPDATED_MESSAGE;
             }
 
             try {
                 ActBackup();
-                return "The backup has been completed successfully.";
+                return SUCCESSFUL_BACKUP_MESSAGE;
             } catch (Exception ex) {
                 return $"There was an error: {Environment.NewLine} {ex.Message}";
             }
@@ -68,7 +81,8 @@ namespace BackuperLibrary {
             List<string> orderedVersions = versions.OrderBy(x => Directory.GetCreationTime(x)).ToList();
 
             while(orderedVersions.Count() > MaxVersions) {
-                Directory.Delete(orderedVersions.First());
+                var directory = new DirectoryInfo(orderedVersions.First());
+                directory.Delete(true);
                 orderedVersions.Remove(orderedVersions.First());
             }
         }
