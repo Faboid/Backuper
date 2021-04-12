@@ -20,17 +20,6 @@ namespace BackuperUI {
     /// </summary>
     public partial class MainWindow : Window { //todo - refactor all this class
 
-        List<Backuper> backupers = GetSampleBackupers(); //todo - automatically get saved backups paths
-
-        //temporary function until more basic functionalities get added
-        private static List<Backuper> GetSampleBackupers() {
-            var backupers = new List<Backuper>();
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "Test", 5));
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "SecondTest", 5));
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "ThirdTest", 5));
-            return backupers;
-        }
-
         public MainWindow() {
             InitializeComponent();
             RefreshListBox();
@@ -38,14 +27,14 @@ namespace BackuperUI {
 
         private void RefreshListBox() {
             DataGridBackups.ItemsSource = null;
-            var infoBackups = backupers.Select(x => new InfoBackup(x));
+            var infoBackups = GlobalValues.Backupers.Select(x => new InfoBackup(x));
             DataGridBackups.ItemsSource = infoBackups;
         }
         
         private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                BackuperResultInfo status = backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
+                BackuperResultInfo status = GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
 
                 MessageBox.Show(status.GetMessage());
                 RefreshListBox();
@@ -54,24 +43,30 @@ namespace BackuperUI {
             }
         }
 
-        private void DeleteBackupButton_Click(object sender, RoutedEventArgs e) {
+
+        private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
+            var userAnswer = MessageBox.Show("Are you sure?", "Do you want to delete this automatic backup?", MessageBoxButton.YesNo);
+            if(userAnswer != MessageBoxResult.Yes) {
+                return;
+            }
+
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
 
-                var userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}?", "Are you sure?", MessageBoxButton.YesNoCancel);
+                userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}?", "Are you sure?", MessageBoxButton.YesNoCancel);
 
                 if(userAnswer == MessageBoxResult.Cancel) {
                     MessageBox.Show("The deletion has been cancelled.");
                     return;
                 }
                 else if(userAnswer == MessageBoxResult.No) {
-                    backupers.Remove(backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single());
+                    GlobalValues.Backupers.Remove(GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single());
                     MessageBox.Show("The element has been deleted, but the already-made backups have been left in the backup folder.");
                 }
                 else if(userAnswer == MessageBoxResult.Yes) {
-                    var backuper = backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
+                    var backuper = GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
                     string message = backuper.EraseBackups();
-                    backupers.Remove(backuper);
+                    GlobalValues.Backupers.Remove(backuper);
 
                     MessageBox.Show(message);
                 }
@@ -83,15 +78,15 @@ namespace BackuperUI {
         }
 
         private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
-            List<BackuperResultInfo> messages = new List<BackuperResultInfo>();
-            foreach(Backuper backuper in backupers) {
+            List<BackuperResultInfo> results = new List<BackuperResultInfo>();
+            foreach(Backuper backuper in GlobalValues.Backupers) {
                 BackuperResultInfo result = backuper.MakeBackup();
-                messages.Add(result);
+                results.Add(result);
             }
 
-            int updated = messages.Where(x => x.Result == BackuperResult.AlreadyUpdated).Count();
-            int succeeded = messages.Where(x => x.Result == BackuperResult.Success).Count();
-            int errors = messages.Where(x => x.Result == BackuperResult.Failure).Count();
+            int updated = results.Where(x => x.Result == BackuperResult.AlreadyUpdated).Count();
+            int succeeded = results.Where(x => x.Result == BackuperResult.Success).Count();
+            int errors = results.Where(x => x.Result == BackuperResult.Failure).Count();
 
             if(errors == 0) {
                 MessageBox.Show(
@@ -107,7 +102,7 @@ namespace BackuperUI {
                     "Do you want to see the error messages?"
                     , "Backup Complete!", MessageBoxButton.YesNo);
 
-                var failures = messages.Where(x => x.Result == BackuperResult.Failure);
+                var failures = results.Where(x => x.Result == BackuperResult.Failure);
                 foreach(BackuperResultInfo failure in failures) {
                     var answer = MessageBox.Show($"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", "Error:", MessageBoxButton.YesNo);
                     if(answer == MessageBoxResult.No) {
@@ -118,6 +113,8 @@ namespace BackuperUI {
 
             RefreshListBox();
         }
+
+
     }
 
     public class InfoBackup {
