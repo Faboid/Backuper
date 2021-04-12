@@ -8,9 +8,6 @@ using System.IO;
 namespace BackuperLibrary {
     public class Backuper {
 
-        public const string ALREADY_UPDATED_MESSAGE = "The backup's version is already updated.";
-        public const string SUCCESSFUL_BACKUP_MESSAGE = "The backup has been completed successfully.";
-
         public Backuper(string from, string name, int maxVersions) {
 
             if(!Directory.Exists(from)) {
@@ -48,16 +45,19 @@ namespace BackuperLibrary {
             }
         }
 
-        public string MakeBackup() {
+        public BackuperResultInfo MakeBackup() {
             if(IsUpdated) {
-                return ALREADY_UPDATED_MESSAGE;
+                return Factory.CreateBackupResult(Name, BackuperResult.AlreadyUpdated);
             }
 
             try {
                 ActBackup();
-                return SUCCESSFUL_BACKUP_MESSAGE;
+
+                return Factory.CreateBackupResult(Name, BackuperResult.Success);
+
             } catch (Exception ex) {
-                return $"There was an error: {Environment.NewLine} {ex.Message}";
+
+                return Factory.CreateBackupResult(Name, BackuperResult.Failure, ex);
             }
         }
 

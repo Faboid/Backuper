@@ -18,7 +18,7 @@ namespace BackuperUI {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window { //todo - refactor all this class
 
         List<Backuper> backupers = GetSampleBackupers(); //todo - automatically get saved backups paths
 
@@ -45,9 +45,9 @@ namespace BackuperUI {
         private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                string message = backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
+                BackuperResultInfo status = backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
 
-                MessageBox.Show(message);
+                MessageBox.Show(status.GetMessage());
                 RefreshListBox();
             } catch(Exception ex) {
                 MessageBox.Show($"There has been an error: {0}", ex.Message);
@@ -83,27 +83,40 @@ namespace BackuperUI {
         }
 
         private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
-            List<string> messages = new List<string>();
+            List<BackuperResultInfo> messages = new List<BackuperResultInfo>();
             foreach(Backuper backuper in backupers) {
-                var message = backuper.MakeBackup();
-                messages.Add(message);
+                BackuperResultInfo result = backuper.MakeBackup();
+                messages.Add(result);
             }
-            int updated = 0;
-            int succeeded = 0;
-            int errors = 0;
 
-            //todo - finish this
-            foreach(string message in messages) {
-                if(message == Backuper.ALREADY_UPDATED_MESSAGE) {
-                    updated++;
-                } 
-                else if(message == Backuper.SUCCESSFUL_BACKUP_MESSAGE) {
-                    succeeded++;
-                } 
-                else {
-                    errors++;
+            int updated = messages.Where(x => x.Result == BackuperResult.AlreadyUpdated).Count();
+            int succeeded = messages.Where(x => x.Result == BackuperResult.Success).Count();
+            int errors = messages.Where(x => x.Result == BackuperResult.Failure).Count();
+
+            if(errors == 0) {
+                MessageBox.Show(
+                    $"{succeeded} have been backuped successfully.\r\n" +
+                    $"{updated} were already updated.\r\n" +
+                    $"{errors} met failure."
+                    );
+            } else {
+                var userAnswer = MessageBox.Show(
+                    $"{succeeded} have been backuped successfully.\r\n" +
+                    $"{updated} were already updated.\r\n" +
+                    $"{errors} met failure.\r\n \r\n" +
+                    "Do you want to see the error messages?"
+                    , "Backup Complete!", MessageBoxButton.YesNo);
+
+                var failures = messages.Where(x => x.Result == BackuperResult.Failure);
+                foreach(BackuperResultInfo failure in failures) {
+                    var answer = MessageBox.Show($"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", "Error:", MessageBoxButton.YesNo);
+                    if(answer == MessageBoxResult.No) {
+                        break;
+                    }
                 }
             }
+
+            RefreshListBox();
         }
     }
 
@@ -114,7 +127,7 @@ namespace BackuperUI {
             this.IsUpdated = backuper.IsUpdated;
         }
         
-        public bool IsUpdated { get; set; } //todo - implement getting one of the two(three?) images based on the result.
+        public bool IsUpdated { get; set; } 
         public string BackupName { get; set; }
         public string SourcePath { get; set; }
 
