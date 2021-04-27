@@ -43,6 +43,10 @@ namespace BackuperUI {
             }
         }
 
+        private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
+            BackuperCreator adder = new BackuperCreator();
+            adder.Show();
+        }
 
         private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
             var userAnswer = MessageBox.Show("Are you sure?", "Do you want to delete this automatic backup?", MessageBoxButton.YesNo);
@@ -114,7 +118,32 @@ namespace BackuperUI {
             RefreshListBox();
         }
 
+        private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
 
+        }
+
+
+        #region WindowBasicFunctionality
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
+
+            if(this.WindowState == WindowState.Normal) {
+
+                this.WindowState = WindowState.Maximized;
+
+            } else if(this.WindowState == WindowState.Maximized) {
+
+                this.WindowState = WindowState.Normal;
+            }
+        }
+
+        private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
+            this.Close();
+        }
+        #endregion
     }
 
     public class InfoBackup {
