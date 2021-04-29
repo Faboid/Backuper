@@ -34,6 +34,11 @@
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="Black"/>
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="White" Opacity="0.67"/>
+                    </Setter.Value>
+                </Setter>
             </Trigger>
         </Style.Triggers>
 
@@ -43,6 +48,7 @@
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="Black"/>
+                <Setter Property="BorderBrush" Value="White"/>
             </Trigger>
         </Style.Triggers>
     </Style>
