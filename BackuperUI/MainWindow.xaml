@@ -22,8 +22,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="DarkThemeButton.xaml"/>
-                <ResourceDictionary Source="DarkThemeDataGrid.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeDataGrid.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
