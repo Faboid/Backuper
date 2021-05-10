@@ -44,12 +44,7 @@ namespace BackuperUI {
         }
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
-            BackuperCreator adder = new BackuperCreator();
-            adder.Show();
-            adder.OnClose += OnCloseBackupCreator;
-        }
-
-        private void OnCloseBackupCreator(object sender, EventArgs e) {
+            BackuperEditor.Create();
             RefreshListBox();
         }
 

@@ -1,38 +1,40 @@
 ﻿using BackuperLibrary;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.IO;
 
 namespace BackuperUI {
     /// <summary>
     /// Interaction logic for BackuperCreator.xaml
     /// </summary>
-    public partial class BackuperCreator : Window {
+    public partial class BackuperEditor : Window {
 
-        public event EventHandler OnClose;
+        public static void Create() {
+            BackuperEditor editor = new BackuperEditor();
+            if(editor.ShowDialog() == true) {
+                Backuper backuper = editor.Backuper;
+                if(backuper != null) {
+                    BackupersHandler.AddBackuper(backuper);
+                    MessageBox.Show($"The {backuper.Name} backuper has been created successfully.");
+                }
+            }
+        }
 
-        public BackuperCreator() {
+        public static void Edit(Backuper backuper) {
+            throw new NotImplementedException();
+        }
+
+        public Backuper Backuper { get; private set; }
+
+        public BackuperEditor() {
             InitializeComponent();
         }
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             if(ValidateInput(out string message)) {
-                Backuper backuper = new Backuper(TextBoxSourcePath.Text, TextBoxName.Text, int.Parse(TextBoxMaxVersions.Text));
-                BackupersHandler.AddBackuper(backuper);
-                MessageBox.Show($"The {TextBoxName.Text} backuper has been created successfully.");
+                Backuper = new Backuper(TextBoxSourcePath.Text, TextBoxName.Text, int.Parse(TextBoxMaxVersions.Text));
+                DialogResult = true;
                 this.Close();
-                OnClose?.Invoke(this, null);
             } else {
                 MessageBox.Show(message);
             }
@@ -73,6 +75,7 @@ namespace BackuperUI {
 
         #region WindowBasicFunctionality
         private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
+            DialogResult = false;
             this.Close();
 
         }
