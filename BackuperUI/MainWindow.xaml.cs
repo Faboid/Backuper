@@ -27,14 +27,14 @@ namespace BackuperUI {
 
         private void RefreshListBox() {
             DataGridBackups.ItemsSource = null;
-            var infoBackups = GlobalValues.Backupers.Select(x => new InfoBackup(x));
+            var infoBackups = BackupersHandler.Backupers.Select(x => new InfoBackup(x));
             DataGridBackups.ItemsSource = infoBackups;
         }
         
         private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                BackuperResultInfo status = GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
+                BackuperResultInfo status = BackupersHandler.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
 
                 MessageBox.Show(status.GetMessage());
                 RefreshListBox();
@@ -46,6 +46,11 @@ namespace BackuperUI {
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             BackuperCreator adder = new BackuperCreator();
             adder.Show();
+            adder.OnClose += OnCloseBackupCreator;
+        }
+
+        private void OnCloseBackupCreator(object sender, EventArgs e) {
+            RefreshListBox();
         }
 
         private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
@@ -60,20 +65,14 @@ namespace BackuperUI {
                 userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}?", "Are you sure?", MessageBoxButton.YesNoCancel);
 
                 if(userAnswer == MessageBoxResult.Cancel) {
-                    MessageBox.Show("The deletion has been cancelled.");
+                    MessageBox.Show("The deletion has been annulled.");
                     return;
-                }
-                else if(userAnswer == MessageBoxResult.No) {
-                    GlobalValues.Backupers.Remove(GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single());
-                    MessageBox.Show("The element has been deleted, but the already-made backups have been left in the backup folder.");
-                }
-                else if(userAnswer == MessageBoxResult.Yes) {
-                    var backuper = GlobalValues.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
-                    string message = backuper.EraseBackups();
-                    GlobalValues.Backupers.Remove(backuper);
 
+                } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
+                    BackupersHandler.DeleteBackuper(backup.BackupName, backup.SourcePath, userAnswer == MessageBoxResult.Yes, out string message);
                     MessageBox.Show(message);
                 }
+
             } catch(Exception ex) {
                 MessageBox.Show($"There was an error: {Environment.NewLine}{ex.Message}");
             } finally {
@@ -83,10 +82,11 @@ namespace BackuperUI {
 
         private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
             List<BackuperResultInfo> results = new List<BackuperResultInfo>();
-            foreach(Backuper backuper in GlobalValues.Backupers) {
+            foreach(Backuper backuper in BackupersHandler.Backupers) {
                 BackuperResultInfo result = backuper.MakeBackup();
                 results.Add(result);
             }
+            RefreshListBox();
 
             int updated = results.Where(x => x.Result == BackuperResult.AlreadyUpdated).Count();
             int succeeded = results.Where(x => x.Result == BackuperResult.Success).Count();
@@ -114,30 +114,25 @@ namespace BackuperUI {
                     }
                 }
             }
-
-            RefreshListBox();
         }
 
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
+            //open new window
 
+            //temporary to test it
+            Backuper backuper = BackupersHandler.Backupers.Where(x => x.Name == "newTest").Single();
+            BackupersHandler.ModifyBackuper(backuper, "hey");
+            RefreshListBox();
         }
 
 
         #region WindowBasicFunctionality
         private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
-            this.WindowState = WindowState.Minimized;
+            this.Minimize();
         }
 
         private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
-
-            if(this.WindowState == WindowState.Normal) {
-
-                this.WindowState = WindowState.Maximized;
-
-            } else if(this.WindowState == WindowState.Maximized) {
-
-                this.WindowState = WindowState.Normal;
-            }
+            this.Maximize();
         }
 
         private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {

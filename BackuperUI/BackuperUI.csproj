@@ -10,4 +10,8 @@
     <ProjectReference Include="..\BackuperLibrary\BackuperLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UserControls\" />
+  </ItemGroup>
+
 </Project>

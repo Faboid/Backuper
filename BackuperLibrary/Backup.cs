@@ -20,6 +20,7 @@ namespace BackuperLibrary {
             CreateAllFiles(files, from.FullName, to.FullName);
         }
 
+        #region private
         private static void CreateAllDirectories(List<DirectoryInfo> source, string from, string to) {
             foreach(DirectoryInfo directoryFrom in source) {
                 DirectoryInfo directoryTo = new DirectoryInfo(directoryFrom.FullName.Replace(from, to));
@@ -57,6 +58,6 @@ namespace BackuperLibrary {
 
             return files;
         }
-
+        #endregion private
     }
 }

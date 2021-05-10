@@ -21,7 +21,6 @@ namespace BackuperLibrary {
             From = from;
             Name = name;
             MaxVersions = maxVersions;
-            To = PathBuilder.GetToPath(Name);
 
             //if the main folder hasn't been created, create it
             if(!Directory.Exists(To)) {
@@ -31,9 +30,34 @@ namespace BackuperLibrary {
 
         public string Name { get; private set; }
         public string From { get; private set; }
-        public string To { get; private set; }
+        public string To { get => PathBuilder.GetToPath(Name); }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
+
+        public void ModifyBackuper(string newName = null, int newMaxVersions = 0) {
+            if(newMaxVersions > 1) {
+                MaxVersions = (int)newMaxVersions;
+                CleanUpExtraVersions();
+            }
+
+            if(newName != null) {
+                if(Directory.Exists(PathBuilder.GetToPath(newName))) {
+                    throw new ArgumentException("The name is already occupied.");
+                }
+
+                string pastTo = To;
+                Name = newName;
+                
+                //create directory to move the backups
+                Directory.CreateDirectory(To);
+
+                //copy all past backups to new location
+                Backup.CopyAndPaste(new DirectoryInfo(pastTo), new DirectoryInfo(To));
+
+                //delete past location
+                Directory.Delete(pastTo, true);
+            }
+        }
 
         public string EraseBackups() {
             try {
@@ -63,7 +87,7 @@ namespace BackuperLibrary {
 
         private void ActBackup() {
             //setup necessary stuff
-            string date = $"{ChangeFormat(DateTime.Now.ToShortDateString())} - {ChangeFormat(DateTime.Now.ToLongTimeString())}";
+            string date = $"{PathBuilder.ChangeFormat(DateTime.Now.ToShortDateString())} - {PathBuilder.ChangeFormat(DateTime.Now.ToLongTimeString())}";
             string path = Path.Combine(To, date);
 
             //create new folder to hold the new backup
@@ -87,22 +111,6 @@ namespace BackuperLibrary {
             }
         }
 
-        private static string ChangeFormat(string input) {
-            StringBuilder sb = new StringBuilder(input.Length);
-
-            for(int i = 0; i < input.Length; i++) {
-                if(input[i] == '/') {
-                    sb.Append('-');
-                } else if(input[i] == ':') {
-                    sb.Append(',');
-                } else {
-                    sb.Append(input[i]);
-                }
-            }
-
-            return sb.ToString();
-        }
-
         private bool IsLatest() {
             string latestVersionPath = Comparer.GetLatestVersion(To);
 
@@ -111,14 +119,22 @@ namespace BackuperLibrary {
             }
 
             return Directory.GetLastWriteTime(From) <= Directory.GetLastWriteTime(latestVersionPath);
-        } 
+        }
 
+        #region conversions
         public override string ToString() {
-            throw new NotImplementedException();
+            return $"{From},{Name},{MaxVersions}";
+        }
+
+        public static Backuper Parse(string s) {
+            var lines = s.Split(',');
+
+            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
         }
 
         public static bool TryParse(string s, out Backuper result) {
             throw new NotImplementedException();
         }
+        #endregion conversions
     }
 }

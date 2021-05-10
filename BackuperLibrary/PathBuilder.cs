@@ -15,5 +15,34 @@ namespace BackuperLibrary {
             return Path.Combine(To, name);
         }
 
+        public static string ChangeFormat(string input) {
+            StringBuilder sb = new StringBuilder(input.Length);
+
+            for(int i = 0; i < input.Length; i++) {
+                if(input[i] == '/') {
+                    sb.Append('-');
+                } else if(input[i] == ':') {
+                    sb.Append(',');
+                } else {
+                    sb.Append(input[i]);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool ValidatePath(string path, out string message) {
+            message = "";
+            // invalid characters: \ / : * ? " < > | 
+            char[] invalidCharacters = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+
+            if(path.Any(x => invalidCharacters.Contains(x))) {
+                message = "The name cannot contain any of the following characters: \\ / : * ? \" < > |";
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }
