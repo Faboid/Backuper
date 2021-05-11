@@ -159,6 +159,7 @@
                     />
 
                 <Button
+                    Name="CompleteOperationButton"
                     Content="Create New Backuper"
                     FontSize="24"
                     Grid.Row="5"

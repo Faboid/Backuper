@@ -21,7 +21,17 @@ namespace BackuperUI {
         }
 
         public static void Edit(Backuper backuper) {
-            throw new NotImplementedException();
+            BackuperEditor editor = new BackuperEditor();
+            editor.Backuper = backuper;
+            editor.CompleteOperationButton.Content = "Save Edit";
+            editor.TextBoxName.Text = backuper.Name;
+            editor.TextBoxSourcePath.Text = backuper.From;
+            editor.TextBoxMaxVersions.Text = backuper.MaxVersions.ToString();
+            editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
+            if(editor.ShowDialog() == true) {
+                BackupersHandler.ModifyBackuper(backuper, editor.Backuper.Name, editor.Backuper.MaxVersions);
+                MessageBox.Show($"The {editor.Backuper.Name} backuper has been edited successfully.");
+            }
         }
 
         public Backuper Backuper { get; private set; }

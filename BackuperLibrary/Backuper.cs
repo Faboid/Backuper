@@ -17,7 +17,6 @@ namespace BackuperLibrary {
                 throw new ArgumentException("The maxVersions argument can't be lower than one.");
             }
 
-
             From = from;
             Name = name;
             MaxVersions = maxVersions;
@@ -35,13 +34,13 @@ namespace BackuperLibrary {
         public bool IsUpdated { get => IsLatest(); }
 
         public void ModifyBackuper(string newName = null, int newMaxVersions = 0) {
-            if(newMaxVersions > 1) {
+            if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
                 MaxVersions = (int)newMaxVersions;
                 CleanUpExtraVersions();
             }
 
-            if(newName != null) {
-                if(Directory.Exists(PathBuilder.GetToPath(newName))) {
+            if(newName != null && newName != Name) {
+                if(BackupersHandler.Backupers.Any(x => x.Name == newName)) {
                     throw new ArgumentException("The name is already occupied.");
                 }
 
@@ -60,6 +59,7 @@ namespace BackuperLibrary {
         }
 
         public string EraseBackups() {
+            //todo - add boolean parameter. True = delete all. False = Move backups to a special "bin" folder
             try {
                 var directory = new DirectoryInfo(To);
                 directory.Delete(true);

@@ -112,11 +112,13 @@ namespace BackuperUI {
         }
 
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
-            //open new window
-
-            //temporary to test it
-            Backuper backuper = BackupersHandler.Backupers.Where(x => x.Name == "newTest").Single();
-            BackupersHandler.ModifyBackuper(backuper, "hey");
+            try {
+                InfoBackup backup = (sender as Button).DataContext as InfoBackup;
+                Backuper backuper = BackupersHandler.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
+                BackuperEditor.Edit(backuper);
+            } catch(Exception ex) {
+                MessageBox.Show($"There has been an error: {0}", ex.Message);
+            }
             RefreshListBox();
         }
 
