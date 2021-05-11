@@ -1,4 +1,5 @@
 ﻿using BackuperLibrary;
+using BackuperLibrary.Generic;
 using System;
 using System.Windows;
 using System.IO;

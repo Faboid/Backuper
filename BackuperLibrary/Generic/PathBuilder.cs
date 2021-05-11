@@ -2,14 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackuperLibrary {
+namespace BackuperLibrary.Generic {
     public static class PathBuilder {
 
         //todo - implement a way to set To's value
         public static string To { get; private set; } = @"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\To"; //temporary value to test stuff
+
+        /// <summary>
+        /// Path to the folder that contains all backupers
+        /// </summary>
+        private static string BackupersPath { get; } = @$"{GetWorkingDirectory()}\Backupers\";
+
+        private static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static string GetToPath(string name) {
             return Path.Combine(To, name);

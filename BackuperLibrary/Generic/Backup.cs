@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackuperLibrary {
+namespace BackuperLibrary.Generic {
     public static class Backup {
 
         public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {

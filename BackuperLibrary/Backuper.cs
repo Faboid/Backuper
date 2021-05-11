@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using BackuperLibrary.Generic;
 
 namespace BackuperLibrary {
     public class Backuper {
@@ -46,7 +47,7 @@ namespace BackuperLibrary {
 
                 string pastTo = To;
                 Name = newName;
-                
+
                 //create directory to move the backups
                 Directory.CreateDirectory(To);
 
