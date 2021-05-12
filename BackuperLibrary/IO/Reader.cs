@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace BackuperLibrary.Generic {
+namespace BackuperLibrary.IO {
     public static class Reader {
 
         public static string[] GetFilesContent(string[] paths) {

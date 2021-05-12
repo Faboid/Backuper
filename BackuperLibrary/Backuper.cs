@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using BackuperLibrary.IO;
+using BackuperLibrary.UISpeaker;
 using BackuperLibrary.Generic;
 
 namespace BackuperLibrary {
     public class Backuper {
 
-        public Backuper(string from, string name, int maxVersions) {
+        public Backuper(string name, string from, int maxVersions) {
 
             if(!Directory.Exists(from)) {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
@@ -38,6 +40,7 @@ namespace BackuperLibrary {
             if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
                 MaxVersions = (int)newMaxVersions;
                 CleanUpExtraVersions();
+                BackupersManager.Save(this);
             }
 
             if(newName != null && newName != Name) {
@@ -45,17 +48,13 @@ namespace BackuperLibrary {
                     throw new ArgumentException("The name is already occupied.");
                 }
 
+                string pastName = Name;
                 string pastTo = To;
                 Name = newName;
 
-                //create directory to move the backups
-                Directory.CreateDirectory(To);
+                Backup.Move(new DirectoryInfo(pastTo), new DirectoryInfo(To));
 
-                //copy all past backups to new location
-                Backup.CopyAndPaste(new DirectoryInfo(pastTo), new DirectoryInfo(To));
-
-                //delete past location
-                Directory.Delete(pastTo, true);
+                BackupersManager.EditName(pastName, Name);
             }
         }
 
@@ -86,6 +85,31 @@ namespace BackuperLibrary {
             }
         }
 
+        #region conversions
+        public override string ToString() {
+            return $"{Name},{From},{MaxVersions}";
+        }
+
+        public string ToString(string separator) {
+            return $"{Name}{separator}{From}{separator}{MaxVersions}";
+        }
+
+        public static Backuper Parse(string s) {
+            var lines = s.Split(',');
+
+            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
+        }
+
+        public static Backuper Parse(string[] lines) {
+            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
+        }
+
+        public static bool TryParse(string s, out Backuper result) {
+            throw new NotImplementedException();
+        }
+        #endregion conversions
+
+        #region private
         private void ActBackup() {
             //setup necessary stuff
             string date = $"{PathBuilder.ChangeFormat(DateTime.Now.ToShortDateString())} - {PathBuilder.ChangeFormat(DateTime.Now.ToLongTimeString())}";
@@ -121,21 +145,7 @@ namespace BackuperLibrary {
 
             return Directory.GetLastWriteTime(From) <= Directory.GetLastWriteTime(latestVersionPath);
         }
+        #endregion private
 
-        #region conversions
-        public override string ToString() {
-            return $"{From},{Name},{MaxVersions}";
-        }
-
-        public static Backuper Parse(string s) {
-            var lines = s.Split(',');
-
-            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
-        }
-
-        public static bool TryParse(string s, out Backuper result) {
-            throw new NotImplementedException();
-        }
-        #endregion conversions
     }
 }

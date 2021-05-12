@@ -30,8 +30,8 @@ namespace BackuperUI {
             editor.TextBoxMaxVersions.Text = backuper.MaxVersions.ToString();
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
-                BackupersHandler.ModifyBackuper(backuper, editor.Backuper.Name, editor.Backuper.MaxVersions);
-                MessageBox.Show($"The {editor.Backuper.Name} backuper has been edited successfully.");
+                backuper.ModifyBackuper(editor.Backuper.Name, editor.Backuper.MaxVersions);
+                MessageBox.Show($"The backuper has been edited successfully.");
             }
         }
 
@@ -43,7 +43,7 @@ namespace BackuperUI {
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             if(ValidateInput(out string message)) {
-                Backuper = new Backuper(TextBoxSourcePath.Text, TextBoxName.Text, int.Parse(TextBoxMaxVersions.Text));
+                Backuper = new Backuper(TextBoxName.Text, TextBoxSourcePath.Text, int.Parse(TextBoxMaxVersions.Text));
                 DialogResult = true;
                 this.Close();
             } else {

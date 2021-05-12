@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using BackuperLibrary.IO;
 
 namespace BackuperLibrary {
     public static class BackupersHandler {
@@ -16,18 +17,12 @@ namespace BackuperLibrary {
         private static string BackupersPath { get; } = @$"{GetWorkingDirectory()}\Backupers.txt";
 
 
-        public static List<Backuper> Backupers { get; private set; } = LoadBackupers();
+        public static List<Backuper> Backupers { get; private set; } = BackupersManager.LoadAll();
         private static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static void AddBackuper(Backuper backuper) {
             Backupers.Add(backuper);
-            SaveBackupersToFile();
-        }
-
-        public static void ModifyBackuper(Backuper backuper, string newName = null, int newMaxVersions = 0) {
-            backuper.ModifyBackuper(newName, newMaxVersions);
-
-            SaveBackupersToFile();
+            BackupersManager.Save(backuper);
         }
 
         public static void DeleteBackuper(string name, string sourcePath, bool deleteSavedBackups, out string message) {
@@ -47,35 +42,6 @@ namespace BackuperLibrary {
 
             //remove from list
             Backupers.Remove(backuper);
-
-            SaveBackupersToFile();
-        }
-
-        private static List<Backuper> LoadBackupers() {
-            //if file doesn't exist, create an empty one
-            if(!File.Exists(BackupersPath)) {
-                File.Create(BackupersPath);
-                return new List<Backuper>();
-            }
-
-            //load config file
-            string[] backupersStrings = File.ReadAllLines(BackupersPath);
-
-            //convert strings to backupers and return
-            return backupersStrings.Select(x => Backuper.Parse(x)).ToList();
-        }
-
-        private static void SaveBackupersToFile() {
-            File.WriteAllLines(BackupersPath, Backupers.Select(x => x.ToString()));
-        }
-
-
-        private static List<Backuper> GetSampleBackupers() {
-            var backupers = new List<Backuper>();
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "Test", 5));
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "SecondTest", 5));
-            backupers.Add(new Backuper(@"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\From", "ThirdTest", 5));
-            return backupers;
         }
 
     }

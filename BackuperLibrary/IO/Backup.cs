@@ -5,8 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackuperLibrary.Generic {
+namespace BackuperLibrary.IO {
     public static class Backup {
+
+        public static void Move(DirectoryInfo from, DirectoryInfo to) {
+            //create directory to move the backups
+            to.Create();
+
+            //copy all past backups to new location
+            Backup.CopyAndPaste(from, to);
+
+            //delete past location
+            from.Delete(true);
+        }
 
         public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {
             //get all directories
@@ -58,6 +69,7 @@ namespace BackuperLibrary.Generic {
 
             return files;
         }
+
         #endregion private
     }
 }

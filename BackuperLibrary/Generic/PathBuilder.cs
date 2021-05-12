@@ -12,16 +12,7 @@ namespace BackuperLibrary.Generic {
         //todo - implement a way to set To's value
         public static string To { get; private set; } = @"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\To"; //temporary value to test stuff
 
-        /// <summary>
-        /// Path to the folder that contains all backupers
-        /// </summary>
-        private static string BackupersPath { get; } = @$"{GetWorkingDirectory()}\Backupers\";
-
-        private static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-        public static string GetToPath(string name) {
-            return Path.Combine(To, name);
-        }
+        public static string GetToPath(string name) => Path.Combine(To, name);
 
         public static string ChangeFormat(string input) {
             StringBuilder sb = new StringBuilder(input.Length);
