@@ -28,14 +28,14 @@ namespace BackuperUI {
 
         private void RefreshListBox() {
             DataGridBackups.ItemsSource = null;
-            var infoBackups = BackupersHandler.Backupers.Select(x => new InfoBackup(x));
+            var infoBackups = BackupersHolder.Backupers.Select(x => new InfoBackup(x));
             DataGridBackups.ItemsSource = infoBackups;
         }
         
         private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                BackuperResultInfo status = BackupersHandler.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
+                BackuperResultInfo status = BackupersHolder.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
 
                 MessageBox.Show(status.GetMessage());
                 RefreshListBox();
@@ -58,19 +58,21 @@ namespace BackuperUI {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
 
-                userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}?", "Are you sure?", MessageBoxButton.YesNoCancel);
+                userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
+                    $"Replying \"No\" will delete the backuper, but won't delete the files.", "Are you sure?", MessageBoxButton.YesNoCancel);
 
                 if(userAnswer == MessageBoxResult.Cancel) {
-                    MessageBox.Show("The deletion has been annulled.");
+                    MessageBox.Show("The operation has been annulled.");
                     return;
 
                 } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
-                    BackupersHandler.DeleteBackuper(backup.BackupName, backup.SourcePath, userAnswer == MessageBoxResult.Yes, out string message);
+                    Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
+                    string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
                     MessageBox.Show(message);
                 }
 
             } catch(Exception ex) {
-                MessageBox.Show($"There was an error: {Environment.NewLine}{ex.Message}");
+                MessageBox.Show(ex.Message, "There was an error:");
             } finally {
                 RefreshListBox();
             }
@@ -78,7 +80,7 @@ namespace BackuperUI {
 
         private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
             List<BackuperResultInfo> results = new List<BackuperResultInfo>();
-            foreach(Backuper backuper in BackupersHandler.Backupers) {
+            foreach(Backuper backuper in BackupersHolder.Backupers) {
                 BackuperResultInfo result = backuper.MakeBackup();
                 results.Add(result);
             }
@@ -115,7 +117,7 @@ namespace BackuperUI {
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
             try {
                 InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                Backuper backuper = BackupersHandler.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
+                Backuper backuper = BackupersHolder.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
                 BackuperEditor.Edit(backuper);
             } catch(Exception ex) {
                 MessageBox.Show($"There has been an error: {0}", ex.Message);

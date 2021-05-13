@@ -19,6 +19,11 @@ namespace BackuperLibrary {
             if(maxVersions < 1) {
                 throw new ArgumentException("The maxVersions argument can't be lower than one.");
             }
+            //todo - find a way to implement the check for duplicate names
+            /*
+            if(BackupersManager.BackupersNames.Any(x => x == name)) {
+                throw new ArgumentException("Tried to create multiple backupers with the same name.");
+            }*/
 
             From = from;
             Name = name;
@@ -36,7 +41,11 @@ namespace BackuperLibrary {
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
 
-        public void ModifyBackuper(string newName = null, int newMaxVersions = 0) {
+        public void SaveToFile() {
+            BackupersManager.Save(this);
+        }
+
+        public void Edit(string newName = null, int newMaxVersions = 0) {
             if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
                 MaxVersions = (int)newMaxVersions;
                 CleanUpExtraVersions();
@@ -44,7 +53,7 @@ namespace BackuperLibrary {
             }
 
             if(newName != null && newName != Name) {
-                if(BackupersHandler.Backupers.Any(x => x.Name == newName)) {
+                if(BackupersManager.BackupersNames.Any(x => x == newName)) {
                     throw new ArgumentException("The name is already occupied.");
                 }
 
@@ -54,16 +63,27 @@ namespace BackuperLibrary {
 
                 Backup.Move(new DirectoryInfo(pastTo), new DirectoryInfo(To));
 
-                BackupersManager.EditName(pastName, Name);
+                BackupersManager.EditName(this, pastName, Name);
             }
         }
 
-        public string EraseBackups() {
-            //todo - add boolean parameter. True = delete all. False = Move backups to a special "bin" folder
+        public string Erase(bool fullyDelete) {
+            //True = delete all backups. False = Move backups to a special "bin" folder
             try {
-                var directory = new DirectoryInfo(To);
-                directory.Delete(true);
-                return $"The backups of {Name} have been deleted successfully.";
+                if(fullyDelete) {
+                    var directory = new DirectoryInfo(To);
+                    directory.Delete(true);
+                    this.Delete();
+                    return $"The backups of {Name} have been deleted successfully.";
+                } else {
+                    //move to /Bin/ folder
+                    string binPath = PathBuilder.GetBinBcpsFolderPath(Name);
+                    Backup.CopyAndPaste(new DirectoryInfo(To), new DirectoryInfo(binPath));
+                    var directory = new DirectoryInfo(To);
+                    directory.Delete(true);
+                    this.Delete();
+                    return $"{Name} has been deleted, but the backups have been moved to backup folder [{binPath}].";
+                }
             } catch (Exception ex) {
                 return $"There was an error: {Environment.NewLine} {ex.Message}";
             }
@@ -90,6 +110,11 @@ namespace BackuperLibrary {
             return $"{Name},{From},{MaxVersions}";
         }
 
+        /// <summary>
+        /// Returns a string that shows the backuper's <paramref name="Name"/>, <paramref name="From"/>, and <paramref name="MaxVersions"/> divided by a custom separator.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <returns></returns>
         public string ToString(string separator) {
             return $"{Name}{separator}{From}{separator}{MaxVersions}";
         }

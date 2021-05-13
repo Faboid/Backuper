@@ -15,7 +15,7 @@ namespace BackuperUI {
             if(editor.ShowDialog() == true) {
                 Backuper backuper = editor.Backuper;
                 if(backuper != null) {
-                    BackupersHandler.AddBackuper(backuper);
+                    backuper.SaveToFile();
                     MessageBox.Show($"The {backuper.Name} backuper has been created successfully.");
                 }
             }
@@ -30,7 +30,7 @@ namespace BackuperUI {
             editor.TextBoxMaxVersions.Text = backuper.MaxVersions.ToString();
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
-                backuper.ModifyBackuper(editor.Backuper.Name, editor.Backuper.MaxVersions);
+                backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions);
                 MessageBox.Show($"The backuper has been edited successfully.");
             }
         }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BackuperLibrary.UISpeaker;
 
-namespace BackuperLibrary {
+namespace BackuperLibrary.Generic {
     public static class Factory {
 
         public static BackuperResultInfo CreateBackupResult(string nameBackup, BackuperResult result, Exception ex = null) {

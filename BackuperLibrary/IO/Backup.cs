@@ -13,7 +13,7 @@ namespace BackuperLibrary.IO {
             to.Create();
 
             //copy all past backups to new location
-            Backup.CopyAndPaste(from, to);
+            CopyAndPaste(from, to);
 
             //delete past location
             from.Delete(true);
