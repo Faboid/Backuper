@@ -21,6 +21,8 @@ namespace BackuperUI {
     /// </summary>
     public partial class MainWindow : Window { //todo - refactor all this class
 
+        private string messageErrorCaption = "There has been an error";
+
         public MainWindow() {
             InitializeComponent();
             RefreshListBox();
@@ -28,19 +30,19 @@ namespace BackuperUI {
 
         private void RefreshListBox() {
             DataGridBackups.ItemsSource = null;
-            var infoBackups = BackupersHolder.Backupers.Select(x => new InfoBackup(x));
+            var infoBackups = BackupersHolder.Backupers.Select(x => new InfoBackuper(x));
             DataGridBackups.ItemsSource = infoBackups;
         }
         
         private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
-                InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                BackuperResultInfo status = BackupersHolder.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single().MakeBackup();
+                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
+                BackuperResultInfo status = BackupersHolder.SearchByName(backup.BackupName).MakeBackup();
 
-                MessageBox.Show(status.GetMessage());
+                MessageBox.Show(status.GetMessage(), "Result");
                 RefreshListBox();
             } catch(Exception ex) {
-                MessageBox.Show($"There has been an error: {0}", ex.Message);
+                MessageBox.Show(ex.Message, messageErrorCaption);
             }
         }
 
@@ -50,13 +52,13 @@ namespace BackuperUI {
         }
 
         private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
-            var userAnswer = MessageBox.Show("Are you sure?", "Do you want to delete this automatic backup?", MessageBoxButton.YesNo);
+            var userAnswer = MessageBox.Show("Do you want to delete this backuper?", "Are you sure?", MessageBoxButton.YesNo);
             if(userAnswer != MessageBoxResult.Yes) {
                 return;
             }
 
             try {
-                InfoBackup backup = (sender as Button).DataContext as InfoBackup;
+                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
 
                 userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
                     $"Replying \"No\" will delete the backuper, but won't delete the files.", "Are you sure?", MessageBoxButton.YesNoCancel);
@@ -72,23 +74,18 @@ namespace BackuperUI {
                 }
 
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message, "There was an error:");
+                MessageBox.Show(ex.Message, messageErrorCaption);
             } finally {
                 RefreshListBox();
             }
         }
 
         private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
-            List<BackuperResultInfo> results = new List<BackuperResultInfo>();
-            foreach(Backuper backuper in BackupersHolder.Backupers) {
-                BackuperResultInfo result = backuper.MakeBackup();
-                results.Add(result);
-            }
+            List<BackuperResultInfo> results = BackupersHolder.BackupAll();
+            ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
+
             RefreshListBox();
 
-            int updated = results.Where(x => x.Result == BackuperResult.AlreadyUpdated).Count();
-            int succeeded = results.Where(x => x.Result == BackuperResult.Success).Count();
-            int errors = results.Where(x => x.Result == BackuperResult.Failure).Count();
 
             if(errors == 0) {
                 MessageBox.Show(
@@ -104,6 +101,10 @@ namespace BackuperUI {
                     "Do you want to see the error messages?"
                     , "Backup Complete!", MessageBoxButton.YesNo);
 
+                if(userAnswer == MessageBoxResult.No) {
+                    return;
+                }
+
                 var failures = results.Where(x => x.Result == BackuperResult.Failure);
                 foreach(BackuperResultInfo failure in failures) {
                     var answer = MessageBox.Show($"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", "Error:", MessageBoxButton.YesNo);
@@ -116,11 +117,11 @@ namespace BackuperUI {
 
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
             try {
-                InfoBackup backup = (sender as Button).DataContext as InfoBackup;
-                Backuper backuper = BackupersHolder.Backupers.Where(x => x.Name == backup.BackupName && x.From == backup.SourcePath).Single();
+                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
+                Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
                 BackuperEditor.Edit(backuper);
             } catch(Exception ex) {
-                MessageBox.Show($"There has been an error: {0}", ex.Message);
+                MessageBox.Show(ex.Message, messageErrorCaption);
             }
             RefreshListBox();
         }
@@ -141,8 +142,8 @@ namespace BackuperUI {
         #endregion
     }
 
-    public class InfoBackup {
-        public InfoBackup(Backuper backuper) {
+    internal class InfoBackuper {
+        internal InfoBackuper(Backuper backuper) {
             this.BackupName = backuper.Name;
             this.SourcePath = backuper.From;
             this.IsUpdated = backuper.IsUpdated;
