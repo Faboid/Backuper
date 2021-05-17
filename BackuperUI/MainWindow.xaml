@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Backuper" 
         Height="450" Width="800" 
-        MinWidth="300" MinHeight="300" 
+        MinWidth="400" MinHeight="300" 
         MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
         Background="#FF121212"
         BorderBrush="Black"
@@ -31,7 +31,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*" MaxWidth="20"/>
-            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="3*" MinWidth="180"/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="3*" MinWidth="100"/>
             <ColumnDefinition Width="3*" MinWidth="100"/>
             <ColumnDefinition Width="0.5*" MaxWidth="20"/>
@@ -48,7 +49,7 @@
             Background="Black"
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="5"
+            Grid.ColumnSpan="6"
             >
 
             <Grid.ColumnDefinitions>
@@ -93,8 +94,16 @@
         </Grid>
 
         <Button
+            Name="ChangeBackupPath_Button"
+            Grid.Column="1"
+            Grid.Row="2"
+            Content="Change Backup Main Path"
+            Click="ChangeBackupPath_Button_Click"
+            />
+
+        <Button
             Name="CreateBackuper_Button"
-            Grid.Column="2"
+            Grid.Column="3"
             Grid.Row="2"
             Content="Create Backuper"
             Click="CreateBackuperButton_Click"
@@ -103,7 +112,7 @@
 
         <Button
             Name="BackupAll_Button"
-            Grid.Column="3"
+            Grid.Column="4"
             Grid.Row="2"
             Content="Backup All"
             Click="BackupAllButton_Click"
@@ -113,7 +122,7 @@
         <DataGrid
             Name="DataGridBackups"
             Grid.Column="1"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="4"
             Grid.Row="3"
             >
 

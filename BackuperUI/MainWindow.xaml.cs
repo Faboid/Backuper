@@ -140,6 +140,10 @@ namespace BackuperUI {
             this.Close();
         }
         #endregion
+
+        private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) {
+
+        }
     }
 
     internal class InfoBackuper {

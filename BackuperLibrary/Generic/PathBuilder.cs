@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BackuperLibrary.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,8 +10,7 @@ using System.Threading.Tasks;
 namespace BackuperLibrary.Generic {
     public static class PathBuilder {
 
-        //todo - implement a way to set To's value
-        public static string To { get; private set; } = @"D:\Programming\Small Projects\Backuper\TemporaryTestFolder\To"; //temporary value to test stuff
+        public static string To { get => BackupFolderHandler.To; }
         public static string BinBackupsFolder { get; } = Path.Combine(To, "Bin");
         public static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -39,7 +39,7 @@ namespace BackuperLibrary.Generic {
             char[] invalidCharacters = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
             if(path.Any(x => invalidCharacters.Contains(x))) {
-                message = "The name cannot contain any of the following characters: \\ / : * ? \" < > |";
+                message = "The path cannot contain any of the following characters: \\ / : * ? \" < > |";
                 return false;
             }
 
