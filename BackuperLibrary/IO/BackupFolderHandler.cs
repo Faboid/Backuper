@@ -11,7 +11,7 @@ namespace BackuperLibrary.IO {
 
         static BackupFolderHandler() {
             if(!File.Exists(ConfigFilePath)) {
-                TryChangePath(DefaultTo);
+                File.WriteAllText(ConfigFilePath, DefaultTo);
             }
 
             RefreshToPath();
