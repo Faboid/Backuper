@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BackuperUI {
+namespace BackuperUI.UserControls {
     /// <summary>
     /// Interaction logic for TopBar.xaml
     /// </summary>
@@ -24,23 +24,34 @@ namespace BackuperUI {
             InitializeComponent();
         }
 
+        public string Title {
+            get => NameWindowText.Text;
+            set => NameWindowText.Text = value;
+        }
+
         private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
-            (sender as Window).WindowState = WindowState.Minimized;
+            var window = Window.GetWindow(this);
+
+            window.WindowState = WindowState.Minimized;
         }
 
         private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
-            if((sender as Window).WindowState == WindowState.Normal) {
+            var window = Window.GetWindow(this);
 
-                (sender as Window).WindowState = WindowState.Maximized;
+            if(window.WindowState == WindowState.Normal) {
 
-            } else if((sender as Window).WindowState == WindowState.Maximized) {
+                window.WindowState = WindowState.Maximized;
 
-                (sender as Window).WindowState = WindowState.Normal;
+            } else if(window.WindowState == WindowState.Maximized) {
+
+                window.WindowState = WindowState.Normal;
             }
         }
 
         private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
-            (sender as Window).Close();
+            var window = Window.GetWindow(this);
+
+            window.Close();
         }
     }
 }
