@@ -126,21 +126,6 @@ namespace BackuperUI {
             RefreshListBox();
         }
 
-
-        #region WindowBasicFunctionality
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
-            this.Minimize();
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
-            this.Maximize();
-        }
-
-        private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
-            this.Close();
-        }
-        #endregion
-
         private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) {
 
         }

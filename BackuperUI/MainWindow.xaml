@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BackuperUI"
+        xmlns:other="clr-namespace:BackuperUI.UserControls"
         mc:Ignorable="d"
         Title="Backuper" 
         Height="450" Width="800" 
@@ -42,56 +43,15 @@
             <RowDefinition Height="0.5*" MaxHeight="20"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="9*"/>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.5*" MaxHeight="20"/>
         </Grid.RowDefinitions>
 
-        <Grid
-            Background="Black"
+        <other:TopBar
+            Title="Backuper"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="6"
-            >
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock
-            x:Name="NameWindowText"
-            Foreground="White"
-            Grid.Column="0"
-            Text="Backuper"
-            FontSize="16"
             />
-
-            <Button
-            x:Name="MinimizeButton"
-            Grid.Column="1"
-            Click="MinimizeButton_Click"
-            Content="—"
-            WindowChrome.IsHitTestVisibleInChrome="True"
-            />
-
-            <Button
-            x:Name="MaximizeButton"
-            Grid.Column="2"
-            Click="MaximizeButton_Click"
-            Content="▢"
-            WindowChrome.IsHitTestVisibleInChrome="True"
-            />
-
-            <Button
-            x:Name="CloseWindowButton"
-            Grid.Column="3"
-            Click="CloseWindowButton_Click"
-            Content="✖"
-            WindowChrome.IsHitTestVisibleInChrome="True"
-            />
-
-        </Grid>
 
         <Button
             Name="ChangeBackupPath_Button"
