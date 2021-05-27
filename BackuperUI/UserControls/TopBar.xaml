@@ -9,14 +9,6 @@
              Background="Black"
              >
 
-    <!--UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeButton.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    <UserControl.Resources/-->
-
     <Grid>
         <Grid.ColumnDefinitions>
             <!--Text Window-->
@@ -31,9 +23,11 @@
 
         <TextBlock
             x:Name="NameWindowText"
+            Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
             Foreground="White"
             Grid.Column="0"
             FontSize="16"
+            Margin="2, 2, 2, 0"
             />
 
         <Button

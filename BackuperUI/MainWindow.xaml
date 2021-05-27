@@ -93,14 +93,20 @@
                 <DataGridTemplateColumn Header="Start Backup" MaxWidth="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="StartBackupButton_Click">Backup</Button>
+                            <Button
+                                Content="Backup"
+                                Click="StartBackupButton_Click"
+                                />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Modify Backup" MaxWidth="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="ModifyBackuperButton_Click">Modify</Button>
+                            <Button 
+                                Content="Modify"
+                                Click="ModifyBackuperButton_Click"
+                                />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -108,8 +114,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button
-                                Click="DeleteBackuperButton_Click"
                                 Content="Delete"
+                                Click="DeleteBackuperButton_Click"
                                 />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

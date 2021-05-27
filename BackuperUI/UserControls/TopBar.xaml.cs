@@ -18,15 +18,17 @@ namespace BackuperUI.UserControls {
     /// Interaction logic for TopBar.xaml
     /// </summary>
     public partial class TopBar : UserControl {
-        //todo - intergrate this usercontrol into the windows to centralize the style
         
         public TopBar() {
             InitializeComponent();
         }
 
+        public static readonly DependencyProperty TitleProperty = 
+            DependencyProperty.Register("Title", typeof(string), typeof(UserControl), new PropertyMetadata(string.Empty));
+
         public string Title {
-            get => NameWindowText.Text;
-            set => NameWindowText.Text = value;
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
