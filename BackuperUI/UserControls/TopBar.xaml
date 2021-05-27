@@ -58,6 +58,7 @@
             Click="CloseWindowButton_Click"
             Content="✖"
             WindowChrome.IsHitTestVisibleInChrome="True"
+            Style="{StaticResource CloseButton}"
             />
 
     </Grid>
