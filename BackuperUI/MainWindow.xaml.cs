@@ -127,8 +127,7 @@ namespace BackuperUI {
         }
 
         private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) {
-            Windows.EditorBackupPath ed = new Windows.EditorBackupPath();
-            ed.ShowDialog();
+            EditorBackupPath.Start();
         }
     }
 
