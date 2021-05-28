@@ -6,171 +6,102 @@
         xmlns:local="clr-namespace:BackuperUI"
         mc:Ignorable="d"
         Title="BackuperCreator" 
-        Height="450" Width="550"
-        MinWidth="550" MinHeight="300" 
-        MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
-        Background="#FF121212"
-        BorderBrush="Black"
-        BorderThickness="5"
-        WindowStyle="None"
+        Height="300" Width="550"
+        MinWidth="550" MinHeight="300"
+        Style="{StaticResource DarkThemeWindow}"
         >
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="25"/>
-    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeWindow.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeButton.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeDataGrid.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBlock.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
-    <Grid>
+
+    <Grid
+        Margin="20"
+        Background="#FF272121"
+        >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*" MaxWidth="30"/>
+            <ColumnDefinition Width="0.5*" MaxWidth="20"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.5*" MaxWidth="30"/>
+            <ColumnDefinition Width="0.5*" MaxWidth="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="0.5*" MaxHeight="40"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="0.5*" MaxHeight="30"/>
+            <RowDefinition Height="auto"/>
+            <!--Name-->
+            <RowDefinition Height="auto"/>
+            <!--Source-->
+            <RowDefinition Height="auto"/>
+            <!--Max Versions-->
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*" MaxHeight="80"/>
+            <!--Button-->
+            <RowDefinition Height="0.5*" MaxHeight="20"/>
         </Grid.RowDefinitions>
 
-        <Grid
-            Background="Black"
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="5"
-            >
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock
-            x:Name="NameWindowText"
-            Foreground="White"
-            Grid.Column="0"
-            Text="Backuper Editor"
-            FontSize="16"
-            />
-
-            <Button
-            x:Name="MinimizeButton"
+        <TextBlock
+            Text="Name:"
+            Grid.Row="1"
             Grid.Column="1"
-            Click="MinimizeButton_Click"
-            Content="—"
-            WindowChrome.IsHitTestVisibleInChrome="True"
+            Padding="0, 0, 5, 0"
+            FontSize="18"
+            Style="{StaticResource Dark}"
             />
 
-            <Button
-            x:Name="MaximizeButton"
+        <TextBox
+            Name="TextBoxName"
+            Grid.Row="1"
             Grid.Column="2"
-            Click="MaximizeButton_Click"
-            Content="▢"
-            WindowChrome.IsHitTestVisibleInChrome="True"
             />
 
-            <Button
-            x:Name="CloseWindowButton"
-            Grid.Column="3"
-            Click="CloseWindowButton_Click"
-            Content="✖"
-            WindowChrome.IsHitTestVisibleInChrome="True"
-            />
-
-        </Grid>
-
-        <Border
-            BorderBrush="Black"
-            BorderThickness="4"
-            Grid.Column="1"
+        <TextBlock
+            Text="Source Path:"
             Grid.Row="2"
-            >
-            <Grid
-                Background="#FF272121"
-                >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*" MaxWidth="20"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="0.5*" MaxWidth="20"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="0.5*" MaxHeight="40"/>
-                    <RowDefinition Height="auto"/> <!--Name-->
-                    <RowDefinition Height="auto"/> <!--Source-->
-                    <RowDefinition Height="auto"/> <!--Max Versions-->
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="2*" MaxHeight="80"/> <!--Button-->
-                    <RowDefinition Height="0.5*" MaxHeight="20"/>
-                </Grid.RowDefinitions>
+            Grid.Column="1"
+            Padding="0, 0, 5, 0"
+            FontSize="18"
+            Style="{StaticResource Dark}"
+            />
 
-                <TextBlock
-                    Text="Name:"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Padding="0, 0, 5, 0"
-                    FontSize="18"
-                    />
-                
-                <TextBox
-                    Name="TextBoxName"
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    />
+        <TextBox
+            Name="TextBoxSourcePath"
+            Grid.Row="2"
+            Grid.Column="2"
+            />
 
-                <TextBlock
-                    Text="Source Path:"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Padding="0, 0, 5, 0"
-                    FontSize="18"
-                    />
+        <TextBlock
+            Text="Max Versions:"
+            Grid.Row="3"
+            Grid.Column="1"
+            Padding="0, 0, 5, 0"
+            FontSize="18"
+            Style="{StaticResource Dark}"
+            />
 
-                <TextBox
-                    Name="TextBoxSourcePath"
-                    Grid.Row="2"
-                    Grid.Column="2"
-                    />
+        <TextBox
+            Name="TextBoxMaxVersions"
+            Grid.Row="3"
+            Grid.Column="2"
+            />
 
-                <TextBlock
-                    Text="Max Versions:"
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    Padding="0, 0, 5, 0"
-                    FontSize="18"
-                    />
-
-                <TextBox
-                    Name="TextBoxMaxVersions"
-                    Grid.Row="3"
-                    Grid.Column="2"
-                    />
-
-                <Button
-                    Name="CompleteOperationButton"
-                    Content="Create New Backuper"
-                    FontSize="24"
-                    Grid.Row="5"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="2"
-                    Margin="70, 10, 70, 10"
-                    Click="CreateBackuperButton_Click"
-                    />
-
-            </Grid>
-        </Border>
+        <Button
+            Name="CompleteOperationButton"
+            Content="Create New Backuper"
+            FontSize="24"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="70, 10, 70, 10"
+            Click="CreateBackuperButton_Click"
+            />
 
     </Grid>
+    
 </Window>

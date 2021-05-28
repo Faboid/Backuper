@@ -9,7 +9,9 @@
              Background="Black"
              >
 
-    <Grid>
+    <Grid
+        Background="Black"
+        >
         <Grid.ColumnDefinitions>
             <!--Text Window-->
             <ColumnDefinition/>

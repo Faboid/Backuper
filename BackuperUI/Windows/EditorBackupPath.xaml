@@ -8,20 +8,24 @@
         mc:Ignorable="d"
         Title="Edit Backups Path:" 
         MaxHeight="300"
-        Height="250" Width="800"
-        Style="{StaticResource WindowDarkTheme}"
+        Height="300" Width="800"
+        Style="{StaticResource DarkThemeWindow}"
         >
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeWindow.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBlock.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid>
+    <Grid
+        Margin="20"
+        Background="#FF272121"
+        >
         <Grid.RowDefinitions>
             <RowDefinition
                 Height="80"
@@ -30,18 +34,64 @@
                 Height="*"
                 />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Text="Path:"
+            Grid.Row="0"
+            Grid.Column="0"
+            Style="{StaticResource Dark}" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Left"
+            Margin="10, 0, 0, 0"
+            FontSize="18"
+            />
 
         <TextBox
-            Margin="20"
-            Grid.Row="0"
+            MaxHeight="30"
+            MinHeight="20"
+            FontSize="18"
+            Margin="20,20,20,18"
+            Grid.Column="1"
+            Grid.Row="0" 
             />
 
-        <Button
-            Content="Confirm"
-            FontSize="50"
-            Margin="40, 30, 40, 30"
+        <Grid
             Grid.Row="1"
-            />
+            Grid.ColumnSpan="2"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" MaxWidth="120"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="1*" MaxWidth="120"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" MaxHeight="30"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="2*" MaxHeight="30"/>
+            </Grid.RowDefinitions>
+            
+            <Viewbox
+                StretchDirection="Both"
+                Stretch="Uniform"
+                Width="auto"
+                Grid.Row="1"
+                Grid.Column="1"
+                >
+                <Button
+                    Content="Confirm"
+                    FontSize="30"
+                    Width="300" 
+                    Height="45"
+                />
+            </Viewbox>
+        </Grid>
+
 
     </Grid>
 
