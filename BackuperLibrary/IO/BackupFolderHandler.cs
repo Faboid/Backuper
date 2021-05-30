@@ -23,6 +23,14 @@ namespace BackuperLibrary.IO {
         private static string ConfigFilePath = Path.Combine(PathBuilder.GetWorkingDirectory(), "Settings.txt");
 
         public static bool SetDefault() {
+            if(To == DefaultTo) {
+                return true;
+            }
+
+            if(!Directory.Exists(DefaultTo)) {
+                Directory.CreateDirectory(DefaultTo);
+            }
+
             return TryChangePath(DefaultTo);
         }
 

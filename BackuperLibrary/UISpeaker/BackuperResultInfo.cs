@@ -26,7 +26,8 @@ namespace BackuperLibrary.UISpeaker {
         public string GetMessage() => Result switch {
             BackuperResult.Success => successfulUpdatedMessage,
             BackuperResult.AlreadyUpdated => alreadyUpdatedMessage,
-            BackuperResult.Failure => errorMessage
+            BackuperResult.Failure => errorMessage,
+            _ => throw new InvalidDataException()
         };
 
     }

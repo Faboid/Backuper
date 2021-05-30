@@ -52,5 +52,18 @@ namespace BackuperUI.Windows {
             }
 
         }
+
+        private void SetDefaultButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                bool success = BackupFolderHandler.SetDefault();
+                if(success) {
+                    MessageBox.Show("Set to default successfully.");
+                } else {
+                    MessageBox.Show("Something went wrong.");
+                }
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "There has been an error:");
+            }
+        }
     }
 }
