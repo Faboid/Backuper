@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Edit Backups Path:" 
         MaxHeight="300"
-        Height="300" Width="800"
+        Height="250" Width="800"
         Style="{StaticResource DarkThemeWindow}"
         >
 
@@ -67,51 +67,46 @@
             >
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1*" MaxWidth="40"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="1*" MaxWidth="10"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="1*" MaxWidth="40"/>
             </Grid.ColumnDefinitions>
 
-            <controls:DynamicMargin
-                Grid.Column="0"
-                >
-                <Viewbox
-                    StretchDirection="Both"
-                    Stretch="Uniform"
-                    Width="auto"
-                    >
-                    <Button
-                        Content="Default"
-                        FontSize="30"
-                        Width="300" 
-                        Height="45"
-                        Click="SetDefaultButton_Click"
-                    />
-                </Viewbox>
-            </controls:DynamicMargin>
-
-            <controls:DynamicMargin
-                Left="30"
-                Right="30"
+            <Viewbox
+                StretchDirection="Both"
+                Stretch="Uniform"
+                Width="auto"
                 Grid.Column="1"
                 >
-                
-                <Viewbox
-                    StretchDirection="Both"
-                    Stretch="Uniform"
-                    Width="auto"
-                    >
-                    <Button
-                        Content="Confirm"
-                        FontSize="30"
-                        Width="300" 
-                        Height="45"
-                        Click="ConfirmButton_Click"
+                <Button
+                    Content="Default"
+                    FontSize="30"
+                    Width="300" 
+                    Height="50"
+                    Click="SetDefaultButton_Click"
                     />
-                </Viewbox>
-            </controls:DynamicMargin>
+            </Viewbox>
+
+
+            <Viewbox
+                StretchDirection="Both"
+                HorizontalAlignment="Center"
+                Stretch="Uniform"
+                Width="auto"
+                Grid.Column="3"
+                >
+                <Button
+                    Content="Confirm"
+                    FontSize="30"
+                    Width="300" 
+                    Height="50"
+                    Click="ConfirmButton_Click"
+                    />
+            </Viewbox>
         </Grid>
 
-            
 
     </Grid>
 
