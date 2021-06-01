@@ -12,7 +12,7 @@ namespace BackuperUI {
     public partial class BackuperEditor : Window {
 
         public static void Create() {
-            BackuperEditor editor = new BackuperEditor();
+            var editor = new BackuperEditor();
             if(editor.ShowDialog() == true) {
                 Backuper backuper = editor.Backuper;
                 if(backuper != null) {
@@ -23,8 +23,9 @@ namespace BackuperUI {
         }
 
         public static void Edit(Backuper backuper) {
-            BackuperEditor editor = new BackuperEditor();
-            editor.Backuper = backuper;
+            var editor = new BackuperEditor {
+                Backuper = backuper
+            };
             editor.CompleteOperationButton.Content = "Save Edit";
             editor.TextBoxName.Text = backuper.Name;
             editor.TextBoxSourcePath.Text = backuper.From;
@@ -77,7 +78,7 @@ namespace BackuperUI {
             return message == "";
         }
 
-        private string AddToMessage(string message, string toAdd) {
+        private static string AddToMessage(string message, string toAdd) {
             if(message == "") {
                 return toAdd;
             } else {

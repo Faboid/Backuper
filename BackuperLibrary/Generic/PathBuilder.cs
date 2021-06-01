@@ -18,7 +18,7 @@ namespace BackuperLibrary.Generic {
         public static string GetBinBcpsFolderPath(string name) => Path.Combine(BinBackupsFolder, $"{name}");
 
         public static string ChangeFormat(string input) {
-            StringBuilder sb = new StringBuilder(input.Length);
+            var sb = new StringBuilder(input.Length);
 
             for(int i = 0; i < input.Length; i++) {
                 if(input[i] == '/') {

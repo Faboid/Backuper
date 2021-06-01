@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BackuperUI;
 
 namespace BackuperUI.UserControls {
     /// <summary>
@@ -31,29 +32,11 @@ namespace BackuperUI.UserControls {
             set => SetValue(TitleProperty, value);
         }
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
-            var window = Window.GetWindow(this);
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => Window.GetWindow(this).Minimize();
 
-            window.WindowState = WindowState.Minimized;
-        }
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e) => Window.GetWindow(this).Maximize();
 
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
-            var window = Window.GetWindow(this);
+        private void CloseWindowButton_Click(object sender, RoutedEventArgs e) => Window.GetWindow(this).Close();
 
-            if(window.WindowState == WindowState.Normal) {
-
-                window.WindowState = WindowState.Maximized;
-
-            } else if(window.WindowState == WindowState.Maximized) {
-
-                window.WindowState = WindowState.Normal;
-            }
-        }
-
-        private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
-            var window = Window.GetWindow(this);
-
-            window.Close();
-        }
     }
 }

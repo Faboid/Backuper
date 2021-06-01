@@ -22,7 +22,7 @@ namespace BackuperUI {
     /// </summary>
     public partial class MainWindow : Window { //todo - refactor all this class
 
-        private string messageErrorCaption = "There has been an error";
+        private readonly string messageErrorCaption = "There has been an error!";
 
         public MainWindow() {
             InitializeComponent();
