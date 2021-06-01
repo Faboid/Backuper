@@ -35,6 +35,8 @@ namespace BackuperLibrary {
             }
         }
 
+        public event EventHandler BackupComplete;
+
         public string Name { get; private set; }
         public string From { get; private set; }
         public string To { get => PathBuilder.GetToPath(Name); }
@@ -96,9 +98,9 @@ namespace BackuperLibrary {
 
             try {
                 ActBackup();
+                BackupComplete?.Invoke(null, EventArgs.Empty);
 
                 return Factory.CreateBackupResult(Name, BackuperResult.Success);
-
             } catch (Exception ex) {
 
                 return Factory.CreateBackupResult(Name, BackuperResult.Failure, ex);

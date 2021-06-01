@@ -23,10 +23,12 @@ namespace BackuperUI {
 #endif
 
             InitializeComponent();
-            RefreshListBox();
+            RefreshListBox(null, EventArgs.Empty);
+            BackupersHolder.EditedBackupers += RefreshListBox;
+            BackupersHolder.Backupers.ForEach(x => x.BackupComplete += RefreshListBox);
         }
 
-        private void RefreshListBox() {
+        private void RefreshListBox(object sender, EventArgs e) {
             DataGridBackups.ItemsSource = null;
             var infoBackups = BackupersHolder.Backupers.Select(x => new InfoBackuper(x));
             DataGridBackups.ItemsSource = infoBackups;
@@ -38,7 +40,6 @@ namespace BackuperUI {
                 BackuperResultInfo status = BackupersHolder.SearchByName(backup.BackupName).MakeBackup();
 
                 DarkMessageBox.Show("Result", status.GetMessage());
-                RefreshListBox();
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
@@ -46,7 +47,6 @@ namespace BackuperUI {
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             BackuperEditor.Create();
-            RefreshListBox();
         }
 
         private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
@@ -73,8 +73,6 @@ namespace BackuperUI {
 
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
-            } finally {
-                RefreshListBox();
             }
         }
 
@@ -82,11 +80,9 @@ namespace BackuperUI {
             List<BackuperResultInfo> results = BackupersHolder.BackupAll();
             ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
 
-            RefreshListBox();
-
 
             if(errors == 0) {
-                DarkMessageBox.Show("Results:",
+                DarkMessageBox.Show("Backup Complete!",
                     $"{succeeded} have been backuped successfully.\r\n" +
                     $"{updated} were already updated.\r\n" +
                     $"{errors} met failure."
@@ -121,12 +117,9 @@ namespace BackuperUI {
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
-            RefreshListBox();
         }
 
-        private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) {
-            EditorBackupPath.Start();
-        }
+        private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) => EditorBackupPath.Start();
     }
 
     internal class InfoBackuper {

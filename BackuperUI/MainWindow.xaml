@@ -80,6 +80,7 @@
         </Button>
 
         <DataGrid
+            IsReadOnly="True"
             Name="DataGridBackups"
             Grid.Column="1"
             Grid.ColumnSpan="4"

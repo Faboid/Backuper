@@ -11,14 +11,16 @@ using BackuperLibrary.UISpeaker;
 namespace BackuperLibrary {
     public static class BackupersHolder {
 
+        public static event EventHandler EditedBackupers;
         public static List<Backuper> Backupers { get; private set; } = BackupersManager.LoadAll();
 
         static BackupersHolder() {
-            BackupersManager.EditedBackupers += Refresh; ;
+            BackupersManager.EditedBackupers += Refresh;
         }
 
         private static void Refresh(object sender, EventArgs e) {
             Backupers = BackupersManager.LoadAll();
+            EditedBackupers?.Invoke(null, EventArgs.Empty);
         }
 
         public static Backuper SearchByName(string name) {
