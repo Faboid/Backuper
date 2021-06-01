@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BackuperLibrary;
 using BackuperLibrary.UISpeaker;
+using BackuperUI.Windows;
 
 namespace BackuperUI {
     /// <summary>
@@ -39,10 +40,10 @@ namespace BackuperUI {
                 InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
                 BackuperResultInfo status = BackupersHolder.SearchByName(backup.BackupName).MakeBackup();
 
-                MessageBox.Show(status.GetMessage(), "Result");
+                DarkMessageBox.Show("Result", status.GetMessage());
                 RefreshListBox();
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message, messageErrorCaption);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
         }
 
@@ -52,7 +53,7 @@ namespace BackuperUI {
         }
 
         private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
-            var userAnswer = MessageBox.Show("Do you want to delete this backuper?", "Are you sure?", MessageBoxButton.YesNo);
+            var userAnswer = DarkMessageBox.Show("Are you sure?", "Do you want to delete this backuper?", MessageBoxButton.YesNo);
             if(userAnswer != MessageBoxResult.Yes) {
                 return;
             }
@@ -60,21 +61,21 @@ namespace BackuperUI {
             try {
                 InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
 
-                userAnswer = MessageBox.Show($"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
-                    $"Replying \"No\" will delete the backuper, but won't delete the files.", "Are you sure?", MessageBoxButton.YesNoCancel);
+                userAnswer = DarkMessageBox.Show("Are you sure?", $"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
+                    $"Replying \"No\" will delete the backuper, but won't delete the files.", MessageBoxButton.YesNoCancel);
 
                 if(userAnswer == MessageBoxResult.Cancel) {
-                    MessageBox.Show("The operation has been annulled.");
+                    DarkMessageBox.Show(string.Empty, "The operation has been annulled.");
                     return;
 
                 } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
                     Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
                     string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
-                    MessageBox.Show(message);
+                    DarkMessageBox.Show("Operation completed.", message);
                 }
 
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message, messageErrorCaption);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message);
             } finally {
                 RefreshListBox();
             }
@@ -88,18 +89,18 @@ namespace BackuperUI {
 
 
             if(errors == 0) {
-                MessageBox.Show(
+                DarkMessageBox.Show("Results:",
                     $"{succeeded} have been backuped successfully.\r\n" +
                     $"{updated} were already updated.\r\n" +
                     $"{errors} met failure."
                     );
             } else {
-                var userAnswer = MessageBox.Show(
+                var userAnswer = DarkMessageBox.Show("Backup Complete!",
                     $"{succeeded} have been backuped successfully.\r\n" +
                     $"{updated} were already updated.\r\n" +
                     $"{errors} met failure.\r\n \r\n" +
                     "Do you want to see the error messages?"
-                    , "Backup Complete!", MessageBoxButton.YesNo);
+                    , MessageBoxButton.YesNo);
 
                 if(userAnswer == MessageBoxResult.No) {
                     return;
@@ -107,7 +108,7 @@ namespace BackuperUI {
 
                 var failures = results.Where(x => x.Result == BackuperResult.Failure);
                 foreach(BackuperResultInfo failure in failures) {
-                    var answer = MessageBox.Show($"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", "Error:", MessageBoxButton.YesNo);
+                    var answer = DarkMessageBox.Show("Error:", $"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", MessageBoxButton.YesNo);
                     if(answer == MessageBoxResult.No) {
                         break;
                     }
@@ -121,7 +122,7 @@ namespace BackuperUI {
                 Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
                 BackuperEditor.Edit(backuper);
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message, messageErrorCaption);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
             RefreshListBox();
         }

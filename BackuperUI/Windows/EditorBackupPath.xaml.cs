@@ -38,17 +38,17 @@ namespace BackuperUI.Windows {
                     bool success = BackupFolderHandler.TryChangePath(path);
 
                     if(success) {
-                        MessageBox.Show("The backup path has been changed successfully.");
+                        DarkMessageBox.Show("Success", "The backup path has been changed successfully.");
                         this.Close();
                     } else {
-                        MessageBox.Show("The operation has failed.");
+                        DarkMessageBox.Show("Failure", "The operation has failed for unknown reasons.");
                     }
                 } else {
-                    MessageBox.Show("Given path must exist.");
+                    DarkMessageBox.Show("Error", "Given path must exist.");
                 }
 
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message, "There has been an error:");
+                DarkMessageBox.Show("There has been an error", ex.Message);
             }
 
         }
@@ -57,12 +57,12 @@ namespace BackuperUI.Windows {
             try {
                 bool success = BackupFolderHandler.SetDefault();
                 if(success) {
-                    MessageBox.Show("Set to default successfully.");
+                    DarkMessageBox.Show("Success", "Set to default successfully.");
                 } else {
-                    MessageBox.Show("Something went wrong.");
+                    DarkMessageBox.Show("Failure", "Something went wrong.");
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "There has been an error:");
+                DarkMessageBox.Show("There has been an error:", ex.Message);
             }
         }
     }

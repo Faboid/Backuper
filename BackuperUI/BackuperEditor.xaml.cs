@@ -3,6 +3,7 @@ using BackuperLibrary.Generic;
 using System;
 using System.Windows;
 using System.IO;
+using BackuperUI.Windows;
 
 namespace BackuperUI {
     /// <summary>
@@ -16,7 +17,7 @@ namespace BackuperUI {
                 Backuper backuper = editor.Backuper;
                 if(backuper != null) {
                     backuper.SaveToFile();
-                    MessageBox.Show($"The {backuper.Name} backuper has been created successfully.");
+                    DarkMessageBox.Show("Operation completed.", $"The {backuper.Name} backuper has been created successfully.");
                 }
             }
         }
@@ -31,7 +32,7 @@ namespace BackuperUI {
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
                 backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions);
-                MessageBox.Show($"The backuper has been edited successfully.");
+                DarkMessageBox.Show("Operation completed.", $"The backuper has been edited successfully.");
             }
         }
 
@@ -47,7 +48,7 @@ namespace BackuperUI {
                 DialogResult = true;
                 this.Close();
             } else {
-                MessageBox.Show(message);
+                DarkMessageBox.Show(string.Empty, message);
             }
         }
 
