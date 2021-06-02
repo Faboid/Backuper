@@ -95,20 +95,5 @@ namespace BackuperUI.Windows {
             }
         }
 
-        #region WindowBasicFunctionality
-        private void CloseWindowButton_Click(object sender, RoutedEventArgs e) {
-            DialogResult = false;
-            this.Close();
-
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e) {
-            this.Maximize();
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e) {
-            this.Minimize();
-        }
-        #endregion
     }
 }
