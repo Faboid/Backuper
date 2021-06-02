@@ -1,0 +1,174 @@
+﻿<Window x:Class="BackuperUI.Windows.OpenFolderDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BackuperUI.Windows"
+        xmlns:controls="clr-namespace:BackuperUI.UserControls"
+        mc:Ignorable="d"
+        Title="Select Folder" 
+        Height="450" Width="800"
+        Style="{StaticResource DarkThemeWindow}"
+        >
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeDataGrid.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeWindow.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBlock.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <!--As of now, DynamicMargin doesn't work as intended.
+    So, it's essentially a fixed size.-->
+    <controls:DynamicMargin
+        Margin="25, 15"
+        >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <!--Top Layer-->
+            <controls:DynamicMargin
+                Margin="1, 2"
+                >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Margin="5"
+                        Grid.Column="0"
+                        Content="←"
+                        FontSize="16"
+                        MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                        MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                        />
+
+                    <TextBox
+                        Text="Path"
+                        Margin="5"
+                        FontSize="16"
+                        Grid.Column="1"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Left"
+                        />
+
+                    <!--Search Function-->
+                    <controls:DynamicMargin
+                        Margin="5"
+                        Grid.Column="2"
+                        >
+
+                        <StackPanel
+                            Orientation="Horizontal"
+                            >
+                            <TextBox
+                                Text="Search"
+                                MinWidth="200"
+                                FontSize="16"
+                                Grid.Column="2"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                />
+                            <Button
+                                FontSize="16"
+                                MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                                />
+                        </StackPanel>
+
+                    </controls:DynamicMargin>
+
+                </Grid>
+            </controls:DynamicMargin>
+
+            <!--Middle Layer-->
+            <controls:DynamicMargin
+                Grid.Row="1"
+                Margin="0, 2"
+                >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" MaxWidth="200"/>
+                        <ColumnDefinition Width="8*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <DataGrid
+                        Margin="5, 5, 0, 5"
+                        Grid.Column="0"
+                        >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Roots" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DataGrid
+                        Margin="5"
+                        Grid.Column="1"
+                        >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="auto"/>
+                            <DataGridTextColumn Header="Full Path" Width="*"/>
+                            <DataGridTextColumn Header="Last Update" Width="auto"/>
+                            <DataGridTextColumn Header="Size" Width="auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </controls:DynamicMargin>
+
+            <!--Lower Layer-->
+            <controls:DynamicMargin
+                Grid.Row="2"
+                Margin="1, 2"
+                >
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Folder:"
+                        FontSize="16"
+                        Margin="5"
+                        Style="{StaticResource Dark}"
+                        Background="Transparent"
+                        />
+
+                    <TextBox
+                        Text="Folder Name"
+                        Grid.Column="1"
+                        Margin="5"
+                        FontSize="16"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Left"
+                        />
+
+                    <Button
+                        Margin="5"
+                        Width="80"
+                        FontSize="16"
+                        Grid.Column="2"
+                        Content="Select"
+                        />
+
+                </Grid>
+            </controls:DynamicMargin>
+
+        </Grid>
+    </controls:DynamicMargin>
+</Window>
