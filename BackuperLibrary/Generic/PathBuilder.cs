@@ -11,7 +11,8 @@ namespace BackuperLibrary.Generic {
     public static class PathBuilder {
 
         public static string To { get => BackupFolderHandler.To; }
-        public static string BinBackupsFolder { get; } = Path.Combine(To, "Bin");
+        public static string BinName { get; } = "Bin";
+        public static string BinBackupsFolder { get; } = Path.Combine(To, BinName);
         public static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static string GetToPath(string name) => Path.Combine(To, name);

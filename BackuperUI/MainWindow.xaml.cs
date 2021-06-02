@@ -25,7 +25,6 @@ namespace BackuperUI {
             InitializeComponent();
             RefreshListBox(null, EventArgs.Empty);
             BackupersHolder.EditedBackupers += RefreshListBox;
-            BackupersHolder.Backupers.ForEach(x => x.BackupComplete += RefreshListBox);
         }
 
         private void RefreshListBox(object sender, EventArgs e) {

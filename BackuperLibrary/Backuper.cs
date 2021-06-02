@@ -19,11 +19,6 @@ namespace BackuperLibrary {
             if(maxVersions < 1) {
                 throw new ArgumentException("The maxVersions argument can't be lower than one.");
             }
-            //todo - find a way to implement the check for duplicate names
-            /*
-            if(BackupersManager.BackupersNames.Any(x => x == name)) {
-                throw new ArgumentException("Tried to create multiple backupers with the same name.");
-            }*/
 
             From = from;
             Name = name;
@@ -170,7 +165,7 @@ namespace BackuperLibrary {
                 return false;
             }
 
-            return Directory.GetLastWriteTime(From) <= Directory.GetLastWriteTime(latestVersionPath);
+            return Directory.GetLastWriteTime(From) < Directory.GetLastWriteTime(latestVersionPath);
         }
         #endregion private
 

@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.IO;
 using BackuperUI.Windows;
+using BackuperLibrary.IO;
 
 namespace BackuperUI {
     /// <summary>
@@ -57,32 +58,40 @@ namespace BackuperUI {
             message = "";
 
             if(TextBoxName.Text == "" || TextBoxSourcePath.Text == "" || TextBoxMaxVersions.Text == "") {
-                message = AddToMessage(message, "All the fields must be compiled.");
+                AddToMessage(ref message, "All the fields must be compiled.");
             }
 
             if(!PathBuilder.ValidatePath(TextBoxName.Text, out string errMessage)) {
-                message = AddToMessage(message, errMessage);
+                AddToMessage(ref message, errMessage);
+            }
+
+            if(BackupersManager.BackupersNames.Contains(TextBoxName.Text)) {
+                AddToMessage(ref message, "This name is occupied by another backuper.");
+            }
+
+            if(TextBoxName.Text == PathBuilder.BinName) {
+                AddToMessage(ref message, $"The name {PathBuilder.BinName} is occupied: it's used to store deleted backups.");
             }
 
             if(!Directory.Exists(TextBoxSourcePath.Text)) {
-                message = AddToMessage(message, "The path doesn't exist.");
+                AddToMessage(ref message, "The path doesn't exist.");
             }
 
             if(!int.TryParse(TextBoxMaxVersions.Text, out int res)) {
-                message = AddToMessage(message, "The max versions must be written as a numerical digit.");
+                AddToMessage(ref message, "The max versions must be written as a numerical digit.");
             } else if(res < 2) {
-                message = AddToMessage(message, "The minimum of max versions is two.");
+                AddToMessage(ref message, "The minimum of max versions is two.");
             }
 
             //if the message is empty, it means no error has been found
             return message == "";
         }
 
-        private static string AddToMessage(string message, string toAdd) {
+        private static void AddToMessage(ref string message, string toAdd) {
             if(message == "") {
-                return toAdd;
+                message = $"- {toAdd}";
             } else {
-                return $"{message}{Environment.NewLine}{Environment.NewLine}{toAdd}";
+                message += $"{Environment.NewLine}{Environment.NewLine}- {toAdd}";
             }
         }
 

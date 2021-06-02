@@ -16,6 +16,7 @@ namespace BackuperLibrary {
 
         static BackupersHolder() {
             BackupersManager.EditedBackupers += Refresh;
+            Backupers.ForEach(x => x.BackupComplete += Refresh);
         }
 
         private static void Refresh(object sender, EventArgs e) {
