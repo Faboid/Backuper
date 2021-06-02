@@ -8,7 +8,7 @@ using BackuperLibrary.UISpeaker;
 using BackuperUI.Windows;
 using BackuperLibrary.Generic;
 
-namespace BackuperUI {
+namespace BackuperUI.Windows {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

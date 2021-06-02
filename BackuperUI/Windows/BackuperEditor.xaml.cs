@@ -6,7 +6,7 @@ using System.IO;
 using BackuperUI.Windows;
 using BackuperLibrary.IO;
 
-namespace BackuperUI {
+namespace BackuperUI.Windows {
     /// <summary>
     /// Interaction logic for BackuperCreator.xaml
     /// </summary>
