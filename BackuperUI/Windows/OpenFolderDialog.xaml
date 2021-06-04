@@ -22,10 +22,8 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
-    <!--As of now, DynamicMargin doesn't work as intended.
-    So, it's essentially a fixed size.-->
-    <controls:DynamicMargin
+
+    <Border
         Margin="25, 15"
         >
         <Grid>
@@ -36,7 +34,7 @@
             </Grid.RowDefinitions>
 
             <!--Top Layer-->
-            <controls:DynamicMargin
+            <Border
                 Margin="1, 2"
                 >
                 <Grid>
@@ -47,16 +45,18 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
+                        x:Name="BackButton"
                         Margin="5"
                         Grid.Column="0"
                         Content="←"
                         FontSize="16"
                         MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                         MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                        Click="BackButton_Click"
                         />
 
                     <TextBox
-                        Text="Path"
+                        x:Name="PathDisplayTextBox"
                         Margin="5"
                         FontSize="16"
                         Grid.Column="1"
@@ -65,7 +65,7 @@
                         />
 
                     <!--Search Function-->
-                    <controls:DynamicMargin
+                    <Border
                         Margin="5"
                         Grid.Column="2"
                         >
@@ -74,27 +74,31 @@
                             Orientation="Horizontal"
                             >
                             <TextBox
-                                Text="Search"
+                                x:Name="SearchTextBox"
+                                Text=""
                                 MinWidth="200"
                                 FontSize="16"
                                 Grid.Column="2"
                                 VerticalContentAlignment="Center"
                                 HorizontalContentAlignment="Left"
+                                TextChanged="SearchTextBox_TextChanged"
                                 />
                             <Button
+                                x:Name="SearchButton"
+                                Content="🔍"
                                 FontSize="16"
                                 MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                                 MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
                                 />
                         </StackPanel>
 
-                    </controls:DynamicMargin>
+                    </Border>
 
                 </Grid>
-            </controls:DynamicMargin>
+            </Border>
 
             <!--Middle Layer-->
-            <controls:DynamicMargin
+            <Border
                 Grid.Row="1"
                 Margin="0, 2"
                 >
@@ -105,30 +109,48 @@
                     </Grid.ColumnDefinitions>
 
                     <DataGrid
+                        x:Name="RootsDataGrid"
                         Margin="5, 5, 0, 5"
                         Grid.Column="0"
+                        IsReadOnly="True"
                         >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Roots" Width="*"/>
+                            <DataGridTextColumn Header="Roots" Binding="{Binding Name}" Width="*"/>
                         </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow"
+                                   BasedOn="{StaticResource {x:Type DataGridRow}}"
+                                   >
+                                <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                            </Style>
+                        </DataGrid.Resources>
                     </DataGrid>
 
                     <DataGrid
+                        x:Name="FoldersDataGrid"
                         Margin="5"
                         Grid.Column="1"
+                        IsReadOnly="True"
                         >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Width="auto"/>
-                            <DataGridTextColumn Header="Full Path" Width="*"/>
-                            <DataGridTextColumn Header="Last Update" Width="auto"/>
-                            <DataGridTextColumn Header="Size" Width="auto"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="auto"/>
+                            <DataGridTextColumn Header="Full Path" Binding="{Binding FullName}" Width="*"/>
+                            <DataGridTextColumn Header="Last Update" Binding="{Binding LastWriteTime}" Width="auto"/>
                         </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow"
+                                   BasedOn="{StaticResource {x:Type DataGridRow}}"
+                                   >
+                                <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                                <EventSetter Event="Selected" Handler="DataGridRow_Selected"/>
+                            </Style>
+                        </DataGrid.Resources>
                     </DataGrid>
                 </Grid>
-            </controls:DynamicMargin>
+            </Border>
 
             <!--Lower Layer-->
-            <controls:DynamicMargin
+            <Border
                 Grid.Row="2"
                 Margin="1, 2"
                 >
@@ -150,7 +172,8 @@
                         />
 
                     <TextBox
-                        Text="Folder Name"
+                        x:Name="SelectedFolderNameTextBox"
+                        Text=""
                         Grid.Column="1"
                         Margin="5"
                         FontSize="16"
@@ -159,16 +182,18 @@
                         />
 
                     <Button
+                        x:Name="SelectButton"
                         Margin="5"
                         Width="80"
                         FontSize="16"
                         Grid.Column="2"
                         Content="Select"
+                        Click="SelectButton_Click"
                         />
 
                 </Grid>
-            </controls:DynamicMargin>
+            </Border>
 
         </Grid>
-    </controls:DynamicMargin>
+    </Border>
 </Window>
