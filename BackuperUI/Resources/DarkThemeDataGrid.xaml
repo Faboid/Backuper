@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="DarkThemeScrollBar.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    
     <Style TargetType="DataGrid">
         <Setter Property="AutoGenerateColumns" Value="false"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
