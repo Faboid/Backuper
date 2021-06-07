@@ -18,39 +18,31 @@ namespace BackuperUI.Windows {
 
             var dialog = new OpenFolderDialog();
             if(dialog.ShowDialog() == true) {
-                return dialog.fullPath;
+                return dialog.FullPath;
             } else {
                 return null;
             }
         }
 
 
-        private DirectoryInfo currDir { get => new DirectoryInfo(PathDisplayTextBox.Text); }
-        private DirectoryInfo fullDir { get => new DirectoryInfo(fullPath); }
-        private string fullPath { get => Path.Combine(PathDisplayTextBox.Text, SelectedFolderNameTextBox.Text); }
-        private DirectoryInfo defaultPath { get; } = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+        private DirectoryInfo CurrDir => new DirectoryInfo(PathDisplayTextBox.Text);
+        private DirectoryInfo FullDir => new DirectoryInfo(FullPath);
+        private string FullPath => Path.Combine(PathDisplayTextBox.Text, SelectedFolderNameTextBox.Text);
+
+        private static DirectoryInfo DefaultPath => new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
 
 
         public OpenFolderDialog() {
             InitializeComponent();
-            LoadFolder(defaultPath);
+            LoadFolder(DefaultPath);
             var drives = DriveInfo.GetDrives();
             var roots = drives.Where(x => x.IsReady).Select(x => x.RootDirectory);
             RootsDataGrid.ItemsSource = roots;
         }
 
-        private bool HasPermissions(DirectoryInfo dir) {
+        private IEnumerable<DirectoryInfo> CurrDirChildren() {
             try {
-                dir.GetAccessControl();
-                return true;
-            } catch(UnauthorizedAccessException) {
-                return false;
-            }
-        }
-
-        private IEnumerable<DirectoryInfo> currDirChildren() {
-            try {
-                return currDir.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden) && HasPermissions(x));
+                return CurrDir.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden) && HasPermissions(x));
             } catch(Exception ex) {
                 DarkMessageBox.Show("Error:", ex.Message);
                 return null;
@@ -62,7 +54,7 @@ namespace BackuperUI.Windows {
             SelectedFolderNameTextBox.Text = string.Empty;
 
 
-            var children = currDirChildren();
+            var children = CurrDirChildren();
             if(children == null) {
                 return;
             }
@@ -78,7 +70,7 @@ namespace BackuperUI.Windows {
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e) {
-            var parent = currDir.Parent;
+            var parent = CurrDir.Parent;
             if(parent == null) {
                 return;
             } else {
@@ -87,13 +79,13 @@ namespace BackuperUI.Windows {
         }
 
         private void SearchTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
-            LoadFolder(currDir, SearchTextBox.Text);
+            LoadFolder(CurrDir, SearchTextBox.Text);
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             var folder = (sender as System.Windows.Controls.DataGridRow).Item as DirectoryInfo;
             SelectedFolderNameTextBox.Text = folder.Name;
-            LoadFolder(fullDir);
+            LoadFolder(FullDir);
         }
 
         private void DataGridRow_Selected(object sender, RoutedEventArgs e) {
@@ -105,9 +97,17 @@ namespace BackuperUI.Windows {
             DialogResult = true;
             this.Close();
         }
+        private static bool HasPermissions(DirectoryInfo dir) {
+            try {
+                dir.GetAccessControl();
+                return true;
+            } catch(UnauthorizedAccessException) {
+                return false;
+            }
+        }
 
         private void SetIfActive() {
-            BackButton.IsEnabled = currDir.Parent != null;
+            BackButton.IsEnabled = CurrDir.Parent != null;
         }
 
     }
