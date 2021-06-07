@@ -73,10 +73,17 @@ namespace BackuperUI.Windows {
             } else {
                 FoldersDataGrid.ItemsSource = children.Where(x => x.Name.Contains(search));
             }
+
+            SetIfActive();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e) {
-            LoadFolder(currDir.Parent);
+            var parent = currDir.Parent;
+            if(parent == null) {
+                return;
+            } else {
+                LoadFolder(parent);
+            }
         }
 
         private void SearchTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
@@ -98,10 +105,10 @@ namespace BackuperUI.Windows {
             DialogResult = true;
             this.Close();
         }
+
+        private void SetIfActive() {
+            BackButton.IsEnabled = currDir.Parent != null;
+        }
+
     }
-
-    internal class DirectoryDisplay {
-
-    }
-
 }
