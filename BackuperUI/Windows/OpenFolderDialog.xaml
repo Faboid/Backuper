@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BackuperUI.Windows"
-        xmlns:controls="clr-namespace:BackuperUI.UserControls"
+        xmlns:usercontrols="clr-namespace:BackuperUI.UserControls"
+        xmlns:customcontrols="clr-namespace:BackuperUI.CustomControls"
         mc:Ignorable="d"
         Title="Select Folder" 
         Height="450" Width="800"
@@ -55,8 +56,9 @@
                         Click="BackButton_Click"
                         />
 
-                    <TextBox
+                    <customcontrols:TextBoxWithPreview
                         x:Name="PathDisplayTextBox"
+                        PreviewText="Write Path"
                         Margin="5"
                         FontSize="16"
                         Grid.Column="1"
@@ -73,9 +75,9 @@
                         <StackPanel
                             Orientation="Horizontal"
                             >
-                            <TextBox
+                            <customcontrols:TextBoxWithPreview
                                 x:Name="SearchTextBox"
-                                Text=""
+                                PreviewText="Search"
                                 MinWidth="200"
                                 FontSize="16"
                                 Grid.Column="2"
@@ -166,6 +168,7 @@
                         Grid.Column="0"
                         Text="Folder:"
                         FontSize="16"
+                        VerticalAlignment="Center"
                         Margin="5"
                         Style="{StaticResource Dark}"
                         Background="Transparent"
