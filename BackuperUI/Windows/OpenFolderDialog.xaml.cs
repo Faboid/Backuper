@@ -13,9 +13,7 @@ namespace BackuperUI.Windows {
     /// </summary>
     public partial class OpenFolderDialog : Window {
 
-        public new static string Show() {
-            Settings.SetCurrentThreadToEnglish();
-
+        public static new string Show() {
             var dialog = new OpenFolderDialog();
             if(dialog.ShowDialog() == true) {
                 return dialog.FullPath;
@@ -24,7 +22,7 @@ namespace BackuperUI.Windows {
             }
         }
 
-
+        //todo - fix bugs related to edited paths
         private DirectoryInfo CurrDir => new DirectoryInfo(PathDisplayTextBox.Text);
         private DirectoryInfo FullDir => new DirectoryInfo(FullPath);
         private string FullPath => Path.Combine(PathDisplayTextBox.Text, SelectedFolderNameTextBox.Text);

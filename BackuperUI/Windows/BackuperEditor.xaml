@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BackuperUI"
+        xmlns:controls="clr-namespace:BackuperUI.CustomControls"
         mc:Ignorable="d"
         Title="BackuperCreator" 
         Height="300" Width="550"
@@ -57,6 +58,7 @@
 
         <TextBox
             Name="TextBoxName"
+            FontSize="18"
             Grid.Row="1"
             Grid.Column="2"
             />
@@ -70,8 +72,9 @@
             Style="{StaticResource Dark}"
             />
 
-        <TextBox
-            Name="TextBoxSourcePath"
+        <controls:FolderSearchTextBox
+            x:Name="TextBoxSourcePath"
+            FontSize="18"
             Grid.Row="2"
             Grid.Column="2"
             />
@@ -87,6 +90,7 @@
 
         <TextBox
             Name="TextBoxMaxVersions"
+            FontSize="18"
             Grid.Row="3"
             Grid.Column="2"
             />

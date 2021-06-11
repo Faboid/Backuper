@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BackuperUI.Windows"
-        xmlns:controls="clr-namespace:BackuperUI.UserControls"
+        xmlns:controls="clr-namespace:BackuperUI.CustomControls"
         mc:Ignorable="d"
         Title="Edit Backups Path:" 
         MaxHeight="300"
@@ -51,14 +51,14 @@
             Style="{StaticResource Dark}" 
             />
 
-        <TextBox
+        <controls:FolderSearchTextBox
             x:Name="PathTextBox"
             MaxHeight="30"
             MinHeight="20"
             FontSize="18"
             Margin="20,20,20,18"
             Grid.Column="1"
-            Grid.Row="0" 
+            Grid.Row="0"
             />
 
         <Grid

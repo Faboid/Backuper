@@ -17,10 +17,7 @@ namespace BackuperUI.Windows {
         private readonly string messageErrorCaption = "There has been an error!";
 
         public MainWindow() {
-
-#if DEBUG
-            Settings.SetCurrentThreadToEnglish();
-#endif
+            Settings.IFDEBUGSetCurrentThreadToEnglish();
 
             InitializeComponent();
             RefreshListBox(null, EventArgs.Empty);

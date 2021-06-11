@@ -49,7 +49,7 @@ namespace BackuperUI.CustomControls {
         }
 
         public static readonly DependencyProperty PreviewTextProperty =
-            DependencyProperty.Register("PreviewText", typeof(string), typeof(TextBoxWithPreview), new PropertyMetadata("TestTest"));
+            DependencyProperty.Register("PreviewText", typeof(string), typeof(TextBoxWithPreview), new PropertyMetadata(string.Empty));
 
         public string PreviewText {
             get => GetValue(PreviewTextProperty) as string;

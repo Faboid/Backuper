@@ -14,5 +14,12 @@ namespace BackuperLibrary.Generic {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         }
 
+        public static void IFDEBUGSetCurrentThreadToEnglish() {
+#if DEBUG
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+#endif
+        }
+
     }
 }
