@@ -62,13 +62,14 @@ namespace BackuperUI.Windows {
             BackuperEditor.Create();
         }
 
-        private void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
+        private async void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
             var userAnswer = DarkMessageBox.Show("Are you sure?", "Do you want to delete this backuper?", MessageBoxButton.YesNo);
             if(userAnswer != MessageBoxResult.Yes) {
                 return;
             }
 
             try {
+
                 InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
 
                 userAnswer = DarkMessageBox.Show("Are you sure?", $"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
@@ -80,8 +81,15 @@ namespace BackuperUI.Windows {
 
                 } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
                     Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
-                    string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
-                    DarkMessageBox.Show("Operation completed.", message);
+                    if (Monitor.TryEnter(backuper)) {
+                        await Task.Run(() => {
+                            string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
+                            Dispatcher.Invoke(() => DarkMessageBox.Show("Operation Completed.", message));
+                        });
+                    } else {
+                        DarkMessageBox.Show("Operation Failed.", "This backuper is being used elsewhere.");
+                    }
+
                 }
 
             } catch(Exception ex) {
@@ -141,7 +149,11 @@ namespace BackuperUI.Windows {
             try {
                 InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
                 Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
-                BackuperEditor.Edit(backuper);
+                if(Monitor.TryEnter(backuper)) {
+                    BackuperEditor.Edit(backuper);
+                } else {
+                    DarkMessageBox.Show("Error:", "This backuper is being used elsewhere.");
+                }
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
