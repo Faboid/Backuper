@@ -28,14 +28,20 @@ namespace BackuperLibrary {
             return Backupers.Where(x => x.Name == name).Single();
         }
 
-        public static List<BackuperResultInfo> BackupAll() {
-            List<BackuperResultInfo> results = new List<BackuperResultInfo>();
+        public static async Task<IEnumerable<BackuperResultInfo>> BackupAllAsync() {
+            List<Task<BackuperResultInfo>> tasks = new List<Task<BackuperResultInfo>>();
+
             foreach(Backuper backuper in Backupers) {
-                BackuperResultInfo result = backuper.MakeBackup();
-                results.Add(result);
+                tasks.Add(
+                    new Task<BackuperResultInfo>(() => { return backuper.MakeBackup(); })
+                );
             }
 
-            return results;
+            tasks.ForEach(x => x.Start());
+
+            await Task.WhenAll(tasks.ToArray());
+
+            return tasks.Select(x => x.Result);
         }
 
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BackuperLibrary.UISpeaker {
     public static class ResultsHandler {
 
-        public static void GetResults(this List<BackuperResultInfo> results, out int successes, out int alreadyUpdated, out int failures) {
+        public static void GetResults(this IEnumerable<BackuperResultInfo> results, out int successes, out int alreadyUpdated, out int failures) {
             successes = 0;
             alreadyUpdated = 0;
             failures = 0;

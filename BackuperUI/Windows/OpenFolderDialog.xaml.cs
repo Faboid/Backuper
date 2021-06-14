@@ -6,6 +6,7 @@ using System.Windows;
 using System.Security.AccessControl;
 
 using BackuperLibrary.Generic;
+using System.Windows.Controls;
 
 namespace BackuperUI.Windows {
     /// <summary>
@@ -76,18 +77,18 @@ namespace BackuperUI.Windows {
             }
         }
 
-        private void SearchTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) {
             LoadFolder(CurrDir, SearchTextBox.Text);
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            var folder = (sender as System.Windows.Controls.DataGridRow).Item as DirectoryInfo;
+            var folder = (sender as DataGridRow).Item as DirectoryInfo;
             SelectedFolderNameTextBox.Text = folder.Name;
             LoadFolder(FullDir);
         }
 
         private void DataGridRow_Selected(object sender, RoutedEventArgs e) {
-            var folder = (sender as System.Windows.Controls.DataGridRow).Item as DirectoryInfo;
+            var folder = (sender as DataGridRow).Item as DirectoryInfo;
             SelectedFolderNameTextBox.Text = folder.Name;
         }
 

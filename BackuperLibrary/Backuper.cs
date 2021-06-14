@@ -93,7 +93,7 @@ namespace BackuperLibrary {
 
             try {
                 ActBackup();
-                BackupComplete?.Invoke(null, EventArgs.Empty);
+                BackupComplete?.Invoke(this, EventArgs.Empty);
 
                 return Factory.CreateBackupResult(Name, BackuperResult.Success);
             } catch (Exception ex) {

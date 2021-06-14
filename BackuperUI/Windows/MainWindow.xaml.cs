@@ -5,8 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using BackuperLibrary;
 using BackuperLibrary.UISpeaker;
-using BackuperUI.Windows;
 using BackuperLibrary.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace BackuperUI.Windows {
     /// <summary>
@@ -25,17 +26,33 @@ namespace BackuperUI.Windows {
         }
 
         private void RefreshListBox(object sender, EventArgs e) {
-            DataGridBackups.ItemsSource = null;
-            var infoBackups = BackupersHolder.Backupers.Select(x => new InfoBackuper(x));
-            DataGridBackups.ItemsSource = infoBackups;
+            Dispatcher.Invoke(() => {
+                DataGridBackups.ItemsSource = null;;
+                DataGridBackups.ItemsSource = BackupersHolder.Backupers.Select(x => new InfoBackuper(x));
+            });
         }
         
-        private void StartBackupButton_Click(object sender, RoutedEventArgs e) {
+        private async void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
-                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
-                BackuperResultInfo status = BackupersHolder.SearchByName(backup.BackupName).MakeBackup();
+                var btn = sender as Button;
+                var backup = btn.DataContext as InfoBackuper;
+                Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
 
-                DarkMessageBox.Show("Result", status.GetMessage());
+                //To avoid blocking the UI thread
+                await Task.Run(() => {
+                    if(Monitor.TryEnter(backuper)) {
+                        try {
+                            BackuperResultInfo status = backuper.MakeBackup();
+                            Dispatcher.Invoke(() => DarkMessageBox.Show("Result", status.GetMessage()));
+                        } finally {
+                            Monitor.Exit(backuper);
+                        }
+                    } else {
+                        Dispatcher.Invoke(() => DarkMessageBox.Show("Error:", "This backuper is already being updated."));
+                    }
+                });
+
+
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
@@ -72,10 +89,17 @@ namespace BackuperUI.Windows {
             }
         }
 
-        private void BackupAllButton_Click(object sender, RoutedEventArgs e) {
-            List<BackuperResultInfo> results = BackupersHolder.BackupAll();
-            ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
+        private async void BackupAllButton_Click(object sender, RoutedEventArgs e) {
+            BackupAll_Button.IsEnabled = false;
+            IEnumerable<BackuperResultInfo> results = null;
 
+            results = await BackupersHolder.BackupAllAsync();
+
+            if(results is null) {
+                DarkMessageBox.Show("Something went wrong!", "The list of the results is null.");
+            }
+
+            ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
 
             if(errors == 0) {
                 DarkMessageBox.Show("Backup Complete!",
@@ -103,6 +127,8 @@ namespace BackuperUI.Windows {
                     }
                 }
             }
+
+            BackupAll_Button.IsEnabled = true;
         }
 
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
