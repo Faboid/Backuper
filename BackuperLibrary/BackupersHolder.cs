@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using BackuperLibrary.IO;
 using BackuperLibrary.UISpeaker;
@@ -33,7 +34,13 @@ namespace BackuperLibrary {
 
             foreach(Backuper backuper in Backupers) {
                 tasks.Add(
-                    new Task<BackuperResultInfo>(() => { return backuper.MakeBackup(); })
+                    new Task<BackuperResultInfo>(() => { 
+                        if (Monitor.TryEnter(backuper)) {
+                            return backuper.MakeBackup(); 
+                        } else {
+                            return new BackuperResultInfo(backuper.Name, BackuperResult.Failure, new ArgumentException("This backuper is being used elsewhere."));
+                        }
+                    })
                 );
             }
 

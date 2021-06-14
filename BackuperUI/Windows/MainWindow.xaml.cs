@@ -120,8 +120,14 @@ namespace BackuperUI.Windows {
                 }
 
                 var failures = results.Where(x => x.Result == BackuperResult.Failure);
+
+                int totalcount = failures.Count();
+                int currentcount = 0;
+                string chooseMessage = $"{Environment.NewLine}{Environment.NewLine}Do you want to read the next error?";
                 foreach(BackuperResultInfo failure in failures) {
-                    var answer = DarkMessageBox.Show("Error:", $"{failure.GetMessage()}{Environment.NewLine}{Environment.NewLine}If you don't want do read the other errors, choose \"NO\"", MessageBoxButton.YesNo);
+                    currentcount++;
+
+                    var answer = DarkMessageBox.Show("Error:", $"{failure.GetMessage()}{((currentcount == totalcount)? "" : chooseMessage)}", MessageBoxButton.YesNo);
                     if(answer == MessageBoxResult.No) {
                         break;
                     }
