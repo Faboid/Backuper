@@ -34,9 +34,15 @@ namespace BackuperLibrary {
 
             foreach(Backuper backuper in Backupers) {
                 tasks.Add(
-                    new Task<BackuperResultInfo>(() => { 
+                    new Task<BackuperResultInfo>(() => {
                         if (Monitor.TryEnter(backuper)) {
-                            return backuper.MakeBackup(); 
+                            try {
+                                Thread.CurrentThread.IsBackground = false;
+                                return backuper.MakeBackup();
+                            } finally {
+                                Monitor.Exit(backuper);
+                                Thread.CurrentThread.IsBackground = true;
+                            }
                         } else {
                             return new BackuperResultInfo(backuper.Name, BackuperResult.Failure, new ArgumentException("This backuper is being used elsewhere."));
                         }

@@ -92,8 +92,11 @@ namespace BackuperLibrary {
             }
 
             try {
+
                 ActBackup();
-                BackupComplete?.Invoke(this, EventArgs.Empty);
+                try {
+                    BackupComplete?.Invoke(this, EventArgs.Empty);
+                } catch (TaskCanceledException) { }
 
                 return Factory.CreateBackupResult(Name, BackuperResult.Success);
             } catch (Exception ex) {

@@ -42,10 +42,14 @@ namespace BackuperUI.Windows {
                 await Task.Run(() => {
                     if(Monitor.TryEnter(backuper)) {
                         try {
+                            Thread.CurrentThread.IsBackground = false;
                             BackuperResultInfo status = backuper.MakeBackup();
                             Dispatcher.Invoke(() => DarkMessageBox.Show("Result", status.GetMessage()));
+                        } catch(TaskCanceledException) { 
+                            //do nothing
                         } finally {
                             Monitor.Exit(backuper);
+                            Thread.CurrentThread.IsBackground = true;
                         }
                     } else {
                         Dispatcher.Invoke(() => DarkMessageBox.Show("Error:", "This backuper is already being updated."));
@@ -84,6 +88,7 @@ namespace BackuperUI.Windows {
                     if (Monitor.TryEnter(backuper)) {
                         await Task.Run(() => {
                             string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
+                            Monitor.Exit(backuper);
                             Dispatcher.Invoke(() => DarkMessageBox.Show("Operation Completed.", message));
                         });
                     } else {
@@ -101,7 +106,11 @@ namespace BackuperUI.Windows {
             BackupAll_Button.IsEnabled = false;
             IEnumerable<BackuperResultInfo> results = null;
 
-            results = await BackupersHolder.BackupAllAsync();
+            try {
+                results = await BackupersHolder.BackupAllAsync();
+            } catch (Exception ex) {
+                DarkMessageBox.Show("Something went wrong!", ex.Message);
+            }
 
             if(results is null) {
                 DarkMessageBox.Show("Something went wrong!", "The list of the results is null.");
@@ -151,6 +160,7 @@ namespace BackuperUI.Windows {
                 Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
                 if(Monitor.TryEnter(backuper)) {
                     BackuperEditor.Edit(backuper);
+                    Monitor.Exit(backuper);
                 } else {
                     DarkMessageBox.Show("Error:", "This backuper is being used elsewhere.");
                 }
