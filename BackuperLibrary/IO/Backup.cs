@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BackuperLibrary.IO {
     public static class Backup {
 
         public static void Move(DirectoryInfo from, DirectoryInfo to) {
+            bool isBackgroundThread = Thread.CurrentThread.IsBackground;
+
+            if(isBackgroundThread == true) {
+                Thread.CurrentThread.IsBackground = false;
+            }
+
             //create directory to move the backups
             to.Create();
 
@@ -17,9 +24,19 @@ namespace BackuperLibrary.IO {
 
             //delete past location
             from.Delete(true);
+
+            if(isBackgroundThread == true) {
+                Thread.CurrentThread.IsBackground = true;
+            }
         }
 
         public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {
+            bool isBackgroundThread = Thread.CurrentThread.IsBackground;
+
+            if(isBackgroundThread == true) {
+                Thread.CurrentThread.IsBackground = false;
+            }
+
             //get all directories
             var directories = GetAllDirectories(from);
             //get all files
@@ -29,6 +46,10 @@ namespace BackuperLibrary.IO {
             CreateAllDirectories(directories, from.FullName, to.FullName);
             //copy the files to the new location
             CreateAllFiles(files, from.FullName, to.FullName);
+
+            if(isBackgroundThread == true) {
+                Thread.CurrentThread.IsBackground = true;
+            }
         }
 
         #region private

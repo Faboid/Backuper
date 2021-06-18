@@ -7,6 +7,8 @@ using System.IO;
 using BackuperLibrary.IO;
 using BackuperLibrary.UISpeaker;
 using BackuperLibrary.Generic;
+using System.Threading;
+using BackuperLibrary.Safety;
 
 namespace BackuperLibrary {
     public class Backuper {
@@ -37,73 +39,97 @@ namespace BackuperLibrary {
         public string To { get => PathBuilder.GetToPath(Name); }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
+        private readonly Locker locker = new Locker();
 
         public void SaveToFile() {
-            BackupersManager.Save(this);
+            locker.LockHere(() => BackupersManager.Save(this));
         }
 
         public void Edit(string newName = null, int newMaxVersions = 0) {
-            if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
-                MaxVersions = (int)newMaxVersions;
-                CleanUpExtraVersions();
-                BackupersManager.Save(this);
-            }
+            locker.LockHere(() => {
 
-            if(newName != null && newName != Name) {
-                if(BackupersManager.BackupersNames.Any(x => x == newName)) {
-                    throw new ArgumentException("The name is already occupied.");
+                if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
+                    MaxVersions = (int)newMaxVersions;
+                    CleanUpExtraVersions();
+                    BackupersManager.Save(this);
                 }
 
-                string pastName = Name;
-                string pastTo = To;
-                Name = newName;
+                if(newName != null && newName != Name) {
+                    if(BackupersManager.BackupersNames.Any(x => x == newName)) {
+                        throw new ArgumentException("The name is already occupied.");
+                    }
 
-                Backup.Move(new DirectoryInfo(pastTo), new DirectoryInfo(To));
+                    string pastName = Name;
+                    string pastTo = To;
+                    Name = newName;
 
-                BackupersManager.EditName(this, pastName, Name);
-            }
+                    Backup.Move(new DirectoryInfo(pastTo), new DirectoryInfo(To));
+
+                    BackupersManager.EditName(this, pastName, Name);
+                }
+            });
+
         }
 
         public string Erase(bool fullyDelete) {
             //True = delete all backups. False = Move backups to a special "bin" folder
-            try {
-                if(fullyDelete) {
-                    var directory = new DirectoryInfo(To);
-                    directory.Delete(true);
-                    this.Delete();
-                    return $"The backups of {Name} have been deleted successfully.";
-                } else {
-                    //move to /Bin/ folder
-                    string binPath = PathBuilder.GetBinBcpsFolderPath(Name);
-                    Backup.CopyAndPaste(new DirectoryInfo(To), new DirectoryInfo(binPath));
-                    var directory = new DirectoryInfo(To);
-                    directory.Delete(true);
-                    this.Delete();
-                    return $"{Name} has been deleted, but the backups have been moved to backup folder [{binPath}].";
+
+            return locker.LockHere(() => {
+
+                try {
+                    if(fullyDelete) {
+                        var directory = new DirectoryInfo(To);
+                        directory.Delete(true);
+                        this.Delete();
+                        return $"The backups of {Name} have been deleted successfully.";
+                    } else {
+                        //move to /Bin/ folder
+                        string binPath = PathBuilder.GetBinBcpsFolderPath(Name);
+                        Backup.CopyAndPaste(new DirectoryInfo(To), new DirectoryInfo(binPath));
+                        var directory = new DirectoryInfo(To);
+                        directory.Delete(true);
+                        this.Delete();
+                        return $"{Name} has been deleted, but the backups have been moved to backup folder [{binPath}].";
+                    }
+                } catch (Exception ex) {
+                    return $"There was an error: {Environment.NewLine} {ex.Message}";
                 }
-            } catch (Exception ex) {
-                return $"There was an error: {Environment.NewLine} {ex.Message}";
-            }
+            });
+
         }
 
         public BackuperResultInfo MakeBackup() {
-            if(IsUpdated) {
-                return Factory.CreateBackupResult(Name, BackuperResult.AlreadyUpdated);
-            }
+            return locker.LockHere(() => {
 
-            try {
+                if(IsUpdated) {
+                    return Factory.CreateBackupResult(Name, BackuperResult.AlreadyUpdated);
+                }
 
-                ActBackup();
                 try {
-                    BackupComplete?.Invoke(this, EventArgs.Empty);
-                } catch (TaskCanceledException) { }
 
-                return Factory.CreateBackupResult(Name, BackuperResult.Success);
-            } catch (Exception ex) {
+                    ActBackup();
+                    try {
+                        BackupComplete?.Invoke(this, EventArgs.Empty);
+                    } catch (TaskCanceledException) { }
 
-                return Factory.CreateBackupResult(Name, BackuperResult.Failure, ex);
-            }
+                    return Factory.CreateBackupResult(Name, BackuperResult.Success);
+                } catch (Exception ex) {
+
+                    return Factory.CreateBackupResult(Name, BackuperResult.Failure, ex);
+                }
+            });
+
         }
+
+        #region Locking
+
+        /// <summary>
+        /// Checks whether the lock is free.
+        /// </summary>
+        /// <returns><see langword="true"/> if the lock is open; otherwise, <see langword="false"/>.</returns>
+        public bool CheckLock() => locker.CheckLock();
+
+        #endregion Locking
 
         #region conversions
         public override string ToString() {

@@ -16,6 +16,8 @@ namespace BackuperUI.Windows {
     public partial class MainWindow : Window { //todo - refactor all this class
 
         private readonly string messageErrorCaption = "There has been an error!";
+        private readonly string operationFailedCaption = "Operation Failed.";
+        private readonly string backuperIsUsedElsewhere = "This backuper is being used elsewhere.";
 
         public MainWindow() {
             Settings.IFDEBUGSetCurrentThreadToEnglish();
@@ -40,19 +42,18 @@ namespace BackuperUI.Windows {
 
                 //To avoid blocking the UI thread
                 await Task.Run(() => {
-                    if(Monitor.TryEnter(backuper)) {
-                        try {
-                            Thread.CurrentThread.IsBackground = false;
-                            BackuperResultInfo status = backuper.MakeBackup();
-                            Dispatcher.Invoke(() => DarkMessageBox.Show("Result", status.GetMessage()));
-                        } catch(TaskCanceledException) { 
-                            //do nothing
-                        } finally {
-                            Monitor.Exit(backuper);
-                            Thread.CurrentThread.IsBackground = true;
-                        }
-                    } else {
-                        Dispatcher.Invoke(() => DarkMessageBox.Show("Error:", "This backuper is already being updated."));
+                    try {
+                        Thread.CurrentThread.IsBackground = false;
+                        BackuperResultInfo status = backuper.MakeBackup();
+                        Dispatcher.Invoke(() => DarkMessageBox.Show("Result", status.GetMessage()));
+                    } catch (ArgumentException ex) {
+                        DarkMessageBox.Show(operationFailedCaption, ex.Message);
+                    } catch(TaskCanceledException) { 
+                        //do nothing
+                    } catch(Exception ex) {
+                        DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                    } finally {
+                        Thread.CurrentThread.IsBackground = true;
                     }
                 });
 
@@ -85,15 +86,17 @@ namespace BackuperUI.Windows {
 
                 } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
                     Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
-                    if (Monitor.TryEnter(backuper)) {
-                        await Task.Run(() => {
-                            string message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
-                            Monitor.Exit(backuper);
+
+                    await Task.Run(() => {
+                        string message = "";
+                        try {
+                            message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
                             Dispatcher.Invoke(() => DarkMessageBox.Show("Operation Completed.", message));
-                        });
-                    } else {
-                        DarkMessageBox.Show("Operation Failed.", "This backuper is being used elsewhere.");
-                    }
+
+                        } catch (ArgumentException ex) {
+                            DarkMessageBox.Show(operationFailedCaption, ex.Message);
+                        }
+                    });
 
                 }
 
@@ -158,18 +161,31 @@ namespace BackuperUI.Windows {
             try {
                 InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
                 Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
-                if(Monitor.TryEnter(backuper)) {
+
+                if(backuper.CheckLock()) {
                     BackuperEditor.Edit(backuper);
-                    Monitor.Exit(backuper);
                 } else {
-                    DarkMessageBox.Show("Error:", "This backuper is being used elsewhere.");
+                    DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhere);
                 }
+
+            } catch (ArgumentException ex) {
+                DarkMessageBox.Show(operationFailedCaption, ex.Message);
             } catch(Exception ex) {
                 DarkMessageBox.Show(messageErrorCaption, ex.Message);
             }
         }
 
-        private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) => EditorBackupPath.Start();
+        private void ChangeBackupPath_Button_Click(object sender, RoutedEventArgs e) {
+            if(BackupersHolder.Backupers.All(x => x.CheckLock())) {
+                try {
+                    EditorBackupPath.Start();
+                } catch (Exception ex) {
+                    DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                }
+            } else {
+                DarkMessageBox.Show(operationFailedCaption, "Some backuper is being used elsewhere.");
+            }
+        }
     }
 
     internal class InfoBackuper {

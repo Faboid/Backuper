@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BackuperLibrary.Generic;
 using BackuperLibrary.IO;
 using BackuperLibrary.UISpeaker;
 
@@ -35,12 +36,13 @@ namespace BackuperLibrary {
             foreach(Backuper backuper in Backupers) {
                 tasks.Add(
                     new Task<BackuperResultInfo>(() => {
-                        if (Monitor.TryEnter(backuper)) {
+                        if (backuper.CheckLock()) {
                             try {
                                 Thread.CurrentThread.IsBackground = false;
                                 return backuper.MakeBackup();
+                            } catch (Exception ex) {
+                                return Factory.CreateBackupResult(backuper.Name, BackuperResult.Failure, ex);
                             } finally {
-                                Monitor.Exit(backuper);
                                 Thread.CurrentThread.IsBackground = true;
                             }
                         } else {

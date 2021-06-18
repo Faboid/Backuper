@@ -5,6 +5,8 @@ using System.Windows;
 using System.IO;
 using BackuperUI.Windows;
 using BackuperLibrary.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace BackuperUI.Windows {
     /// <summary>
@@ -23,7 +25,8 @@ namespace BackuperUI.Windows {
             }
         }
 
-        public static void Edit(Backuper backuper) {
+        public static async void Edit(Backuper backuper) {
+
             var editor = new BackuperEditor {
                 Backuper = backuper
             };
@@ -33,7 +36,12 @@ namespace BackuperUI.Windows {
             editor.TextBoxMaxVersions.Text = backuper.MaxVersions.ToString();
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
-                backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions);
+                await Task.Run(() => {
+                    Thread.CurrentThread.IsBackground = false;
+                    backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions);
+                    Thread.CurrentThread.IsBackground = true;
+                });
+
                 DarkMessageBox.Show("Operation completed.", $"The backuper has been edited successfully.");
             }
         }
