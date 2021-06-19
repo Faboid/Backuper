@@ -29,16 +29,15 @@ namespace BackuperUI.Windows {
 
         private void RefreshListBox(object sender, EventArgs e) {
             Dispatcher.Invoke(() => {
-                DataGridBackups.ItemsSource = null;;
-                DataGridBackups.ItemsSource = BackupersHolder.Backupers.Select(x => new InfoBackuper(x));
+                DataGridBackups.ItemsSource = null; ;
+                DataGridBackups.ItemsSource = BackupersHolder.Backupers;
             });
         }
         
         private async void StartBackupButton_Click(object sender, RoutedEventArgs e) {
             try {
                 var btn = sender as Button;
-                var backup = btn.DataContext as InfoBackuper;
-                Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
+                var backuper = btn.DataContext as Backuper;
 
                 //To avoid blocking the UI thread
                 await Task.Run(() => {
@@ -75,9 +74,9 @@ namespace BackuperUI.Windows {
 
             try {
 
-                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
+                var backuper = (sender as Button).DataContext as Backuper;
 
-                userAnswer = DarkMessageBox.Show("Are you sure?", $"Do you want to delete all the backups of {backup.BackupName}? {Environment.NewLine}" +
+                userAnswer = DarkMessageBox.Show("Are you sure?", $"Do you want to delete all the backups of {backuper.Name}? {Environment.NewLine}" +
                     $"Replying \"No\" will delete the backuper, but won't delete the files.", MessageBoxButton.YesNoCancel);
 
                 if(userAnswer == MessageBoxResult.Cancel) {
@@ -85,7 +84,6 @@ namespace BackuperUI.Windows {
                     return;
 
                 } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
-                    Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
 
                     await Task.Run(() => {
                         string message = "";
@@ -94,7 +92,7 @@ namespace BackuperUI.Windows {
                             Dispatcher.Invoke(() => DarkMessageBox.Show("Operation Completed.", message));
 
                         } catch (ArgumentException ex) {
-                            DarkMessageBox.Show(operationFailedCaption, ex.Message);
+                            Dispatcher.Invoke(() => DarkMessageBox.Show(operationFailedCaption, ex.Message));
                         }
                     });
 
@@ -159,8 +157,7 @@ namespace BackuperUI.Windows {
 
         private void ModifyBackuperButton_Click(object sender, RoutedEventArgs e) {
             try {
-                InfoBackuper backup = (sender as Button).DataContext as InfoBackuper;
-                Backuper backuper = BackupersHolder.SearchByName(backup.BackupName);
+                var backuper = (sender as Button).DataContext as Backuper;
 
                 if(backuper.CheckLock()) {
                     BackuperEditor.Edit(backuper);
@@ -188,16 +185,4 @@ namespace BackuperUI.Windows {
         }
     }
 
-    internal class InfoBackuper {
-        internal InfoBackuper(Backuper backuper) {
-            this.BackupName = backuper.Name;
-            this.SourcePath = backuper.From;
-            this.IsUpdated = backuper.IsUpdated;
-        }
-        
-        public bool IsUpdated { get; set; } 
-        public string BackupName { get; set; }
-        public string SourcePath { get; set; }
-
-    }
 }

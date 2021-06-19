@@ -48,6 +48,10 @@ namespace BackuperLibrary.IO {
             EditedBackupers?.Invoke(null, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Loads all backupers from their save file.
+        /// </summary>
+        /// <returns>A list of backupers.</returns>
         public static List<Backuper> LoadAll() {
             List<Backuper> backupers = new List<Backuper>();
 

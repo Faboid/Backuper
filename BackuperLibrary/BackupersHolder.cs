@@ -56,6 +56,7 @@ namespace BackuperLibrary {
 
             await Task.WhenAll(tasks.ToArray());
 
+            EditedBackupers?.Invoke(null, EventArgs.Empty);
             return tasks.Select(x => x.Result);
         }
 
