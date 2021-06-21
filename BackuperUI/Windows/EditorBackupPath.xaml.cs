@@ -29,13 +29,17 @@ namespace BackuperUI.Windows {
             InitializeComponent();
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e) {
+        private async void ConfirmButton_Click(object sender, RoutedEventArgs e) {
             string path = PathTextBox.Text;
 
             try {
 
                 if(Directory.Exists(path)) {
-                    bool success = BackupFolderHandler.TryChangePath(path);
+                    bool success = false;
+
+                    await Task.Run(() => {
+                        success = BackupFolderHandler.TryChangePath(path);
+                    });
 
                     if(success) {
                         DarkMessageBox.Show("Success", "The backup path has been changed successfully.");
