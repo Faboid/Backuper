@@ -45,14 +45,17 @@ namespace BackuperLibrary.IO {
             }
 
             if(Directory.Exists(newPath)) {
-                var moveFrom = new DirectoryInfo(To);
-                var moveTo = new DirectoryInfo(newPath);
-                Backup.Move(moveFrom, moveTo);
 
-                File.WriteAllText(ConfigFilePath, newPath);
-                RefreshToPath();
+                return Settings.SetThreadForegroundHere(() => {
+                    var moveFrom = new DirectoryInfo(To);
+                    var moveTo = new DirectoryInfo(newPath);
+                    Backup.Move(moveFrom, moveTo);
 
-                return true;
+                    File.WriteAllText(ConfigFilePath, newPath);
+                    RefreshToPath();
+
+                    return true;
+                });
             }
 
             return false;

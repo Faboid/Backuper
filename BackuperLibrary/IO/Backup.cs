@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BackuperLibrary.Generic;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,46 +11,35 @@ namespace BackuperLibrary.IO {
     public static class Backup {
 
         public static void Move(DirectoryInfo from, DirectoryInfo to) {
-            bool isBackgroundThread = Thread.CurrentThread.IsBackground;
 
-            if(isBackgroundThread == true) {
-                Thread.CurrentThread.IsBackground = false;
-            }
+            Settings.SetThreadForegroundHere(() => {
 
-            //create directory to move the backups
-            to.Create();
+                //create directory to move the backups
+                to.Create();
 
-            //copy all past backups to new location
-            CopyAndPaste(from, to);
+                //copy all past backups to new location
+                CopyAndPaste(from, to);
 
-            //delete past location
-            from.Delete(true);
-
-            if(isBackgroundThread == true) {
-                Thread.CurrentThread.IsBackground = true;
-            }
+                //delete past location
+                from.Delete(true);
+            });
         }
 
         public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {
-            bool isBackgroundThread = Thread.CurrentThread.IsBackground;
 
-            if(isBackgroundThread == true) {
-                Thread.CurrentThread.IsBackground = false;
-            }
+            Settings.SetThreadForegroundHere(() => {
 
-            //get all directories
-            var directories = GetAllDirectories(from);
-            //get all files
-            var files = GetAllFiles(directories);
+                //get all directories
+                var directories = GetAllDirectories(from);
+                //get all files
+                var files = GetAllFiles(directories);
 
-            //create all the needed directories
-            CreateAllDirectories(directories, from.FullName, to.FullName);
-            //copy the files to the new location
-            CreateAllFiles(files, from.FullName, to.FullName);
+                //create all the needed directories
+                CreateAllDirectories(directories, from.FullName, to.FullName);
+                //copy the files to the new location
+                CreateAllFiles(files, from.FullName, to.FullName);
+            });
 
-            if(isBackgroundThread == true) {
-                Thread.CurrentThread.IsBackground = true;
-            }
         }
 
         #region private

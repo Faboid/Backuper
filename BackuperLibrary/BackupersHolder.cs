@@ -37,14 +37,15 @@ namespace BackuperLibrary {
                 tasks.Add(
                     new Task<BackuperResultInfo>(() => {
                         if (backuper.CheckLock()) {
-                            try {
-                                Thread.CurrentThread.IsBackground = false;
-                                return backuper.MakeBackup();
-                            } catch (Exception ex) {
-                                return Factory.CreateBackupResult(backuper.Name, BackuperResult.Failure, ex);
-                            } finally {
-                                Thread.CurrentThread.IsBackground = true;
-                            }
+                            return Settings.SetThreadForegroundHere(() => {
+
+                                try {
+                                    return backuper.MakeBackup();
+                                } catch (Exception ex) {
+                                    return Factory.CreateBackupResult(backuper.Name, BackuperResult.Failure, ex);
+                                }
+                            });
+
                         } else {
                             return new BackuperResultInfo(backuper.Name, BackuperResult.Failure, new ArgumentException("This backuper is being used elsewhere."));
                         }
