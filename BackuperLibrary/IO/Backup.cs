@@ -25,12 +25,20 @@ namespace BackuperLibrary.IO {
             });
         }
 
-        public static void CopyAndPaste(DirectoryInfo from, DirectoryInfo to) {
+        public static void CopyAndPaste(FileSystemInfo from, DirectoryInfo to) {
 
             Settings.SetThreadForegroundHere(() => {
+                
+                if(from is FileInfo) {
+                    FileInfo destination = new FileInfo($"{to.FullName}\\{from.Name}");
+                    File.Copy(from.FullName, destination.FullName);
+
+                    return;
+                }
+
 
                 //get all directories
-                var directories = GetAllDirectories(from);
+                var directories = GetAllDirectories(from as DirectoryInfo);
                 //get all files
                 var files = GetAllFiles(directories);
 

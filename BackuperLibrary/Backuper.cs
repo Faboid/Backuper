@@ -13,16 +13,16 @@ using BackuperLibrary.Safety;
 namespace BackuperLibrary {
     public class Backuper {
 
-        public Backuper(string name, string from, int maxVersions) {
+        public Backuper(string name, FileSystemInfo source, int maxVersions) {
 
-            if(!Directory.Exists(from)) {
+            if(!source.Exists) {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
             }
             if(maxVersions < 1) {
                 throw new ArgumentException("The maxVersions argument can't be lower than one.");
             }
 
-            From = from;
+            Source = source;
             Name = name;
             MaxVersions = maxVersions;
 
@@ -35,10 +35,12 @@ namespace BackuperLibrary {
         public event EventHandler BackupComplete;
 
         public string Name { get; private set; }
-        public string From { get; private set; }
+        public FileSystemInfo Source { get; private set; }
+        public string SourcePath { get => Source.FullName; }
         public string To { get => PathBuilder.GetToPath(Name); }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
+
         private readonly Locker locker = new Locker();
 
         public void SaveToFile() {
@@ -133,7 +135,7 @@ namespace BackuperLibrary {
 
         #region conversions
         public override string ToString() {
-            return $"{Name},{From},{MaxVersions}";
+            return $"{Name},{Source.FullName},{MaxVersions}";
         }
 
         /// <summary>
@@ -142,17 +144,17 @@ namespace BackuperLibrary {
         /// <param name="separator"></param>
         /// <returns></returns>
         public string ToString(string separator) {
-            return $"{Name}{separator}{From}{separator}{MaxVersions}";
+            return $"{Name}{separator}{Source.FullName}{separator}{MaxVersions}";
         }
 
         public static Backuper Parse(string s) {
             var lines = s.Split(',');
 
-            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
+            return Factory.CreateBackuper(lines[0], lines[1], int.Parse(lines[2]));
         }
 
         public static Backuper Parse(string[] lines) {
-            return new Backuper(lines[0], lines[1], int.Parse(lines[2]));
+            return Factory.CreateBackuper(lines[0], lines[1], int.Parse(lines[2]));
         }
 
         public static bool TryParse(string s, out Backuper result) {
@@ -170,7 +172,7 @@ namespace BackuperLibrary {
             Directory.CreateDirectory(path);
 
             //copy "from" to the new folder
-            Backup.CopyAndPaste(new DirectoryInfo(From), new DirectoryInfo(path));
+            Backup.CopyAndPaste(Source, new DirectoryInfo(path));
 
             //check if there are too many versions and, if there are, delete the oldest ones
             CleanUpExtraVersions();
@@ -194,7 +196,7 @@ namespace BackuperLibrary {
                 return false;
             }
 
-            return Directory.GetLastWriteTime(From) < Directory.GetLastWriteTime(latestVersionPath);
+            return Directory.GetLastWriteTime(Source.FullName) < Directory.GetLastWriteTime(latestVersionPath);
         }
         #endregion private
 

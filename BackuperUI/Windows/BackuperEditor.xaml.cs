@@ -32,7 +32,7 @@ namespace BackuperUI.Windows {
             };
             editor.CompleteOperationButton.Content = "Save Edit";
             editor.TextBoxName.Text = backuper.Name;
-            editor.TextBoxSourcePath.Text = backuper.From;
+            editor.TextBoxSourcePath.Text = backuper.SourcePath;
             editor.TextBoxMaxVersions.Text = backuper.MaxVersions.ToString();
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
@@ -54,7 +54,7 @@ namespace BackuperUI.Windows {
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             if(ValidateInput(out string message)) {
-                Backuper = new Backuper(TextBoxName.Text, TextBoxSourcePath.Text, int.Parse(TextBoxMaxVersions.Text));
+                Backuper = Factory.CreateBackuper(TextBoxName.Text, TextBoxSourcePath.Text, int.Parse(TextBoxMaxVersions.Text));
                 DialogResult = true;
                 this.Close();
             } else {
@@ -81,8 +81,8 @@ namespace BackuperUI.Windows {
                 AddToMessage(ref message, $"The name {PathBuilder.BinName} is occupied: it's used to store deleted backups.");
             }
 
-            if(!Directory.Exists(TextBoxSourcePath.Text)) {
-                AddToMessage(ref message, "The path doesn't exist.");
+            if(!Directory.Exists(TextBoxSourcePath.Text) && !File.Exists(TextBoxSourcePath.Text)) {
+                AddToMessage(ref message, "The given path doesn't exist.");
             }
 
             if(!int.TryParse(TextBoxMaxVersions.Text, out int res)) {
