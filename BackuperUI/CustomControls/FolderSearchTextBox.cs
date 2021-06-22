@@ -30,7 +30,7 @@ namespace BackuperUI.CustomControls {
         }
 
         private void Btn_Click(object sender, RoutedEventArgs e) {
-            string result = OpenFolderDialog.Show();
+            string result = OpenPathDialog.Show();
             if(result is not null) {
                 Text = result;
             }
