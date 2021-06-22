@@ -68,7 +68,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <controls:TextBoxWithPreview
-                                Text="{TemplateBinding Text}"
+                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                 FontSize="{TemplateBinding FontSize}"
                                 PreviewText="{TemplateBinding PreviewText}"
                                 VerticalAlignment="Center"
