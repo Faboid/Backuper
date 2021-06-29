@@ -11,9 +11,13 @@ using System.Threading.Tasks;
 namespace BackuperLibrary {
     public static class Startup {
 
-        private static string pathToExe = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-        private static string startPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-        private static string shortcutPath = Path.Combine(startPath, "Backuper.lnk");
+        private static readonly string pathToExe = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+        private static readonly string startPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+        private static readonly string shortcutPath = Path.Combine(startPath, "Backuper.lnk");
+
+        public static bool IsActive() {
+            return System.IO.File.Exists(shortcutPath);
+        }
 
         public static void Set(bool set) {
             if(set) {

@@ -32,7 +32,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*" MaxWidth="20"/>
-            <ColumnDefinition Width="3*" MinWidth="180"/>
+            <ColumnDefinition Width="2*" MinWidth="160"/>
+            <ColumnDefinition Width="2*" MinWidth="180"/>
             <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="3*" MinWidth="100"/>
             <ColumnDefinition Width="3*" MinWidth="100"/>
@@ -50,7 +51,7 @@
             Title="Backuper"
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="6"
+            Grid.ColumnSpan="7"
             />
 
         <Button
@@ -62,8 +63,16 @@
             />
 
         <Button
+            x:Name="ToggleAutomaticBackups_Button"
+            Grid.Column="2"
+            Grid.Row="2"
+            Content="Turn ON Automatic Backuping"
+            Click="ToggleAutomaticBackupsButton_Click"
+            />
+
+        <Button
             Name="CreateBackuper_Button"
-            Grid.Column="3"
+            Grid.Column="4"
             Grid.Row="2"
             Content="Create Backuper"
             Click="CreateBackuperButton_Click"
@@ -72,7 +81,7 @@
 
         <Button
             Name="BackupAll_Button"
-            Grid.Column="4"
+            Grid.Column="5"
             Grid.Row="2"
             Content="Backup All"
             Click="BackupAllButton_Click"
@@ -83,7 +92,7 @@
             IsReadOnly="True"
             Name="DataGridBackups"
             Grid.Column="1"
-            Grid.ColumnSpan="4"
+            Grid.ColumnSpan="5"
             Grid.Row="3"
             >
 

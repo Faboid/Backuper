@@ -20,11 +20,12 @@ namespace BackuperUI.Windows {
         private readonly string backuperIsUsedElsewhere = "This backuper is being used elsewhere.";
 
         public MainWindow() {
-            Settings.IFDEBUGSetCurrentThreadToEnglish();
+            BackuperLibrary.Generic.Settings.IFDEBUGSetCurrentThreadToEnglish();
 
             InitializeComponent();
             RefreshListBox(null, EventArgs.Empty);
             BackupersHolder.EditedBackupers += RefreshListBox;
+            RefreshToggleAutomaticBackupsButtonText();
         }
 
         private void RefreshListBox(object sender, EventArgs e) {
@@ -183,6 +184,29 @@ namespace BackuperUI.Windows {
                 DarkMessageBox.Show(operationFailedCaption, "Some backuper is being used elsewhere.");
             }
         }
+
+        private void ToggleAutomaticBackupsButton_Click(object sender, RoutedEventArgs e) {
+            ToggleAutomaticBackups_Button.IsEnabled = false;
+
+            //swaps: if active turns inactive, if inactive turns active
+            Startup.Set(!Startup.IsActive());
+
+            RefreshToggleAutomaticBackupsButtonText();
+
+            ToggleAutomaticBackups_Button.IsEnabled = true;
+        }
+
+        private void RefreshToggleAutomaticBackupsButtonText() {
+            string preText = "Turn";
+            string postText = "Automatic Backuping";
+
+            if(Startup.IsActive()) {
+                ToggleAutomaticBackups_Button.Content = $"{preText} OFF {postText}";
+            } else {
+                ToggleAutomaticBackups_Button.Content = $"{preText} ON {postText}";
+            }
+        }
+
     }
 
 }
