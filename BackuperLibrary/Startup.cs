@@ -15,6 +15,8 @@ namespace BackuperLibrary {
         private static readonly string startPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string shortcutPath = Path.Combine(startPath, "Backuper.lnk");
 
+        public const string startupArgument = "Startup";
+
         public static bool IsActive() {
             return System.IO.File.Exists(shortcutPath);
         }
@@ -30,7 +32,7 @@ namespace BackuperLibrary {
         private static void CreateShortcut() {
             IWshShortcut shortcut = new WshShell().CreateShortcut(shortcutPath);
             shortcut.TargetPath = pathToExe;
-            shortcut.Arguments = "Startup";
+            shortcut.Arguments = startupArgument;
             shortcut.Description = "A shortcut to load Backuper on startup, so that it can back up everything automatically.";
             shortcut.Save();
         }

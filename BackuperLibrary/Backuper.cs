@@ -40,6 +40,7 @@ namespace BackuperLibrary {
         public string To { get => PathBuilder.GetToPath(Name); }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
+        public bool UpdateAutomatically { get; set; } = true;
 
         private readonly Locker locker = new Locker();
 

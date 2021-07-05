@@ -31,17 +31,21 @@ namespace BackuperLibrary {
         }
 
         public static async Task<IEnumerable<BackuperResultInfo>> BackupAllAsync() {
+            return await BackupOnlyAsync(Backupers);
+        }
+
+        public static async Task<IEnumerable<BackuperResultInfo>> BackupOnlyAsync(IEnumerable<Backuper> backupers) {
             List<Task<BackuperResultInfo>> tasks = new List<Task<BackuperResultInfo>>();
 
-            foreach(Backuper backuper in Backupers) {
+            foreach(Backuper backuper in backupers) {
                 tasks.Add(
                     new Task<BackuperResultInfo>(() => {
-                        if (backuper.CheckLock()) {
+                        if(backuper.CheckLock()) {
                             return Settings.SetThreadForegroundHere(() => {
 
                                 try {
                                     return backuper.MakeBackup();
-                                } catch (Exception ex) {
+                                } catch(Exception ex) {
                                     return Factory.CreateBackupResult(backuper.Name, BackuperResult.Failure, ex);
                                 }
                             });
@@ -59,6 +63,14 @@ namespace BackuperLibrary {
 
             EditedBackupers?.Invoke(null, EventArgs.Empty);
             return tasks.Select(x => x.Result);
+        }
+
+        public static IEnumerable<BackuperResultInfo> BackupAll() {
+            return BackupOnly(Backupers);
+        }
+
+        public static IEnumerable<BackuperResultInfo> BackupOnly(IEnumerable<Backuper> backupers) {
+            return backupers.Select(x => x.MakeBackup());
         }
 
     }
