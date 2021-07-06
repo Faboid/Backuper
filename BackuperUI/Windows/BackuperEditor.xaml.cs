@@ -15,7 +15,7 @@ namespace BackuperUI.Windows {
     public partial class BackuperEditor : Window {
 
         public static void Create() {
-            var editor = new BackuperEditor();
+            var editor = new BackuperEditor(true);
             if(editor.ShowDialog() == true) {
                 Backuper backuper = editor.Backuper;
                 if(backuper != null) {
@@ -27,7 +27,7 @@ namespace BackuperUI.Windows {
 
         public static async void Edit(Backuper backuper) {
 
-            var editor = new BackuperEditor {
+            var editor = new BackuperEditor(backuper.UpdateAutomatically) {
                 Backuper = backuper
             };
             editor.CompleteOperationButton.Content = "Save Edit";
@@ -38,7 +38,7 @@ namespace BackuperUI.Windows {
             if(editor.ShowDialog() == true) {
                 await Task.Run(() => {
                     Thread.CurrentThread.IsBackground = false;
-                    backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions);
+                    backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions, editor.Backuper.UpdateAutomatically);
                     Thread.CurrentThread.IsBackground = true;
                 });
 
@@ -48,13 +48,22 @@ namespace BackuperUI.Windows {
 
         public Backuper Backuper { get; private set; }
 
-        public BackuperEditor() {
+        private string[] comboboxChoices = new string[2] { "ON", "OFF" };
+        private bool convertCombox { get => (string)ComboBoxAutoUpdate.SelectedItem == "ON"; }
+
+        public BackuperEditor(bool comboBoxSetter) {
             InitializeComponent();
+            ComboBoxAutoUpdate.ItemsSource = comboboxChoices;
+            if(comboBoxSetter) {
+                ComboBoxAutoUpdate.SelectedItem = comboboxChoices[0];
+            } else {
+                ComboBoxAutoUpdate.SelectedItem = comboboxChoices[1];
+            }
         }
 
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
             if(ValidateInput(out string message)) {
-                Backuper = Factory.CreateBackuper(TextBoxName.Text, TextBoxSourcePath.Text, int.Parse(TextBoxMaxVersions.Text));
+                Backuper = Factory.CreateBackuper(TextBoxName.Text, TextBoxSourcePath.Text, int.Parse(TextBoxMaxVersions.Text), convertCombox);
                 DialogResult = true;
                 this.Close();
             } else {
@@ -65,7 +74,7 @@ namespace BackuperUI.Windows {
         private bool ValidateInput(out string message) {
             message = "";
 
-            if(TextBoxName.Text == "" || TextBoxSourcePath.Text == "" || TextBoxMaxVersions.Text == "") {
+            if(TextBoxName.Text == "" || TextBoxSourcePath.Text == "" || TextBoxMaxVersions.Text == "" || ComboBoxAutoUpdate.SelectedItem is null) {
                 AddToMessage(ref message, "All the fields must be compiled.");
             }
 
@@ -73,7 +82,8 @@ namespace BackuperUI.Windows {
                 AddToMessage(ref message, errMessage);
             }
 
-            if(BackupersManager.BackupersNames.Contains(TextBoxName.Text)) {
+            if(BackupersManager.BackupersNames.Contains(TextBoxName.Text) && !(Backuper is not null && Backuper.Name == TextBoxName.Text)) {
+
                 AddToMessage(ref message, "This name is occupied by another backuper.");
             }
 

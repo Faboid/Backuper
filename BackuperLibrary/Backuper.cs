@@ -13,7 +13,7 @@ using BackuperLibrary.Safety;
 namespace BackuperLibrary {
     public class Backuper {
 
-        public Backuper(string name, FileSystemInfo source, int maxVersions) {
+        public Backuper(string name, FileSystemInfo source, int maxVersions, bool updateAutomatically) {
 
             if(!source.Exists) {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
@@ -25,6 +25,7 @@ namespace BackuperLibrary {
             Source = source;
             Name = name;
             MaxVersions = maxVersions;
+            UpdateAutomatically = updateAutomatically;
 
             //if the main folder hasn't been created, create it
             if(!Directory.Exists(To)) {
@@ -40,7 +41,7 @@ namespace BackuperLibrary {
         public string To { get => PathBuilder.GetToPath(Name); }
         public int MaxVersions { get; private set; }
         public bool IsUpdated { get => IsLatest(); }
-        public bool UpdateAutomatically { get; set; } = true;
+        public bool UpdateAutomatically { get; set; }
 
         private readonly Locker locker = new Locker();
 
@@ -48,13 +49,16 @@ namespace BackuperLibrary {
             locker.LockHere(() => BackupersManager.Save(this));
         }
 
-        public void Edit(string newName = null, int newMaxVersions = 0) {
+        public void Edit(string newName = null, int newMaxVersions = 0, bool? updateAutomatically = null) {
             locker.LockHere(() => {
 
                 if(newMaxVersions > 1 && newMaxVersions != MaxVersions) {
                     MaxVersions = (int)newMaxVersions;
                     CleanUpExtraVersions();
-                    BackupersManager.Save(this);
+                }
+                
+                if(updateAutomatically is not null) {
+                    UpdateAutomatically = (bool)updateAutomatically;
                 }
 
                 if(newName != null && newName != Name) {
@@ -70,6 +74,8 @@ namespace BackuperLibrary {
 
                     BackupersManager.EditName(this, pastName, Name);
                 }
+
+                BackupersManager.Save(this);
             });
 
         }
@@ -136,7 +142,7 @@ namespace BackuperLibrary {
 
         #region conversions
         public override string ToString() {
-            return $"{Name},{Source.FullName},{MaxVersions}";
+            return $"{Name},{Source.FullName},{MaxVersions},{UpdateAutomatically}";
         }
 
         /// <summary>
@@ -145,17 +151,21 @@ namespace BackuperLibrary {
         /// <param name="separator"></param>
         /// <returns></returns>
         public string ToString(string separator) {
-            return $"{Name}{separator}{Source.FullName}{separator}{MaxVersions}";
+            return $"{Name}{separator}{Source.FullName}{separator}{MaxVersions}{separator}{UpdateAutomatically}";
         }
 
         public static Backuper Parse(string s) {
             var lines = s.Split(',');
 
-            return Factory.CreateBackuper(lines[0], lines[1], int.Parse(lines[2]));
+            return CreateBackuper(lines);
         }
 
         public static Backuper Parse(string[] lines) {
-            return Factory.CreateBackuper(lines[0], lines[1], int.Parse(lines[2]));
+            return CreateBackuper(lines);
+        }
+
+        private static Backuper CreateBackuper(string[] lines) {
+            return Factory.CreateBackuper(lines[0], lines[1], int.Parse(lines[2]), bool.Parse(lines[3]));
         }
 
         public static bool TryParse(string s, out Backuper result) {

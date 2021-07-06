@@ -13,13 +13,13 @@ namespace BackuperLibrary.Generic {
             return new BackuperResultInfo(nameBackup, result, ex);
         }
 
-        public static Backuper CreateBackuper(string name, string sourcePath, int maxVersions) {
+        public static Backuper CreateBackuper(string name, string sourcePath, int maxVersions, bool updateAutomatically) {
 
             if(Directory.Exists(sourcePath)) {
-                return new Backuper(name, new DirectoryInfo(sourcePath), maxVersions);
+                return new Backuper(name, new DirectoryInfo(sourcePath), maxVersions, updateAutomatically);
 
             } else if (File.Exists(sourcePath)) {
-                return new Backuper(name, new FileInfo(sourcePath), maxVersions);
+                return new Backuper(name, new FileInfo(sourcePath), maxVersions, updateAutomatically);
 
             } else {
                 throw new InvalidDataException($"The source path doesn't exist or is invalid: {sourcePath}");
