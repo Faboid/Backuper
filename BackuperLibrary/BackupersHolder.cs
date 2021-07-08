@@ -41,6 +41,7 @@ namespace BackuperLibrary {
                 tasks.Add(
                     new Task<BackuperResultInfo>(() => {
                         if(backuper.CheckLock()) {
+
                             return Settings.SetThreadForegroundHere(() => {
 
                                 try {

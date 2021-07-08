@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeButton.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeTextBlock.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/DarkThemeComboBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -111,6 +112,8 @@
             Name="ComboBoxAutoUpdate"
             Grid.Row="4"
             Grid.Column="2"
+            Margin="0, 1, 0, 0"
+            Style="{StaticResource DarkComboBox}"
             />
 
         <Button
