@@ -11,36 +11,11 @@ using System.Windows;
 namespace BackuperUI.UIClasses {
     public static class Backuping {
 
-        public static async Task BackupAllAsync() {
-
-            IEnumerable<BackuperResultInfo> results = null;
-
-            try {
-                results = await BackupersHolder.BackupAllAsync();
-            } catch(Exception ex) {
-                DarkMessageBox.Show("Something went wrong!", ex.Message);
-            }
-
-            ShowResultsToUser(results);
+        public static void ShowError(Exception ex) {
+            DarkMessageBox.Show("Something went wrong!", ex.Message);
         }
 
-        public static async Task BackupOnlyAsync(IEnumerable<Backuper> backupers) {
-            IEnumerable<BackuperResultInfo> results = null;
-
-            try {
-                results = await BackupersHolder.BackupOnlyAsync(backupers);
-            } catch(Exception ex) {
-                DarkMessageBox.Show("Something went wrong!", ex.Message);
-            }
-
-            if(results.Count() is 0) {
-                return;
-            }
-
-            ShowResultsToUser(results);
-        }
-
-        private static void ShowResultsToUser(IEnumerable<BackuperResultInfo> results) {
+        public static void ShowResultsToUser(IEnumerable<BackuperResultInfo> results) {
             if(results is null) {
                 DarkMessageBox.Show("Something went wrong!", "The list of the results is null.");
             }

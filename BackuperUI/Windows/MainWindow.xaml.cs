@@ -108,7 +108,12 @@ namespace BackuperUI.Windows {
         private async void BackupAllButton_Click(object sender, RoutedEventArgs e) {
             BackupAll_Button.IsEnabled = false;
 
-            await Backuping.BackupAllAsync();
+            try {
+                var results = await BackupersHolder.BackupAllAsync();
+                Backuping.ShowResultsToUser(results);
+            } catch(Exception ex) {
+                Backuping.ShowError(ex);
+            }
 
             BackupAll_Button.IsEnabled = true;
         }
