@@ -13,20 +13,32 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace BackuperUI.Windows {
+
     /// <summary>
-    /// Interaction logic for DarkMessageBox.xaml
+    /// A dark-themed message box.
     /// </summary>
     public partial class DarkMessageBox : Window {
 
+        /// <summary>
+        /// Starts a <see cref="DarkMessageBox"/> window to show a message to the user, or to ask them for an input.
+        /// </summary>
+        /// <param name="title">Title of the window.</param>
+        /// <param name="content">Message of the window.</param>
+        /// <param name="buttons">Set buttons to ask the user for inputs.</param>
+        /// <returns></returns>
         public static MessageBoxResult Show(string title, string content, MessageBoxButton buttons = MessageBoxButton.OK) {
+            //todo - ask for a dispatcher to avoid "you're not on the UI thread" exceptions
             var window = new DarkMessageBox(title, content, buttons);
             window.ShowDialog();
             return window.Result;
         }
 
+        /// <summary>
+        /// The result of the user input.
+        /// </summary>
         public MessageBoxResult Result { private set; get; } = MessageBoxResult.Cancel;
 
-        public DarkMessageBox(string title, string content, MessageBoxButton buttons) {
+        private DarkMessageBox(string title, string content, MessageBoxButton buttons) {
             InitializeComponent();
             this.Title = title;
             this.ContentTextBlock.Text = content;

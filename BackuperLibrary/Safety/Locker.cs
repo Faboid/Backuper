@@ -6,9 +6,22 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace BackuperLibrary.Safety {
+
+    /// <summary>
+    /// Class to function as a lock.
+    /// </summary>
     public class Locker {
 
+        /// <summary>
+        /// Initializes a Locker.
+        /// </summary>
+        /// <param name="messageErrorIfOccupied">The exception's message that will be returned in case the locker throws a <see cref="TimeoutException"/></param>
+        public Locker(string messageErrorIfOccupied) {
+            MessageErrorIfOccupied = messageErrorIfOccupied;
+        }
+
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private string MessageErrorIfOccupied;
 
 
         /// <summary>
@@ -19,6 +32,11 @@ namespace BackuperLibrary.Safety {
             return semaphore.CurrentCount > 0;
         }
 
+        /// <summary>
+        /// Locks within the function, then unlocks. Throws a <see cref="TimeoutException"/> if it can't lock within 10ms.
+        /// </summary>
+        /// <param name="action">The action to execute while locked.</param>
+        /// <exception cref="TimeoutException"></exception>
         public void LockHere(Action action) {
             Lock();
             try {
@@ -28,6 +46,13 @@ namespace BackuperLibrary.Safety {
             }
         }
 
+        /// <summary>
+        /// Locks within the function, unlocks, and then returns a value of generic type. Throws a <see cref="TimeoutException"/> if it can't lock within 10ms.
+        /// </summary>
+        /// <typeparam name="T">The type of the value to return.</typeparam>
+        /// <param name="action">The action to execute while locked.</param>
+        /// <returns><paramref name="action"/>'s return value.</returns>
+        /// <exception cref="TimeoutException"></exception>
         public T LockHere<T>(Func<T> action) {
             Lock();
             try {
@@ -37,13 +62,20 @@ namespace BackuperLibrary.Safety {
             }
         }
 
-        public void Lock() {
+        /// <summary>
+        /// Attempts locking for 10ms. If it can't, it throws a <see cref="TimeoutException"/>.
+        /// </summary>
+        /// <exception cref="TimeoutException"></exception>
+        private void Lock() {
             if(!semaphore.Wait(10)) {
-                throw new ArgumentException("This backuper is being used elsewhere.");
+                throw new TimeoutException(MessageErrorIfOccupied);
             }
         }
 
-        public void Unlock() {
+        /// <summary>
+        /// Unlocks the lock.
+        /// </summary>
+        private void Unlock() {
             semaphore.Release();
         }
 

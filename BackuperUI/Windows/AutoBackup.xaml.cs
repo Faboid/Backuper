@@ -1,4 +1,5 @@
 ﻿using BackuperLibrary;
+using BackuperLibrary.ErrorHandling;
 using BackuperLibrary.UISpeaker;
 using BackuperUI.UIClasses;
 using System;
@@ -50,20 +51,18 @@ namespace BackuperUI.Windows {
         }
 
         private void AutoBackup_workFailed(object sender, Exception e) {
-            Dispatcher.Invoke(() => {
-                Backuping.ShowError(e);
-                Close();
-            });
+            Log.WriteError(e);
+            Backuping.ShowError(e, Dispatcher);
+            Dispatcher.Invoke(Close);
         }
 
         private void AutoBackup_workDone(object sender, IEnumerable<BackuperResultInfo> e) {
-            Dispatcher.Invoke(() => {
-                if(e is not null && e.Any()) {
-                    Backuping.ShowResultsToUser(e);
-                }
 
-                Close();
-            });
+            if(e is not null && e.Any()) {
+                Backuping.ShowResultsToUser(e, Dispatcher);
+            }
+
+            Dispatcher.Invoke(Close);
 
         }
 

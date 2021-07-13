@@ -23,6 +23,7 @@ namespace BackuperLibrary.UISpeaker {
         private string alreadyUpdatedMessage { get => $"{NameBackup} is already updated."; }
         private string errorMessage { get => $"{NameBackup} has been met by an error: {Error.Message}"; }
 
+        /// <returns>A user-friendly message based on the backup's result.</returns>
         public string GetMessage() => Result switch {
             BackuperResult.Success => successfulUpdatedMessage,
             BackuperResult.AlreadyUpdated => alreadyUpdatedMessage,
@@ -32,6 +33,9 @@ namespace BackuperLibrary.UISpeaker {
 
     }
 
+    /// <summary>
+    /// An enum to represent whether a backup was a success.
+    /// </summary>
     public enum BackuperResult {
         Success,
         AlreadyUpdated,

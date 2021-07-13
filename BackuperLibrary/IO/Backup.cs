@@ -10,7 +10,15 @@ using System.Threading.Tasks;
 namespace BackuperLibrary.IO {
     public static class Backup {
 
+        /// <summary>
+        /// Copy pastes the content of <paramref name="from"/> to <paramref name="to"/>, then deletes the past one.
+        /// </summary>
+        /// <param name="from">The old directory to copy from.</param>
+        /// <param name="to">The new directory, to copy into.</param>
         public static void Move(DirectoryInfo from, DirectoryInfo to) {
+            if(!from.Exists) {
+                throw new ArgumentException("The folder doesn't exist.", paramName: from.FullName);
+            }
 
             Settings.SetThreadForegroundHere(() => {
 
@@ -25,6 +33,9 @@ namespace BackuperLibrary.IO {
             });
         }
 
+        /// <summary>
+        /// Copy pastes the content of <paramref name="from"/> to <paramref name="to"/>.
+        /// </summary>
         public static void CopyAndPaste(FileSystemInfo from, DirectoryInfo to) {
 
             Settings.SetThreadForegroundHere(() => {

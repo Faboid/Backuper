@@ -9,27 +9,19 @@ using BackuperLibrary.IO;
 namespace BackuperLibrary.Generic {
     public static class Comparer {
 
-        public static bool AreDifferent(string firstPath, string secondPath) {
-
-            string[] firstFilesPaths = Directory.GetFiles(firstPath);
-            string[] secondFilesPaths = Directory.GetFiles(secondPath);
-            if(firstFilesPaths != secondFilesPaths) { return false; }
-
-            string[] firstFilesContent = Reader.GetFilesContent(firstFilesPaths);
-            string[] secondFilesContent = Reader.GetFilesContent(secondFilesPaths);
-            if(firstFilesContent != secondFilesContent) { return false; }
-
-            return true;
-        }
-
-        public static string GetLatestVersion(string path) {
+        /// <summary>
+        /// Searches the directory's folders in search of the newest folder, then returns that folder's creation date
+        /// </summary>
+        /// <param name="path">The path to the directory</param>
+        /// <returns>The date of the creation of the newest folder within the directory</returns>
+        public static string GetLatestVersion(DirectoryInfo path) {
             //iterates through all directories(versions) and get the most recent one
 
-            string[] versions = Directory.GetDirectories(path);
+            var versions = path.GetDirectories();
             
             if(versions.Length == 0) { return null; }
 
-            return versions.OrderBy(x => Directory.GetCreationTime(x)).First();
+            return versions.OrderBy(x => x.CreationTime).First().ToString();
         }
 
     }

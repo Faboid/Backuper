@@ -14,6 +14,9 @@ namespace BackuperUI.Windows {
     /// </summary>
     public partial class BackuperEditor : Window {
 
+        /// <summary>
+        /// Starts a new <see cref="BackuperEditor"/> window to create a new backuper.
+        /// </summary>
         public static void Create() {
             var editor = new BackuperEditor(true);
             if(editor.ShowDialog() == true) {
@@ -25,6 +28,10 @@ namespace BackuperUI.Windows {
             }
         }
 
+        /// <summary>
+        /// Starts a new <see cref="BackuperEditor"/> window to edit <paramref name="backuper"/>.
+        /// </summary>
+        /// <param name="backuper">The backuper to edit.</param>
         public static async void Edit(Backuper backuper) {
 
             var editor = new BackuperEditor(backuper.UpdateAutomatically) {
@@ -37,21 +44,26 @@ namespace BackuperUI.Windows {
             editor.TextBoxSourcePath.IsEnabled = false; //source path cannot be edited
             if(editor.ShowDialog() == true) {
                 await Task.Run(() => {
-                    Thread.CurrentThread.IsBackground = false;
-                    backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions, editor.Backuper.UpdateAutomatically);
-                    Thread.CurrentThread.IsBackground = true;
+                    Settings.SetThreadForegroundHere(() => {
+                        backuper.Edit(editor.Backuper.Name, editor.Backuper.MaxVersions, editor.Backuper.UpdateAutomatically);
+                    });
                 });
 
                 DarkMessageBox.Show("Operation completed.", $"The backuper has been edited successfully.");
             }
         }
 
+        /// <summary>
+        /// Cache for the backuper to edit.
+        /// </summary>
         public Backuper Backuper { get; private set; }
+
 
         private string[] comboboxChoices = new string[2] { "ON", "OFF" };
         private bool convertCombox { get => (string)ComboBoxAutoUpdate.SelectedItem == "ON"; }
 
-        public BackuperEditor(bool comboBoxSetter) {
+
+        private BackuperEditor(bool comboBoxSetter) {
             InitializeComponent();
             ComboBoxAutoUpdate.ItemsSource = comboboxChoices;
             if(comboBoxSetter) {

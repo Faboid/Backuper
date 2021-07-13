@@ -14,10 +14,12 @@ namespace BackuperLibrary.Generic {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         }
 
+        /// <summary>
+        /// Sets the current thread to english only if it's used during a debug session.
+        /// </summary>
         public static void IFDEBUGSetCurrentThreadToEnglish() {
 #if DEBUG
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            SetCurrentThreadToEnglish();
 #endif
         }
 

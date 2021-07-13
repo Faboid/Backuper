@@ -9,10 +9,12 @@ using BackuperLibrary.Generic;
 using System.Windows.Controls;
 
 namespace BackuperUI.Windows {
+
     /// <summary>
     /// Window to search a path to an existing file/directory.
     /// </summary>
     public partial class OpenPathDialog : Window {
+
 
         /// <summary>
         /// Opens a <see cref="OpenPathDialog"/> window to select an existing path.
@@ -33,6 +35,7 @@ namespace BackuperUI.Windows {
         private string FullPath => Path.Combine(PathDisplayTextBox.Text, SelectedFolderNameTextBox.Text);
 
         private static DirectoryInfo DefaultPath => new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+
 
         /// <summary>
         /// <see cref="OpenPathDialog"/> window's constructor.
