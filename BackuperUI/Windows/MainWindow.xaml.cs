@@ -49,18 +49,18 @@ namespace BackuperUI.Windows {
                 await Task.Run(() => {
                     try {
                         if(!backuper.CheckLock()) {
-                            Dispatcher.Invoke(() => DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhereCaption));
+                            DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhereCaption, Dispatcher);
                             return;
                         }
 
                         Thread.CurrentThread.IsBackground = false;
                         BackuperResultInfo status = backuper.MakeBackup();
-                        Dispatcher.Invoke(() => DarkMessageBox.Show("Result", status.GetMessage()));
+                        DarkMessageBox.Show("Result", status.GetMessage(), Dispatcher);
                     } catch(TaskCanceledException) { 
                         //do nothing
                     } catch(Exception ex) {
                         Log.WriteError(ex);
-                        Dispatcher.Invoke(() => DarkMessageBox.Show(messageErrorCaption, ex.Message));
+                        DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
                         
                     } finally {
                         Thread.CurrentThread.IsBackground = true;
@@ -70,7 +70,7 @@ namespace BackuperUI.Windows {
 
             } catch(Exception ex) {
                 Log.WriteError(ex);
-                DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
             }
         }
 
@@ -78,7 +78,7 @@ namespace BackuperUI.Windows {
         /// Starts a window of <see cref="BackuperEditor"/> to create a new backuper.
         /// </summary>
         private void CreateBackuperButton_Click(object sender, RoutedEventArgs e) {
-            BackuperEditor.Create();
+            BackuperEditor.Create(Dispatcher);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace BackuperUI.Windows {
         /// or deleting the backuper and moving the backups to a bin folder.
         /// </summary>
         private async void DeleteBackuperButton_Click(object sender, RoutedEventArgs e) {
-            var userAnswer = DarkMessageBox.Show("Are you sure?", "Do you want to delete this backuper?", MessageBoxButton.YesNo);
+            var userAnswer = DarkMessageBox.Show("Are you sure?", "Do you want to delete this backuper?", Dispatcher, MessageBoxButton.YesNo);
             if(userAnswer != MessageBoxResult.Yes) {
                 return;
             }
@@ -97,15 +97,15 @@ namespace BackuperUI.Windows {
                 backuper = (sender as Button).DataContext as Backuper;
             } catch (Exception ex) {
                 Log.WriteError(ex);
-                DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
                 return;
             }
 
             userAnswer = DarkMessageBox.Show("Are you sure?", $"Do you want to delete all the backups of {backuper.Name}? {Environment.NewLine}" +
-                $"Replying \"No\" will delete the backuper, but won't delete the files.", MessageBoxButton.YesNoCancel);
+                $"Replying \"No\" will delete the backuper, but won't delete the files.", Dispatcher, MessageBoxButton.YesNoCancel);
 
             if(userAnswer == MessageBoxResult.Cancel) {
-                DarkMessageBox.Show(string.Empty, "The operation has been annulled.");
+                DarkMessageBox.Show(string.Empty, "The operation has been annulled.", Dispatcher);
                 return;
 
             } else if(userAnswer == MessageBoxResult.No || userAnswer == MessageBoxResult.Yes) {
@@ -114,11 +114,11 @@ namespace BackuperUI.Windows {
                     string message = "";
                     try {
                         message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
-                        Dispatcher.Invoke(() => DarkMessageBox.Show("Operation Completed.", message));
+                        DarkMessageBox.Show("Operation Completed.", message, Dispatcher);
 
                     } catch (Exception ex) {
                         Log.WriteError(ex);
-                        Dispatcher.Invoke(() => DarkMessageBox.Show(operationFailedCaption, ex.Message));
+                        DarkMessageBox.Show(operationFailedCaption, ex.Message, Dispatcher);
                     }
                 });
 
@@ -153,18 +153,18 @@ namespace BackuperUI.Windows {
                 var backuper = (sender as Button).DataContext as Backuper;
 
                 if(backuper.CheckLock()) {
-                    BackuperEditor.Edit(backuper);
+                    BackuperEditor.Edit(backuper, Dispatcher);
                 } else {
-                    DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhereCaption);
+                    DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhereCaption, Dispatcher);
                 }
 
             } catch (ArgumentException ex) {
 
-                DarkMessageBox.Show(operationFailedCaption, ex.Message);
+                DarkMessageBox.Show(operationFailedCaption, ex.Message, Dispatcher);
             } catch(Exception ex) {
 
                 Log.WriteError(ex);
-                DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
             }
         }
 
@@ -177,10 +177,10 @@ namespace BackuperUI.Windows {
                     EditorBackupPath.Start();
                 } catch (Exception ex) {
                     Log.WriteError(ex);
-                    DarkMessageBox.Show(messageErrorCaption, ex.Message);
+                    DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
                 }
             } else {
-                DarkMessageBox.Show(operationFailedCaption, "Some backuper is being used elsewhere.");
+                DarkMessageBox.Show(operationFailedCaption, "Some backuper is being used elsewhere.", Dispatcher);
             }
         }
 

@@ -17,13 +17,13 @@ namespace BackuperUI.Windows {
         /// <summary>
         /// Starts a new <see cref="BackuperEditor"/> window to create a new backuper.
         /// </summary>
-        public static void Create() {
+        public static void Create(System.Windows.Threading.Dispatcher dispatcher) {
             var editor = new BackuperEditor(true);
             if(editor.ShowDialog() == true) {
                 Backuper backuper = editor.Backuper;
                 if(backuper != null) {
                     backuper.SaveToFile();
-                    DarkMessageBox.Show("Operation completed.", $"The {backuper.Name} backuper has been created successfully.");
+                    DarkMessageBox.Show("Operation completed.", $"The {backuper.Name} backuper has been created successfully.", dispatcher);
                 }
             }
         }
@@ -32,7 +32,7 @@ namespace BackuperUI.Windows {
         /// Starts a new <see cref="BackuperEditor"/> window to edit <paramref name="backuper"/>.
         /// </summary>
         /// <param name="backuper">The backuper to edit.</param>
-        public static async void Edit(Backuper backuper) {
+        public static async void Edit(Backuper backuper, System.Windows.Threading.Dispatcher dispatcher) {
 
             var editor = new BackuperEditor(backuper.UpdateAutomatically) {
                 Backuper = backuper
@@ -49,7 +49,7 @@ namespace BackuperUI.Windows {
                     });
                 });
 
-                DarkMessageBox.Show("Operation completed.", $"The backuper has been edited successfully.");
+                DarkMessageBox.Show("Operation completed.", $"The backuper has been edited successfully.", dispatcher);
             }
         }
 
@@ -79,7 +79,7 @@ namespace BackuperUI.Windows {
                 DialogResult = true;
                 this.Close();
             } else {
-                DarkMessageBox.Show(string.Empty, message);
+                DarkMessageBox.Show(string.Empty, message, Dispatcher);
             }
         }
 

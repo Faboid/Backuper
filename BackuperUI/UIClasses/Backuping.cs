@@ -18,7 +18,7 @@ namespace BackuperUI.UIClasses {
         /// <param name="ex">The exception that contains the message to show.</param>
         /// <param name="dispatcher">The dispatcher to stay on the UI thread.</param>
         public static void ShowError(Exception ex, Dispatcher dispatcher) {
-            dispatcher.Invoke(() => DarkMessageBox.Show("Something went wrong!", ex.Message));
+            DarkMessageBox.Show("Something went wrong!", ex.Message, dispatcher);
         }
 
         /// <summary>
@@ -27,47 +27,46 @@ namespace BackuperUI.UIClasses {
         /// <param name="results">The results to show.</param>
         /// <param name="dispatcher">The dispatcher to stay on the UI thread.</param>
         public static void ShowResultsToUser(IEnumerable<BackuperResultInfo> results, Dispatcher dispatcher) {
-            dispatcher.Invoke(() => {
 
-                if(results is null) {
-                    DarkMessageBox.Show("Something went wrong!", "The list of the results is null.");
+            if(results is null) {
+                DarkMessageBox.Show("Something went wrong!", "The list of the results is null.", dispatcher);
+            }
+
+            ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
+
+            if(errors == 0) {
+                DarkMessageBox.Show("Backup Complete!",
+                    $"{succeeded} have been backuped successfully.\r\n" +
+                    $"{updated} were already updated.\r\n" +
+                    $"{errors} met failure."
+                    , dispatcher);
+            } else {
+                var userAnswer = DarkMessageBox.Show("Backup Complete!",
+                    $"{succeeded} have been backuped successfully.\r\n" +
+                    $"{updated} were already updated.\r\n" +
+                    $"{errors} met failure.\r\n \r\n" +
+                    "Do you want to see the error messages?"
+                    , dispatcher
+                    , MessageBoxButton.YesNo);
+
+                if(userAnswer == MessageBoxResult.No) {
+                    return;
                 }
 
-                ResultsHandler.GetResults(results, out int succeeded, out int updated, out int errors);
+                var failures = results.Where(x => x.Result == BackuperResult.Failure);
 
-                if(errors == 0) {
-                    DarkMessageBox.Show("Backup Complete!",
-                        $"{succeeded} have been backuped successfully.\r\n" +
-                        $"{updated} were already updated.\r\n" +
-                        $"{errors} met failure."
-                        );
-                } else {
-                    var userAnswer = DarkMessageBox.Show("Backup Complete!",
-                        $"{succeeded} have been backuped successfully.\r\n" +
-                        $"{updated} were already updated.\r\n" +
-                        $"{errors} met failure.\r\n \r\n" +
-                        "Do you want to see the error messages?"
-                        , MessageBoxButton.YesNo);
+                int totalcount = failures.Count();
+                int currentcount = 0;
+                string chooseMessage = $"{Environment.NewLine}{Environment.NewLine}Do you want to read the next error?";
+                foreach(BackuperResultInfo failure in failures) {
+                    currentcount++;
 
-                    if(userAnswer == MessageBoxResult.No) {
-                        return;
-                    }
-
-                    var failures = results.Where(x => x.Result == BackuperResult.Failure);
-
-                    int totalcount = failures.Count();
-                    int currentcount = 0;
-                    string chooseMessage = $"{Environment.NewLine}{Environment.NewLine}Do you want to read the next error?";
-                    foreach(BackuperResultInfo failure in failures) {
-                        currentcount++;
-
-                        var answer = DarkMessageBox.Show("Error:", $"{failure.GetMessage()}{((currentcount == totalcount) ? "" : chooseMessage)}", MessageBoxButton.YesNo);
-                        if(answer == MessageBoxResult.No) {
-                            break;
-                        }
+                    var answer = DarkMessageBox.Show("Error:", $"{failure.GetMessage()}{((currentcount == totalcount) ? "" : chooseMessage)}", dispatcher, MessageBoxButton.YesNo);
+                    if(answer == MessageBoxResult.No) {
+                        break;
                     }
                 }
-            });
+            }
 
         }
 

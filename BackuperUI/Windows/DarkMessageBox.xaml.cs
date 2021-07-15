@@ -26,11 +26,14 @@ namespace BackuperUI.Windows {
         /// <param name="content">Message of the window.</param>
         /// <param name="buttons">Set buttons to ask the user for inputs.</param>
         /// <returns></returns>
-        public static MessageBoxResult Show(string title, string content, MessageBoxButton buttons = MessageBoxButton.OK) {
+        public static MessageBoxResult Show(string title, string content, System.Windows.Threading.Dispatcher dispatcher, MessageBoxButton buttons = MessageBoxButton.OK) {
             //todo - ask for a dispatcher to avoid "you're not on the UI thread" exceptions
-            var window = new DarkMessageBox(title, content, buttons);
-            window.ShowDialog();
-            return window.Result;
+
+            return dispatcher.Invoke(() => { 
+                var window = new DarkMessageBox(title, content, buttons);
+                window.ShowDialog(); 
+                return window.Result;
+            });
         }
 
         /// <summary>

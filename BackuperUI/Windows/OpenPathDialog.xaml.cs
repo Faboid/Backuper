@@ -64,7 +64,7 @@ namespace BackuperUI.Windows {
 
                 return Enumerable.Concat<FileSystemInfo>(directories, files);
             } catch(Exception ex) {
-                DarkMessageBox.Show("Error:", ex.Message);
+                DarkMessageBox.Show("Error:", ex.Message, Dispatcher);
                 return null;
             }
         }
@@ -76,7 +76,7 @@ namespace BackuperUI.Windows {
         /// <param name="search">A filter to show only related results. Leave empty to keep all results.</param>
         private void LoadFolder(DirectoryInfo folder, string search = "") {
             if(!folder.Exists) {
-                DarkMessageBox.Show("Invalid path.", $"{folder.FullName} doesn't exist.");
+                DarkMessageBox.Show("Invalid path.", $"{folder.FullName} doesn't exist.", Dispatcher);
             }
 
             PathDisplayTextBox.Text = folder.FullName;

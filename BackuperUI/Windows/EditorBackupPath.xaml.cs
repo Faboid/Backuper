@@ -51,19 +51,19 @@ namespace BackuperUI.Windows {
                     });
 
                     if(success) {
-                        DarkMessageBox.Show("Success", "The backup path has been changed successfully.");
+                        DarkMessageBox.Show("Success", "The backup path has been changed successfully.", Dispatcher);
                         this.Close();
                     } else {
-                        DarkMessageBox.Show("Failure", "The operation has failed for unknown reasons.");
+                        DarkMessageBox.Show("Failure", "The operation has failed for unknown reasons.", Dispatcher);
                     }
                 } else {
 
-                    DarkMessageBox.Show("Error:", "Given path must exist.");
+                    DarkMessageBox.Show("Error:", "Given path must exist.", Dispatcher);
                 }
 
             } catch(IOException ex) {
 
-                DarkMessageBox.Show("There has been an error", ex.Message);
+                DarkMessageBox.Show("There has been an error", ex.Message, Dispatcher);
             } finally {
                 SetDefaultButton.IsEnabled = true;
                 ConfirmButton.IsEnabled = true;
@@ -78,13 +78,13 @@ namespace BackuperUI.Windows {
             try {
                 bool success = BackupFolderHandler.SetDefault();
                 if(success) {
-                    DarkMessageBox.Show("Success", "Set to default successfully.");
+                    DarkMessageBox.Show("Success", "Set to default successfully.", Dispatcher);
                 } else {
-                    DarkMessageBox.Show("Failure", "Something went wrong.");
+                    DarkMessageBox.Show("Failure", "Something went wrong.", Dispatcher);
                 }
             } catch (IOException ex) {
 
-                DarkMessageBox.Show("There has been an error:", ex.Message);
+                DarkMessageBox.Show("There has been an error:", ex.Message, Dispatcher);
             } finally {
                 SetDefaultButton.IsEnabled = true;
                 ConfirmButton.IsEnabled = true;
