@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using BackuperLibrary.Generic;
+using BackuperLibrary.UISpeaker;
 
 namespace BackuperLibrary.IO {
     public static class BackupersManager {
@@ -93,7 +94,26 @@ namespace BackuperLibrary.IO {
             var files = directory.GetFiles();
 
             foreach(FileInfo file in files) {
-                backupers.Add(Load(file.FullName));
+                try {
+                    var backuper = Load(file.FullName);
+                    backupers.Add(backuper);
+                } catch(Exception ex) {
+                    ErrorHandling.Log.WriteError(ex);
+                    bool result = DeleteCorruptedBackuper(file);
+
+                    string name = Path.GetFileNameWithoutExtension(file.FullName);
+                    if(result is true) {
+
+                        MessageUI.Send(null, "Error on load!", $"There has been an error when trying to load the backuper {name}.{Environment.NewLine}{Environment.NewLine}" +
+                                $"To protect against corrupted files, the backuper has been deleted, and its backups have been moved to the bin folder:" +
+                                $"{Environment.NewLine}{PathBuilder.BinBackupsFolder}");
+                    } else {
+
+                        MessageUI.Send(null, "Error on load!", $"There has been an error when trying to load the backuper {name}.{Environment.NewLine}{Environment.NewLine}" +
+                                $"To protect against corrupted files, the backuper has been deleted. {Environment.NewLine}" +
+                                $"An attempt was made to move its backups to the bin folder, but an error occurred. It's suggested to manually check for the backups.");
+                    }
+                }
             }
 
             return backupers;
@@ -106,6 +126,28 @@ namespace BackuperLibrary.IO {
 
         private static void RefreshBackupersNames(object sender, EventArgs e) {
             BackupersNames = GetBackupersNames();
+        }
+
+        private static bool DeleteCorruptedBackuper(FileInfo backuperFile) {
+
+            try {
+                //gets name of the backuper
+                string name = Path.GetFileNameWithoutExtension(backuperFile.FullName);
+
+                //get path to backup
+                string path = PathBuilder.GetToPath(name);
+
+                //move backup to the bin folder and delete the previous backups
+                Backup.Move(new DirectoryInfo(path), new DirectoryInfo(PathBuilder.GetBinBcpsFolderPath(name)));
+
+            } catch(DirectoryNotFoundException) {
+                return false;
+
+            } finally {
+                backuperFile.Delete();
+            }
+
+            return true;
         }
 
         private static List<string> GetBackupersNames() {
@@ -128,7 +170,6 @@ namespace BackuperLibrary.IO {
         }
 
         private static Backuper Load(string path) {
-            //todo - handle invalid/corrupted backupers
             string[] lines = File.ReadAllLines(path);
             return Backuper.Parse(lines);
         }

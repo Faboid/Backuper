@@ -29,11 +29,14 @@ namespace BackuperLibrary {
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public Backuper(string name, FileSystemInfo source, int maxVersions, bool updateAutomatically) {
 
+            if(source is null) {
+                throw new ArgumentNullException(nameof(source), "The source can't be null.");
+            }
             if(!source.Exists) {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
             }
             if(maxVersions < 1) {
-                throw new ArgumentOutOfRangeException("The maxVersions argument can't be lower than one.");
+                throw new ArgumentOutOfRangeException(nameof(MaxVersions),"The maxVersions argument can't be less than one.");
             }
 
             Source = source;
@@ -154,9 +157,7 @@ namespace BackuperLibrary {
                     } else {
                         //move to /Bin/ folder
                         string binPath = PathBuilder.GetBinBcpsFolderPath(this);
-                        Backup.CopyAndPaste(new DirectoryInfo(To), new DirectoryInfo(binPath));
-                        var directory = new DirectoryInfo(To);
-                        directory.Delete(true);
+                        Backup.Move(new DirectoryInfo(To), new DirectoryInfo(binPath));
                         this.Delete();
                         return $"{Name} has been deleted, but the backups have been moved to backup folder [{binPath}].";
                     }
