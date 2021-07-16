@@ -1,4 +1,5 @@
 ﻿using BackuperLibrary;
+using BackuperLibrary.UISpeaker;
 using BackuperUI.UIClasses;
 using BackuperUI.Windows;
 using System;
@@ -18,6 +19,7 @@ namespace BackuperUI {
 
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
+            MessageUI.Mail += ReceiveMessage;
 
             if(e.Args.Length is 0) {
                 //run the app as normal
@@ -32,5 +34,8 @@ namespace BackuperUI {
             }
         }
 
+        private void ReceiveMessage(object sender, MailArgs e) {
+            DarkMessageBox.Show(e.Title, e.Message, Dispatcher);
+        }
     }
 }

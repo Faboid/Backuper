@@ -128,6 +128,7 @@ namespace BackuperLibrary.IO {
         }
 
         private static Backuper Load(string path) {
+            //todo - handle invalid/corrupted backupers
             string[] lines = File.ReadAllLines(path);
             return Backuper.Parse(lines);
         }

@@ -17,11 +17,11 @@ namespace BackuperLibrary.Safety {
         /// </summary>
         /// <param name="messageErrorIfOccupied">The exception's message that will be returned in case the locker throws a <see cref="TimeoutException"/></param>
         public Locker(string messageErrorIfOccupied) {
-            MessageErrorIfOccupied = messageErrorIfOccupied;
+            this.messageErrorIfOccupied = messageErrorIfOccupied;
         }
 
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
-        private string MessageErrorIfOccupied;
+        private readonly string messageErrorIfOccupied;
 
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace BackuperLibrary.Safety {
         /// <exception cref="TimeoutException"></exception>
         private void Lock() {
             if(!semaphore.Wait(10)) {
-                throw new TimeoutException(MessageErrorIfOccupied);
+                throw new TimeoutException(messageErrorIfOccupied);
             }
         }
 
