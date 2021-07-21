@@ -34,6 +34,7 @@ namespace BackuperUI.Windows {
         private DirectoryInfo CurrDir => new DirectoryInfo(PathDisplayTextBox.Text);
         private DirectoryInfo FullDir => new DirectoryInfo(FullPath);
         private string FullPath => Path.Combine(PathDisplayTextBox.Text, SelectedFolderNameTextBox.Text);
+        private DirectoryInfo CachedPath { get; set; }
 
         private static DirectoryInfo DefaultPath => new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
 
@@ -78,8 +79,20 @@ namespace BackuperUI.Windows {
         /// <param name="search">A filter to show only related results. Leave empty to keep all results.</param>
         private void LoadFolder(DirectoryInfo folder, string search = "") {
             if(!folder.Exists) {
-                DarkMessageBox.Show("Invalid path.", $"{folder.FullName} doesn't exist.", Dispatcher);
-                return;
+
+                //tries to check if, by fixing the current path, it's possible to get a path to find the selected folder
+                PathDisplayTextBox.Text = CachedPath.FullName;
+                if(!FullDir.Exists) {
+
+                    DarkMessageBox.Show("Invalid path.", $"{folder.FullName} doesn't exist.", Dispatcher);
+                    folder = CachedPath;
+                } else {
+
+                    folder = FullDir;
+                }
+
+            } else {
+                CachedPath = new DirectoryInfo(folder.FullName);
             }
 
             PathDisplayTextBox.Text = folder.FullName;
