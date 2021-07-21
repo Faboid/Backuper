@@ -15,7 +15,7 @@ namespace BackuperUI.Windows {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window { //todo - refactor all this class
+    public partial class MainWindow : Window {
 
         private readonly string messageErrorCaption = "There has been an error!";
         private readonly string operationFailedCaption = "Operation Failed.";

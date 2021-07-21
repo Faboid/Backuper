@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 
 using BackuperLibrary.Generic;
 using System.Windows.Controls;
+using BackuperLibrary.ErrorHandling;
 
 namespace BackuperUI.Windows {
 
@@ -64,6 +65,7 @@ namespace BackuperUI.Windows {
 
                 return Enumerable.Concat<FileSystemInfo>(directories, files);
             } catch(Exception ex) {
+                Log.WriteError(ex);
                 DarkMessageBox.Show("Error:", ex.Message, Dispatcher);
                 return null;
             }
@@ -77,6 +79,7 @@ namespace BackuperUI.Windows {
         private void LoadFolder(DirectoryInfo folder, string search = "") {
             if(!folder.Exists) {
                 DarkMessageBox.Show("Invalid path.", $"{folder.FullName} doesn't exist.", Dispatcher);
+                return;
             }
 
             PathDisplayTextBox.Text = folder.FullName;
