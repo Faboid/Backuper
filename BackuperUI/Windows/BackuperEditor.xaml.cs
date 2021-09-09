@@ -94,6 +94,10 @@ namespace BackuperUI.Windows {
                 AddToMessage(ref message, errMessage);
             }
 
+            if(TextBoxName.Text.Contains(',') || TextBoxSourcePath.Text.Contains(',') || TextBoxMaxVersions.Text.Contains(',')) {
+                AddToMessage(ref message, "Commas aren't allowed.");
+            }
+
             if(BackupersManager.BackupersNames.Contains(TextBoxName.Text) && !(Backuper is not null && Backuper.Name == TextBoxName.Text)) {
 
                 AddToMessage(ref message, "This name is occupied by another backuper.");
