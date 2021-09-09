@@ -298,7 +298,16 @@ namespace BackuperLibrary {
                 return false;
             }
 
-            return Directory.GetLastWriteTime(Source.FullName) < Directory.GetLastWriteTime(latestVersionPath);
+            DateTime lastBackup = Directory.GetLastWriteTime(latestVersionPath);
+
+            if(Source is FileInfo) {
+                return File.GetLastWriteTime(Source.FullName) < lastBackup;
+            }
+
+            //since windows doesn't update parents folders's last access time date when a subdirectory's files gets edited, it is necessary to check all child's dates
+            IEnumerable<DateTime> dates = Backup.GetAllDirectories(new DirectoryInfo(Source.FullName)).Select(x => x.LastWriteTime);
+                
+            return dates.All(x => x < lastBackup);
         }
         #endregion private
 

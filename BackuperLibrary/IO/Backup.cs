@@ -67,6 +67,23 @@ namespace BackuperLibrary.IO {
 
         }
 
+        /// <summary>
+        /// Gets all child directories recursively.
+        /// </summary>
+        /// <param name="source">The main directory from which to search all child directories.</param>
+        /// <returns>A list of <see cref="DirectoryInfo"/> containing all directories.</returns>
+        public static List<DirectoryInfo> GetAllDirectories(DirectoryInfo source) {
+            List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
+            allDirectories.Add(source);
+            var directories = source.GetDirectories();
+
+            foreach(DirectoryInfo directory in directories) {
+                allDirectories.AddRange(GetAllDirectories(directory));
+            }
+
+            return allDirectories;
+        }
+
         #region private
         private static void CreateAllDirectories(List<DirectoryInfo> source, string from, string to) {
             foreach(DirectoryInfo directoryFrom in source) {
@@ -82,18 +99,6 @@ namespace BackuperLibrary.IO {
 
                 File.Copy(fileFrom.FullName, fileTo.FullName);
             }
-        }
-
-        private static List<DirectoryInfo> GetAllDirectories(DirectoryInfo source) {
-            List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
-            allDirectories.Add(source);
-            var directories = source.GetDirectories();
-
-            foreach(DirectoryInfo directory in directories) {
-                allDirectories.AddRange(GetAllDirectories(directory));
-            }
-
-            return allDirectories;
         }
 
         private static List<FileInfo> GetAllFiles(List<DirectoryInfo> source) {
