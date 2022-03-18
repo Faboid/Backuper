@@ -30,7 +30,7 @@ namespace BackuperLibrary.Generic {
         /// Gets the directory where the application's exe has been executed in.
         /// </summary>
         /// <returns>A string with the path to the exe's folder.</returns>
-        public static string GetWorkingDirectory() => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        public static string GetWorkingDirectory() => Path.GetDirectoryName(Environment.ProcessPath);
 
         /// <summary>
         /// Combines <see cref="To"/> and <see cref="Backuper.Name"/> to get a path to <paramref name="backuper"/>'s backups location.
