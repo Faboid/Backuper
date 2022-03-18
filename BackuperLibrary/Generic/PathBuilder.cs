@@ -1,13 +1,14 @@
 ﻿using BackuperLibrary.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BackuperLibrary.Generic {
+    //todo - split class in multiple classes: specifically, divide the "to" and the "bin" sections
     public static class PathBuilder {
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace BackuperLibrary.Generic {
         /// Gets the directory where the application's exe has been executed in.
         /// </summary>
         /// <returns>A string with the path to the exe's folder.</returns>
-        public static string GetWorkingDirectory() => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string GetWorkingDirectory() => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
         /// <summary>
         /// Combines <see cref="To"/> and <see cref="Backuper.Name"/> to get a path to <paramref name="backuper"/>'s backups location.
