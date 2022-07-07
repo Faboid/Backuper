@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Core", "Backuper.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Core.Tests", "Backuper.Core.Tests\Backuper.Core.Tests.csproj", "{D09E2F70-AE79-481F-B56E-FC638CC0FC6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Utils", "Backuper.Utils\Backuper.Utils.csproj", "{12D0FE22-23A7-480F-9776-E14381D6B20F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Utils.Tests", "Backuper.Utils.Tests\Backuper.Utils.Tests.csproj", "{2250DAE5-8FE4-4180-9C9A-6470582C7108}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{D09E2F70-AE79-481F-B56E-FC638CC0FC6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D09E2F70-AE79-481F-B56E-FC638CC0FC6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D09E2F70-AE79-481F-B56E-FC638CC0FC6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D0FE22-23A7-480F-9776-E14381D6B20F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D0FE22-23A7-480F-9776-E14381D6B20F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D0FE22-23A7-480F-9776-E14381D6B20F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D0FE22-23A7-480F-9776-E14381D6B20F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
