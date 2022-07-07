@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Utils", "Backuper.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Utils.Tests", "Backuper.Utils.Tests\Backuper.Utils.Tests.csproj", "{2250DAE5-8FE4-4180-9C9A-6470582C7108}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Extensions", "Backuper.Extensions\Backuper.Extensions.csproj", "{9DF8066D-12E9-4E86-B9AB-FD4D886F1424}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Extensions.Tests", "Backuper.Extensions.Tests\Backuper.Extensions.Tests.csproj", "{9A42B1F4-7952-4251-9994-F8C0D7C4BDA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2250DAE5-8FE4-4180-9C9A-6470582C7108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A42B1F4-7952-4251-9994-F8C0D7C4BDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A42B1F4-7952-4251-9994-F8C0D7C4BDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A42B1F4-7952-4251-9994-F8C0D7C4BDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A42B1F4-7952-4251-9994-F8C0D7C4BDA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
