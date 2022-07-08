@@ -13,7 +13,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <Using Include="Xunit"/>
+        <ProjectReference Include="..\Backuper.TestUtils\Backuper.TestUtils.csproj" />
+        <ProjectReference Include="..\Backuper.Utils\Backuper.Utils.csproj" />
+        <Using Include="Xunit" />
     </ItemGroup>
 
 </Project>
