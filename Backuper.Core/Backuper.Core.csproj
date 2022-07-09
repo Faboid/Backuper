@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Backuper.Extensions\Backuper.Extensions.csproj" />
+    <ProjectReference Include="..\Backuper.Utils\Backuper.Utils.csproj" />
+  </ItemGroup>
+
 </Project>
