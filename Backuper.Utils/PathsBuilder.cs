@@ -6,7 +6,17 @@ namespace Backuper.Utils {
         //todo - implement a way of saving a new default path
         public PathsBuilder() : this(Directory.GetCurrentDirectory()) { }
 
-        public PathsBuilder(string customMainDirectory) {
+        /// <summary>
+        /// Creates a new <see cref="PathsBuilder"/> with a custom path. 
+        /// Throws <see cref="ArgumentException"/> if the directory doesn't exist.
+        /// </summary>
+        /// <param name="customMainDirectory">Path to an existing directory to use as a root for the paths.</param>
+        /// <exception cref="ArgumentException"></exception>
+        internal PathsBuilder(string customMainDirectory) {
+            if(!Directory.Exists(customMainDirectory)) {
+                throw new ArgumentException("The given directory does not exist.", nameof(customMainDirectory));
+            }
+
             BackupsMainDirectory = customMainDirectory;
         }
 

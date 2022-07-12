@@ -20,7 +20,7 @@
         public void CorrectCustomPath() {
 
             //arrange
-            var expected = @"C:\stuff\";
+            var expected = @"C:\";
             var builder = new PathsBuilder(expected);
 
             //act
@@ -29,6 +29,13 @@
             //assert
             Assert.StartsWith(expected, paths.BackupsDirectory);
 
+        }
+
+        [Fact]
+        public void ThrowsWhenDirectoryDoesNotExist() {
+            Assert.Throws<ArgumentException>(() => { new PathsBuilder(null!); });
+            Assert.Throws<ArgumentException>(() => { new PathsBuilder("    "); });
+            Assert.Throws<ArgumentException>(() => { new PathsBuilder("someval"); });
         }
 
     }
