@@ -1,0 +1,50 @@
+﻿using System.Text;
+
+namespace Backuper.Core.Models; 
+
+public class BackuperInfo {
+
+    public BackuperInfo(string name, string sourcePath, int maxVersions, bool updateOnBoot) {
+        Name = name;
+        SourcePath = sourcePath;
+        MaxVersions = maxVersions;
+        UpdateOnBoot = updateOnBoot;
+    }
+
+    /// <summary>
+    /// The key of this backuper. There cannot be multiple backupers with the same name.
+    /// </summary>
+    public string Name { get; set; }
+    
+    /// <summary>
+    /// The path to the source; to what this backuper backups.
+    /// </summary>
+    public string SourcePath { get; set; }
+
+    /// <summary>
+    /// The maximum versions allowed for this backuper.
+    /// </summary>
+    public int MaxVersions { get; set; }
+
+    /// <summary>
+    /// Whether this backuper gets backuped on computer boot.
+    /// </summary>
+    public bool UpdateOnBoot { get; set; }
+
+    private const string separator = ",";
+
+    //todo - test the methods below
+    public override string ToString() {
+        var values = new string[] { Name, SourcePath, MaxVersions.ToString(), UpdateOnBoot.ToString() };
+
+        return new StringBuilder()
+            .AppendJoin(separator, values)
+            .ToString();
+    }
+
+    public BackuperInfo Parse(string s) {
+        var values = s.Split(separator, StringSplitOptions.None);
+        return new(values[0], values[1], int.Parse(values[2]), bool.Parse(values[3]));
+    }
+
+}
