@@ -5,6 +5,11 @@ namespace Backuper.Core.Models;
 public class BackuperInfo {
 
     public BackuperInfo(string name, string sourcePath, int maxVersions, bool updateOnBoot) {
+
+        if(maxVersions < 1) {
+            throw new ArgumentOutOfRangeException(nameof(maxVersions), "The maximum versions cannot be less than one.");
+        }
+
         Name = name;
         SourcePath = sourcePath;
         MaxVersions = maxVersions;
@@ -42,7 +47,7 @@ public class BackuperInfo {
             .ToString();
     }
 
-    public BackuperInfo Parse(string s) {
+    public static BackuperInfo Parse(string s) {
         var values = s.Split(separator, StringSplitOptions.None);
         return new(values[0], values[1], int.Parse(values[2]), bool.Parse(values[3]));
     }

@@ -13,7 +13,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <Using Include="Xunit"/>
+        <ProjectReference Include="..\Backuper.Core\Backuper.Core.csproj" />
+        <Using Include="Xunit" />
     </ItemGroup>
 
 </Project>
