@@ -38,7 +38,6 @@ public class BackuperInfo {
 
     private const string separator = ",";
 
-    //todo - test the methods below
     public override string ToString() {
         var values = new string[] { Name, SourcePath, MaxVersions.ToString(), UpdateOnBoot.ToString() };
 
