@@ -1,7 +1,7 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Extensions;
 using Backuper.Utils;
-namespace Backuper.Core; 
+namespace Backuper.Core.BackuperTypes;
 
 public class DirectoryBackuper : IBackuper {
 
@@ -15,7 +15,7 @@ public class DirectoryBackuper : IBackuper {
     public DirectoryInfo Source { get; private set; }
     public BackuperInfo Info { get; init; }
     public bool IsUpdated { get; private set; }
-    
+
     private readonly Paths pathsBuilder;
 
     //todo - test the methods below
