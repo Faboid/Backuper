@@ -7,25 +7,26 @@ public class DirectoryBackuper : IBackuper {
 
     public DirectoryBackuper(BackuperInfo info, PathsBuilder pathsBuilder) {
         Info = info;
-        this.pathsBuilder = pathsBuilder.Build(info.Name);
-        IsUpdated = IsUpToDate();
+        this.paths = pathsBuilder.Build(info.Name);
+        Directory.CreateDirectory(paths.BackupsDirectory);
         Source = new(info.SourcePath);
+        IsUpdated = IsUpToDate();
     }
 
     public DirectoryInfo Source { get; private set; }
     public BackuperInfo Info { get; init; }
     public bool IsUpdated { get; private set; }
 
-    private readonly Paths pathsBuilder;
+    private readonly Paths paths;
 
     //todo - test the methods below
     public Task BinBackupsAsync() {
-        Directory.Move(pathsBuilder.BackupsDirectory, pathsBuilder.BinDirectory);
+        Directory.Move(paths.BackupsDirectory, paths.BinDirectory);
         return Task.CompletedTask;
     }
 
     public void EraseBackups() {
-        Directory.Delete(pathsBuilder.BackupsDirectory, true);
+        Directory.Delete(paths.BackupsDirectory, true);
     }
 
     public Task StartBackupAsync() {
@@ -33,26 +34,24 @@ public class DirectoryBackuper : IBackuper {
             return Task.CompletedTask;
         }
 
-        var path = pathsBuilder.GenerateNewBackupVersionDirectory();
+        var path = paths.GenerateNewBackupVersionDirectory();
         Directory.CreateDirectory(path);
-
-        Dictionary<string, string> yo = new();
 
         //create all directories
         Source
             .EnumerateDirectories("*", SearchOption.AllDirectories)
-            .Select(x => x.Name.Replace(Source.Name, path))
+            .Select(x => x.Name.Replace(Source.FullName, path))
             .ForEach(x => Directory.CreateDirectory(x));
 
         //todo - actually make this async
         //copy all files
         Source
             .EnumerateFiles("*", SearchOption.AllDirectories)
-            .Select(x => (File: x, NewPath: x.Name.Replace(Source.Name, path)))
+            .Select(x => (File: x, NewPath: x.FullName.Replace(Source.FullName, path)))
             .ForEach(x => x.File.CopyTo(x.NewPath));
 
         //delete extra versions
-        Directory.EnumerateDirectories(pathsBuilder.BackupsDirectory)
+        Directory.EnumerateDirectories(paths.BackupsDirectory)
             .OrderByDescending(x => Directory.GetCreationTime(x))
             .Skip(Info.MaxVersions)
             .ForEach(x => Directory.Delete(x, true));
@@ -66,7 +65,7 @@ public class DirectoryBackuper : IBackuper {
         //backups are done and then never touched,
         //so it's best to get the creation time
         var latestBackup = Directory
-            .GetDirectories(pathsBuilder.BackupsDirectory, "*", SearchOption.TopDirectoryOnly)
+            .GetDirectories(paths.BackupsDirectory, "*", SearchOption.TopDirectoryOnly)
             .Select(x => Directory.GetCreationTimeUtc(x))
             .DefaultIfEmpty()
             .Max();
