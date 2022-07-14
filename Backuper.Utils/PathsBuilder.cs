@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Utils {
     public class PathsBuilder {
 
@@ -41,14 +43,20 @@ namespace Backuper.Utils {
 
         public string BinDirectory { get; }
         public string BackupsDirectory { get; }
+        
+        private static readonly DateTimeFormatInfo format = new();
+
+        public DateTime VersionNameToDateTime(string versionPath) {
+            var name = new DirectoryInfo(versionPath).Name.Replace('—', ':');
+            return DateTime.ParseExact(name, format.UniversalSortableDateTimePattern, format);
+        }
 
         public string GenerateNewBackupVersionDirectory() {
             return GenerateNewBackupVersionDirectory(DateTime.Now);
         }
 
         internal string GenerateNewBackupVersionDirectory(DateTime dateTime) {
-            DateTimeFormatInfo format = new();
-            var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern);
+            var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern).Replace(':', '—');
             return Path.Combine(BackupsDirectory, dateAsString);
         }
 

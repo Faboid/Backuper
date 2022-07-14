@@ -51,12 +51,26 @@ namespace Backuper.Utils.Tests {
 
             //act
             var version = paths.GenerateNewBackupVersionDirectory(time);
-            var name = new DirectoryInfo(version).Name;
-            DateTimeFormatInfo dateFormat = new();
-            DateTime parsedTime = DateTime.ParseExact(name, dateFormat.UniversalSortableDateTimePattern, dateFormat);
+            DateTime parsedTime = paths.VersionNameToDateTime(version);
 
             //assert
             Assert.Equal(time, parsedTime, TimeSpan.FromSeconds(5));
+
+        }
+
+        [Fact]
+        public void GenerateValidPathName() {
+
+            //arrange
+            var invalid = Path.GetInvalidFileNameChars();
+            Paths paths = new(Directory.GetCurrentDirectory(), "someName");
+
+            //act
+            var versDir = paths.GenerateNewBackupVersionDirectory();
+            var isValid = new DirectoryInfo(versDir).Name.Any(x => invalid.Contains(x));
+
+            //assert
+            Assert.False(isValid);
 
         }
         
