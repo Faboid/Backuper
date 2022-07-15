@@ -40,7 +40,7 @@ public class DirectoryBackuper : IBackuper {
         //create all directories
         Source
             .EnumerateDirectories("*", SearchOption.AllDirectories)
-            .Select(x => x.Name.Replace(Source.FullName, path))
+            .Select(x => x.FullName.Replace(Source.FullName, path))
             .ForEach(x => Directory.CreateDirectory(x));
 
         //todo - actually make this async

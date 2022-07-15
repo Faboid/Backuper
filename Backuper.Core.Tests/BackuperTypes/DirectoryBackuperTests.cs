@@ -20,6 +20,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             }
 
             Directory.CreateDirectory(sourceData);
+            Directory.CreateDirectory(Directory.GetParent(sourceFilePath)!.FullName);
             File.WriteAllText(sourceFilePath, fileData);
             Directory.CreateDirectory(backuperPath);
             builder = new(backuperPath);
@@ -27,14 +28,14 @@ namespace Backuper.Core.Tests.BackuperTypes {
 
         private const string fileName = "someFile.extension";
         private const string fileData = "Hello World!";
+        private const string directoryName = "SomeDirectory";
 
         private readonly static string sourceData = Path.Combine(Directory.GetCurrentDirectory(), "BackupersTestData");
         private readonly static string backuperPath = Path.Combine(Directory.GetCurrentDirectory(), "BackuperTestsBackups");
-        private readonly static string sourceFilePath = Path.Combine(sourceData, fileName);
+        private readonly static string sourceFilePath = Path.Combine(sourceData, directoryName, fileName);
 
         private readonly PathsBuilder builder;
 
-        //todo - implement testing of directories as well
         [Fact]
         public async Task BackupsCorrectly() {
 
@@ -52,7 +53,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             Assert.True(Directory.Exists(paths.BackupsDirectory));
             Assert.True(paths.VersionNameToDateTime(writtenDir) != default);
             Assert.True(Directory.Exists(writtenDir));
-            Assert.Equal(fileData, File.ReadAllText(Path.Combine(writtenDir, fileName)));
+            Assert.Equal(fileData, File.ReadAllText(Path.Combine(writtenDir, directoryName, fileName)));
 
         }
 
