@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Backuper.Utils.Tests {
+﻿namespace Backuper.Utils.Tests {
     public class PathsTests {
 
         [Theory]
@@ -32,8 +30,7 @@ namespace Backuper.Utils.Tests {
 
             //act
             var version = paths.GenerateNewBackupVersionDirectory();
-            var name = new DirectoryInfo(version).Name;
-            DateTime parsedTime = DateTime.Parse(name);
+            DateTime parsedTime = paths.VersionNameToDateTime(version);
 
             //assert
             Assert.StartsWith(paths.BackupsDirectory, version);
