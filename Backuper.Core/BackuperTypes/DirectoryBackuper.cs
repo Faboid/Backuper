@@ -29,26 +29,13 @@ public class DirectoryBackuper : IBackuper {
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
-    public Task StartBackupAsync() {
+    public async Task StartBackupAsync() {
         if(IsUpToDate()) {
-            return Task.CompletedTask;
+            return;
         }
 
         var path = paths.GenerateNewBackupVersionDirectory();
-        Directory.CreateDirectory(path);
-
-        //create all directories
-        Source
-            .EnumerateDirectories("*", SearchOption.AllDirectories)
-            .Select(x => x.FullName.Replace(Source.FullName, path))
-            .ForEach(x => Directory.CreateDirectory(x));
-
-        //todo - actually make this async
-        //copy all files
-        Source
-            .EnumerateFiles("*", SearchOption.AllDirectories)
-            .Select(x => (File: x, NewPath: x.FullName.Replace(Source.FullName, path)))
-            .ForEach(x => x.File.CopyTo(x.NewPath));
+        await Source.CopyToAsync(path); //todo - once it's implemented, use the async overload
 
         //delete extra versions
         Directory.EnumerateDirectories(paths.BackupsDirectory)
@@ -57,7 +44,6 @@ public class DirectoryBackuper : IBackuper {
             .ForEach(x => Directory.Delete(x, true));
 
         IsUpdated = true;
-        return Task.CompletedTask;
     }
 
     private bool IsUpToDate() {
