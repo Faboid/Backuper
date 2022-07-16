@@ -8,17 +8,25 @@ public class FileInfoExtensionsTests {
         //arrange
         string sourceFilePath = Path.Combine(Directory.GetCurrentDirectory(), "testFile.txt");
         string fileText = "This is the file's content. It must b e copied correctly.";
-        FileInfo fileInfo = new FileInfo(sourceFilePath);
         string newPath = Path.Combine(Directory.GetCurrentDirectory(), "copyTestFile.txt");
-        
-        File.WriteAllText(sourceFilePath, fileText);
+        FileInfo fileInfo = new FileInfo(sourceFilePath);
 
-        //act
-        await fileInfo.CopyToAsync(newPath);
+        try {
 
-        //assert
-        Assert.True(File.Exists(newPath));
-        Assert.Equal(fileText, File.ReadAllText(newPath));
+            File.WriteAllText(sourceFilePath, fileText);
+
+            //act
+            await fileInfo.CopyToAsync(newPath);
+
+            //assert
+            Assert.True(File.Exists(newPath));
+            Assert.Equal(fileText, File.ReadAllText(newPath));
+
+        } finally {
+
+            File.Delete(sourceFilePath);
+            File.Delete(newPath);
+        }
 
     }
 
