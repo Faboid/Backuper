@@ -11,7 +11,7 @@ namespace Backuper.Core {
         BackuperInfo Info { get; }
 
         //todo - use better returns to send back results to the UI
-        void EraseBackups();
+        Task EraseBackupsAsync();
         Task BinBackupsAsync();
         Task StartBackupAsync();
 

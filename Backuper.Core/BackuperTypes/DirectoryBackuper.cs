@@ -7,7 +7,7 @@ public class DirectoryBackuper : IBackuper {
 
     public DirectoryBackuper(BackuperInfo info, PathsBuilder pathsBuilder) {
         Info = info;
-        this.paths = pathsBuilder.Build(info.Name);
+        paths = pathsBuilder.Build(info.Name);
         Directory.CreateDirectory(paths.BackupsDirectory);
         Source = new(info.SourcePath);
         IsUpdated = IsUpToDate();
@@ -18,24 +18,29 @@ public class DirectoryBackuper : IBackuper {
     public bool IsUpdated { get; private set; }
 
     private readonly Paths paths;
+    private readonly Locker locker = new();
 
     //todo - test the methods below
-    public Task BinBackupsAsync() {
-        Directory.Move(paths.BackupsDirectory, paths.BinDirectory);
-        return Task.CompletedTask;
+    public async Task BinBackupsAsync() {
+        using var lockd = await locker.GetLockAsync();
+        await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory);
+        Directory.Delete(paths.BackupsDirectory, true);
     }
 
-    public void EraseBackups() {
+    public async Task EraseBackupsAsync() {
+        using var lockd = await locker.GetLockAsync();
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
     public async Task StartBackupAsync() {
+        using var lockd = await locker.GetLockAsync(); //todo - return special code when the lock doesn't get obtained quickly
+
         if(IsUpToDate()) {
             return;
         }
 
         var path = paths.GenerateNewBackupVersionDirectory();
-        await Source.CopyToAsync(path); //todo - once it's implemented, use the async overload
+        await Source.CopyToAsync(path);
 
         //delete extra versions
         Directory.EnumerateDirectories(paths.BackupsDirectory)
