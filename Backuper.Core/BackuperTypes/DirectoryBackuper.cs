@@ -21,24 +21,26 @@ public class DirectoryBackuper : IBackuper {
     private readonly Locker locker = new();
 
     //todo - test the methods below
-    public async Task BinBackupsAsync() {
+    public async Task BinBackupsAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        if(token.IsCancellationRequested) return;
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory).ConfigureAwait(false);
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
-    public async Task EraseBackupsAsync() {
+    public async Task EraseBackupsAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        if(token.IsCancellationRequested) return;
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
-    public async Task StartBackupAsync() {
+    public async Task StartBackupAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync().ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
         using var threadHandler = ThreadsHandler.SetScopedForeground();
 
-        if(IsUpToDate()) {
+        if(IsUpToDate() || token.IsCancellationRequested) {
             return;
         }
 
@@ -59,7 +61,7 @@ public class DirectoryBackuper : IBackuper {
         //backups are done and then never touched,
         //so it's best to get the creation time
         var latestBackup = Directory
-            .GetDirectories(paths.BackupsDirectory, "*", SearchOption.TopDirectoryOnly)
+            .EnumerateDirectories(paths.BackupsDirectory, "*", SearchOption.TopDirectoryOnly)
             .Select(x => Directory.GetCreationTimeUtc(x))
             .DefaultIfEmpty()
             .Max();
@@ -71,7 +73,7 @@ public class DirectoryBackuper : IBackuper {
         //windows doesn't update the parents' folders' last write time
         //therefore, it's needed to go through all children directories
         var latestChange = Directory
-            .GetDirectories(Source.FullName, "*", SearchOption.AllDirectories)
+            .EnumerateDirectories(Source.FullName, "*", SearchOption.AllDirectories)
             .Select(x => Directory.GetLastWriteTimeUtc(x))
             .DefaultIfEmpty()
             .Max();

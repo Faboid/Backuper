@@ -11,9 +11,9 @@ namespace Backuper.Core {
         BackuperInfo Info { get; }
 
         //todo - use better returns to send back results to the UI
-        Task EraseBackupsAsync();
-        Task BinBackupsAsync();
-        Task StartBackupAsync();
+        Task EraseBackupsAsync(CancellationToken token);
+        Task BinBackupsAsync(CancellationToken token);
+        Task StartBackupAsync(CancellationToken token);
 
     }
 }
