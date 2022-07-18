@@ -22,25 +22,28 @@ public class DirectoryBackuper : IBackuper {
 
     //todo - test the methods below
     public async Task BinBackupsAsync() {
-        using var lockd = await locker.GetLockAsync();
-        await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory);
+        using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
+        await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory).ConfigureAwait(false);
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
     public async Task EraseBackupsAsync() {
-        using var lockd = await locker.GetLockAsync();
+        using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
     public async Task StartBackupAsync() {
-        using var lockd = await locker.GetLockAsync(); //todo - return special code when the lock doesn't get obtained quickly
+        using var lockd = await locker.GetLockAsync().ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
 
         if(IsUpToDate()) {
             return;
         }
 
         var path = paths.GenerateNewBackupVersionDirectory();
-        await Source.CopyToAsync(path);
+        await Source.CopyToAsync(path).ConfigureAwait(false);
 
         //delete extra versions
         Directory.EnumerateDirectories(paths.BackupsDirectory)
