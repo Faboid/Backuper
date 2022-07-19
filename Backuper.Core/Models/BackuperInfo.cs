@@ -37,17 +37,24 @@ public class BackuperInfo {
     public bool UpdateOnBoot { get; set; }
 
     private const string separator = ",";
-
+    //todo - test the below methods
     public override string ToString() {
-        var values = new string[] { Name, SourcePath, MaxVersions.ToString(), UpdateOnBoot.ToString() };
-
+        var values = ToStrings();
         return new StringBuilder()
             .AppendJoin(separator, values)
             .ToString();
     }
 
+    public string[] ToStrings() {
+        return new string[] { Name, SourcePath, MaxVersions.ToString(), UpdateOnBoot.ToString() };
+    }
+
     public static BackuperInfo Parse(string s) {
         var values = s.Split(separator, StringSplitOptions.None);
+        return Parse(values);
+    }
+
+    public static BackuperInfo Parse(string[] values) {
         return new(values[0], values[1], int.Parse(values[2]), bool.Parse(values[3]));
     }
 
