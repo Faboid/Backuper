@@ -7,21 +7,25 @@
             dict.Remove(path);
         }
 
-        public bool Exists(string path) {
-            return dict.ContainsKey(path);
+        public IEnumerable<string> EnumerateNames() {
+            return dict.Keys;
         }
 
-        public Task<string[]> ReadAllLinesAsync(string path) {
-            return Task.FromResult(dict[path]);
+        public bool Exists(string name) {
+            return dict.ContainsKey(name);
         }
 
-        public Task WriteAllLinesAsync(string path, string[] lines) {
-            if(!dict.TryGetValue(path, out var newLines)) {
+        public Task<string[]> ReadAllLinesAsync(string name) {
+            return Task.FromResult(dict[name]);
+        }
+
+        public Task WriteAllLinesAsync(string name, string[] lines) {
+            if(!dict.TryGetValue(name, out var newLines)) {
                 newLines = lines;
-                dict.Add(path, newLines);
+                dict.Add(name, newLines);
             }
 
-            dict[path] = newLines;
+            dict[name] = newLines;
             return Task.CompletedTask;
         }
     }

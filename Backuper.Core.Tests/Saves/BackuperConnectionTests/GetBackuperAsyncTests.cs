@@ -8,13 +8,11 @@ public class GetBackuperAsyncTests {
 
     public GetBackuperAsyncTests() {
         dbConn = new MemoryDBConnection();
-        sut = new(dbConn, mainPath);
+        sut = new(dbConn);
     }
 
     readonly MemoryDBConnection dbConn;
     readonly BackuperConnection sut;
-    readonly string mainPath = Path.Combine(Directory.GetCurrentDirectory(), "TestBackupers");
-    string GetBackuperPath(string name) => Path.Combine(mainPath, $"{name}.txt");
 
     [Fact]
     public async Task GetBackuperCorrectly() {
@@ -22,8 +20,7 @@ public class GetBackuperAsyncTests {
         //arrange
         string name = "aName";
         BackuperInfo expected = new(name, Directory.GetCurrentDirectory(), 3, false);
-        string path = GetBackuperPath(name);
-        await dbConn.WriteAllLinesAsync(path, expected.ToStrings());
+        await dbConn.WriteAllLinesAsync(name, expected.ToStrings());
 
         //act
         var result = (await sut.GetBackuperAsync(name)).Or(default!);

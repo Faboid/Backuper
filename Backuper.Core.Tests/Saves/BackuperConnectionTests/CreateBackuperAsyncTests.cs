@@ -8,13 +8,11 @@ public class CreateBackuperAsyncTests {
 
     public CreateBackuperAsyncTests() {
         dbConn = new MemoryDBConnection();
-        sut = new(dbConn, mainPath);
+        sut = new(dbConn);
     }
 
     readonly MemoryDBConnection dbConn;
     readonly BackuperConnection sut;
-    readonly string mainPath = Path.Combine(Directory.GetCurrentDirectory(), "TestBackupers");
-    string GetBackuperPath(string name) => Path.Combine(mainPath, $"{name}.txt");
 
     [Fact]
     public async Task BackuperCreatedCorrectly() {
@@ -23,15 +21,14 @@ public class CreateBackuperAsyncTests {
         string name = "someName";
         string sourcePath = Directory.GetCurrentDirectory();
         BackuperInfo expected = new(name, sourcePath, 3, false);
-        string path = GetBackuperPath(name);
 
         //act
         await sut.CreateBackuperAsync(expected);
-        var result = await dbConn.ReadAllLinesAsync(path);
+        var result = await dbConn.ReadAllLinesAsync(name);
         var actual = BackuperInfo.Parse(result);
 
         //assert
-        Assert.True(dbConn.Exists(path), "The backuper wasn't created correctly.");
+        Assert.True(dbConn.Exists(name), "The backuper wasn't created correctly.");
         Assert.Equal(expected.Name, actual.Name);
         Assert.Equal(expected.SourcePath, actual.SourcePath);
         Assert.Equal(expected.MaxVersions, actual.MaxVersions);
