@@ -20,12 +20,12 @@
         }
 
         public Task WriteAllLinesAsync(string name, string[] lines) {
-            if(!dict.TryGetValue(name, out var newLines)) {
-                newLines = lines;
-                dict.Add(name, newLines);
+            if(!dict.ContainsKey(name)) {
+                dict.Add(name, lines);
+                return Task.CompletedTask;
             }
 
-            dict[name] = newLines;
+            dict[name] = lines;
             return Task.CompletedTask;
         }
     }
