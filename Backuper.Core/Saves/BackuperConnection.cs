@@ -54,7 +54,7 @@ public class BackuperConnection {
         curr.UpdateOnBoot = newUpdateOnBoot ?? curr.UpdateOnBoot;
 
         var newValues = curr.ToStrings();
-        await dbConnection.WriteAllLinesAsync(newName ?? name, newValues);
+        await dbConnection.WriteAllLinesAsync(curr.Name, newValues);
         if(!string.IsNullOrWhiteSpace(newName)) {
             //if the name has changed, delete the old backuper file
             dbConnection.Delete(name);
