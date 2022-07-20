@@ -2,7 +2,9 @@
 using Backuper.Core.Saves.DBConnections;
 using Backuper.Extensions;
 using Backuper.Utils;
+using System.Runtime.CompilerServices;
 
+[assembly:InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Core.Saves;
 
 public class BackuperConnection {
