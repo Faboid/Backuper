@@ -34,6 +34,31 @@ public class DeleteBackuperTests {
 
     }
 
-    //todo - implement bad paths tests
+    [Fact]
+    public void NotExistentBackuper_ReturnsCorrectCode() {
+
+        //arrange
+        string name = "val";
+
+        //act
+        var exists = dbConn.Exists(name);
+        var result = sut.DeleteBackuper(name);
+
+        //assert
+        Assert.False(exists);
+        Assert.Equal(BackuperConnection.DeleteBackuperCode.BackuperDoesNotExist, result);
+
+    }
+
+    [Theory]
+    [InlineData("   ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void HandlesInvalidNames(string name) {
+
+        var result = sut.DeleteBackuper(name);
+        Assert.Equal(BackuperConnection.DeleteBackuperCode.NameNotValid, result);
+
+    }
 
 }
