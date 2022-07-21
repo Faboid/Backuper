@@ -39,30 +39,21 @@ namespace Backuper.Core.Tests.BackuperTypes {
         [Fact]
         public async Task StartBackuperAsync_CreatesNewVersionWithCopyOfSource() {
 
-            try {
+            //arrange
+            string name = "someName";
+            BackuperInfo info = new(name, sourceData, 3, false);
+            DirectoryBackuper backuper = new(info, builder);
+            Paths paths = builder.Build(name);
 
-                //arrange
-                string name = "someName";
-                BackuperInfo info = new(name, sourceData, 3, false);
-                DirectoryBackuper backuper = new(info, builder);
-                Paths paths = builder.Build(name);
+            //act
+            await backuper.StartBackupAsync();
+            var writtenDir = Directory.GetDirectories(paths.BackupsDirectory).First();
 
-                //act
-                await backuper.StartBackupAsync();
-                var writtenDir = Directory.GetDirectories(paths.BackupsDirectory).First();
-
-                //assert
-                Assert.True(Directory.Exists(paths.BackupsDirectory));
-                Assert.True(paths.VersionNameToDateTime(writtenDir) != default);
-                Assert.True(Directory.Exists(writtenDir));
-                Assert.Equal(fileData, File.ReadAllText(Path.Combine(writtenDir, directoryName, fileName)));
-
-            } finally {
-
-                //resets
-                Directory.Delete(backuperPath, true);
-                Directory.CreateDirectory(backuperPath);
-            }
+            //assert
+            Assert.True(Directory.Exists(paths.BackupsDirectory));
+            Assert.True(paths.VersionNameToDateTime(writtenDir) != default);
+            Assert.True(Directory.Exists(writtenDir));
+            Assert.Equal(fileData, File.ReadAllText(Path.Combine(writtenDir, directoryName, fileName)));
 
         }
 
