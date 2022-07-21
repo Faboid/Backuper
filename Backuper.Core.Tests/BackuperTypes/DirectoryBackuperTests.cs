@@ -58,6 +58,35 @@ namespace Backuper.Core.Tests.BackuperTypes {
         }
 
         [Fact]
+        public async Task StartBackuperAsync_BackupOnlyIfNotUpdated() {
+
+            //arrange
+            string name = "someName";
+            BackuperInfo info = new(name, sourceData, 3, false);
+            DirectoryBackuper backuper = new(info, builder);
+            Paths paths = builder.Build(name);
+
+            //act
+            for(int i = 0; i < 3; i++) {
+                await backuper.StartBackupAsync();
+
+                //todo - currently, the version name is generated with time only. This means that
+                //multiple calls under a second get thrown under the same version name.
+                //once the version name is generated with more than just the time, remove this.
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+            
+            //refresh write time
+            File.WriteAllText(sourceFilePath, fileData);
+            await backuper.StartBackupAsync();
+
+            //assert
+            Assert.True(Directory.Exists(paths.BackupsDirectory));
+            Assert.Equal(2, Directory.GetDirectories(paths.BackupsDirectory).Length);
+
+        }
+
+        [Fact]
         public async Task BinBackupsAsync_MovesBackupsToBin_And_DeletesBackupsFromMainDirectory() {
 
             //arrange
