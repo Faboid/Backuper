@@ -75,7 +75,7 @@ public class DirectoryBackuper : IBackuper {
         //therefore, it's needed to go through all children directories
         var latestChange = Directory
             .EnumerateDirectories(Source.FullName, "*", SearchOption.AllDirectories)
-            .Select(x => Directory.GetLastWriteTimeUtc(x))
+            .Select(x => Directory.EnumerateFiles(x).Max(x => File.GetLastWriteTimeUtc(x)))
             .DefaultIfEmpty()
             .Max();
 
