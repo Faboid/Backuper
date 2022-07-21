@@ -20,7 +20,9 @@ public class DirectoryBackuper : IBackuper {
     private readonly Paths paths;
     private readonly Locker locker = new();
 
-    //todo - test the methods below
+    //todo - these methods delete the main directory of this backuper.
+    //either set up creation of it in the StartBackupsAsync method,
+    //or add some flag that throws if someone tries to backup after erasing.
     public async Task BinBackupsAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
         if(token.IsCancellationRequested) return;
@@ -28,7 +30,6 @@ public class DirectoryBackuper : IBackuper {
         await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory).ConfigureAwait(false);
         Directory.Delete(paths.BackupsDirectory, true);
     }
-
     public async Task EraseBackupsAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
         if(token.IsCancellationRequested) return;
