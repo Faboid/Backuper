@@ -33,6 +33,23 @@ public class GetBackuperAsyncTests {
 
     }
 
-    //todo - implement bad paths tests
+    [Fact]
+    public async Task NotExistentBackuper_ReturnsCorrectCode() {
+
+        var result = await sut.GetBackuperAsync("backuper");
+        Assert.Equal(BackuperConnection.GetBackuperCode.BackuperDoesNotExist, result);
+
+    }
+
+    [Theory]
+    [InlineData("   ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public async Task HandlesInvalidNames(string name) {
+
+        var result = await sut.GetBackuperAsync(name);
+        Assert.Equal(BackuperConnection.GetBackuperCode.NameNotValid, result);
+
+    }
 
 }
