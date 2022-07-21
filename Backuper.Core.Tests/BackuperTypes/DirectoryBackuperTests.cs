@@ -89,6 +89,25 @@ namespace Backuper.Core.Tests.BackuperTypes {
 
         }
 
+        [Fact]
+        public async Task EraseBackupsAsync_DeletesAllBackupsCorrectly() {
+
+            //arrange
+            string name = "someNameHere";
+            BackuperInfo info = new(name, sourceData, 3, false);
+            DirectoryBackuper backuper = new(info, builder);
+            Paths paths = builder.Build(name);
+
+            //act
+            var existed = Directory.Exists(paths.BackupsDirectory);
+            await backuper.EraseBackupsAsync();
+
+            //assert
+            Assert.True(existed);
+            Assert.False(Directory.Exists(paths.BackupsDirectory));
+
+        }
+
         public void Dispose() {
             Directory.Delete(sourceData, true);
             Directory.Delete(backuperPath, true);
