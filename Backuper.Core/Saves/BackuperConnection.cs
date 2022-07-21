@@ -20,6 +20,10 @@ public class BackuperConnection {
     //or to check them here
 
     public async Task<CreateBackuperCode> CreateBackuperAsync(BackuperInfo info) {
+        if(string.IsNullOrWhiteSpace(info.Name)) {
+            return CreateBackuperCode.NameNotValid;
+        }
+
         if(dbConnection.Exists(info.Name)) {
             return CreateBackuperCode.BackuperExistsAlready;
         }
@@ -29,6 +33,10 @@ public class BackuperConnection {
     }
 
     public async Task<Option<BackuperInfo, GetBackuperCode>> GetBackuperAsync(string name) {
+        if(string.IsNullOrWhiteSpace(name)) {
+            return GetBackuperCode.NameNotValid;
+        }
+
         if(!dbConnection.Exists(name)) {
             return GetBackuperCode.BackuperDoesNotExist;
         }
@@ -44,6 +52,10 @@ public class BackuperConnection {
     }
 
     public async Task<UpdateBackuperCode> UpdateBackuperAsync(string name, string? newName = null, int newMaxVersions = 0, bool? newUpdateOnBoot = null) {
+        if(string.IsNullOrWhiteSpace(name)) {
+            return UpdateBackuperCode.NameNotValid;
+        }
+
         if(!dbConnection.Exists(name)) {
             return UpdateBackuperCode.BackuperDoesNotExist;
         }
@@ -64,6 +76,10 @@ public class BackuperConnection {
     }
 
     public DeleteBackuperCode DeleteBackuper(string name) {
+        if(string.IsNullOrWhiteSpace(name)) {
+            return DeleteBackuperCode.NameNotValid;
+        }
+
         if(!dbConnection.Exists(name)) {
             return DeleteBackuperCode.BackuperDoesNotExist;
         }
@@ -76,24 +92,28 @@ public class BackuperConnection {
         Unknown,
         Success,
         Failure,
-        BackuperExistsAlready
+        NameNotValid,
+        BackuperExistsAlready,
     }
 
     public enum GetBackuperCode {
         Unknown,
-        BackuperDoesNotExist
+        BackuperDoesNotExist,
+        NameNotValid,
     }
 
     public enum UpdateBackuperCode {
         Unknown,
         Success,
-        BackuperDoesNotExist
+        BackuperDoesNotExist,
+        NameNotValid
     }
 
     public enum DeleteBackuperCode {
         Unknown,
         Success,
-        BackuperDoesNotExist
+        BackuperDoesNotExist,
+        NameNotValid,
     }
 
 }

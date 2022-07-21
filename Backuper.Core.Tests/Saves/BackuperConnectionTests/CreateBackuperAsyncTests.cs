@@ -36,6 +36,34 @@ public class CreateBackuperAsyncTests {
 
     }
 
-    //todo - implement bad paths
+    [Fact]
+    public async Task HandlesDuplicateBackuperNames() {
+
+        //arrange
+        string name = "backuper";
+        string sourcePath = Directory.GetCurrentDirectory();
+        BackuperInfo infoFirst = new(name, sourcePath, 3, false);
+        BackuperInfo infoSecond = new(name, sourcePath, 2, true);
+
+        //act
+        await sut.CreateBackuperAsync(infoFirst);
+        var result = await sut.CreateBackuperAsync(infoSecond);
+
+        //assert
+        Assert.Equal(BackuperConnection.CreateBackuperCode.BackuperExistsAlready, result);
+
+    }
+    
+    [Theory]
+    [InlineData("   ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public async Task HandlesInvalidNames(string name) {
+
+        var info = new BackuperInfo(name, Directory.GetCurrentDirectory(), 3, false);
+        var result = await sut.CreateBackuperAsync(info);
+        Assert.Equal(BackuperConnection.CreateBackuperCode.NameNotValid, result);
+
+    }
 
 }
