@@ -56,18 +56,25 @@
                 var noDirResult = GetVersionNumber(noDirPathResult);
                 Directory.CreateDirectory(noDirPathResult);
                 var oneDirResult = GetVersionNumber(paths.GenerateNewBackupVersionDirectory());
-                var twoDirPath = paths.GenerateNewBackupVersionDirectory();
-                var twoDirResult = GetVersionNumber(twoDirPath);
 
-                Directory.CreateDirectory(twoDirPath);
+                //this is to skip ten versions and check if the version number functions correctly
+                //even with version over one digit.
+                _ = Enumerable.Range(0, 10)
+                    .Select(x => paths.GenerateNewBackupVersionDirectory())
+                    .ToList();
+
+                var overTenDirPath = paths.GenerateNewBackupVersionDirectory();
+                var overTenDirResult = GetVersionNumber(overTenDirPath);
+
+                Directory.CreateDirectory(overTenDirPath);
                 var newPaths = new Paths(mainDir, backuperName);
                 var newPathsVersionResult = GetVersionNumber(newPaths.GenerateNewBackupVersionDirectory());
 
                 //assert
                 Assert.Equal(1, noDirResult);
                 Assert.Equal(2, oneDirResult);
-                Assert.Equal(3, twoDirResult);
-                Assert.Equal(4, newPathsVersionResult);
+                Assert.Equal(13, overTenDirResult);
+                Assert.Equal(14, newPathsVersionResult);
 
             } finally {
 
