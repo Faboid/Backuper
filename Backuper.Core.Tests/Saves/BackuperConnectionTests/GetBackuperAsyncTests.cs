@@ -37,7 +37,7 @@ public class GetBackuperAsyncTests {
     public async Task NotExistentBackuper_ReturnsCorrectCode() {
 
         var result = await sut.GetBackuperAsync("backuper");
-        Assert.Equal(BackuperConnection.GetBackuperCode.BackuperDoesNotExist, result);
+        Assert.Equal(GetBackuperCode.BackuperDoesNotExist, result);
 
     }
 
@@ -48,7 +48,7 @@ public class GetBackuperAsyncTests {
     public async Task HandlesInvalidNames(string name) {
 
         var result = await sut.GetBackuperAsync(name);
-        Assert.Equal(BackuperConnection.GetBackuperCode.NameNotValid, result);
+        Assert.Equal(GetBackuperCode.NameNotValid, result);
 
     }
 

@@ -29,7 +29,7 @@ public class DeleteBackuperTests {
 
         //assert
         Assert.True(exists);
-        Assert.Equal(BackuperConnection.DeleteBackuperCode.Success, result);
+        Assert.Equal(DeleteBackuperCode.Success, result);
         Assert.False(stillExists);
 
     }
@@ -46,7 +46,7 @@ public class DeleteBackuperTests {
 
         //assert
         Assert.False(exists);
-        Assert.Equal(BackuperConnection.DeleteBackuperCode.BackuperDoesNotExist, result);
+        Assert.Equal(DeleteBackuperCode.BackuperDoesNotExist, result);
 
     }
 
@@ -57,7 +57,7 @@ public class DeleteBackuperTests {
     public void HandlesInvalidNames(string name) {
 
         var result = sut.DeleteBackuper(name);
-        Assert.Equal(BackuperConnection.DeleteBackuperCode.NameNotValid, result);
+        Assert.Equal(DeleteBackuperCode.NameNotValid, result);
 
     }
 

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 [assembly:InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Core.Saves;
 
-public class BackuperConnection {
+public class BackuperConnection : IBackuperConnection {
 
     public BackuperConnection() : this(new FileDBConnection()) { }
     internal BackuperConnection(IDBConnection dbConnection) {
@@ -86,34 +86,6 @@ public class BackuperConnection {
 
         dbConnection.Delete(name);
         return DeleteBackuperCode.Success;
-    }
-
-    public enum CreateBackuperCode {
-        Unknown,
-        Success,
-        Failure,
-        NameNotValid,
-        BackuperExistsAlready,
-    }
-
-    public enum GetBackuperCode {
-        Unknown,
-        BackuperDoesNotExist,
-        NameNotValid,
-    }
-
-    public enum UpdateBackuperCode {
-        Unknown,
-        Success,
-        BackuperDoesNotExist,
-        NameNotValid
-    }
-
-    public enum DeleteBackuperCode {
-        Unknown,
-        Success,
-        BackuperDoesNotExist,
-        NameNotValid,
     }
 
 }

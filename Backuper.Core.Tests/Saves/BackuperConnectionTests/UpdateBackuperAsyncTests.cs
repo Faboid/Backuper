@@ -28,7 +28,7 @@ public class UpdateBackuperAsyncTests {
         var actual = BackuperInfo.Parse(await dbConn.ReadAllLinesAsync(name));
 
         //assert
-        Assert.Equal(BackuperConnection.UpdateBackuperCode.Success, result);
+        Assert.Equal(UpdateBackuperCode.Success, result);
         Assert.Equal(expected.Name, actual.Name);
         Assert.Equal(expected.SourcePath, actual.SourcePath);
         Assert.Equal(expected.MaxVersions, actual.MaxVersions);
@@ -40,7 +40,7 @@ public class UpdateBackuperAsyncTests {
     public async Task NotExistentBackuper_ReturnsCorrectCode() {
 
         var result = await sut.UpdateBackuperAsync("backuper");
-        Assert.Equal(BackuperConnection.UpdateBackuperCode.BackuperDoesNotExist, result);
+        Assert.Equal(UpdateBackuperCode.BackuperDoesNotExist, result);
     }
 
     [Theory]
@@ -50,7 +50,7 @@ public class UpdateBackuperAsyncTests {
     public async Task HandlesInvalidNames(string name) {
 
         var result = await sut.UpdateBackuperAsync(name);
-        Assert.Equal(BackuperConnection.UpdateBackuperCode.NameNotValid, result);
+        Assert.Equal(UpdateBackuperCode.NameNotValid, result);
     }
 
 }

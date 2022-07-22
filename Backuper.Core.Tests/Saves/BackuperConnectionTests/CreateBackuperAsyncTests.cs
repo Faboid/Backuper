@@ -50,7 +50,7 @@ public class CreateBackuperAsyncTests {
         var result = await sut.CreateBackuperAsync(infoSecond);
 
         //assert
-        Assert.Equal(BackuperConnection.CreateBackuperCode.BackuperExistsAlready, result);
+        Assert.Equal(CreateBackuperCode.BackuperExistsAlready, result);
 
     }
     
@@ -62,7 +62,7 @@ public class CreateBackuperAsyncTests {
 
         var info = new BackuperInfo(name, Directory.GetCurrentDirectory(), 3, false);
         var result = await sut.CreateBackuperAsync(info);
-        Assert.Equal(BackuperConnection.CreateBackuperCode.NameNotValid, result);
+        Assert.Equal(CreateBackuperCode.NameNotValid, result);
 
     }
 
