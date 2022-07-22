@@ -39,15 +39,18 @@ namespace Backuper.Utils {
             dataDirectory = Path.Combine(dataDirectory, "Backuper");
             BackupsDirectory = Path.Combine(dataDirectory, "Backups", backuperName);
             BinDirectory = Path.Combine(dataDirectory, "Bin", backuperName);
+            currentVerNumber = GetLatestVersionNumber();
         }
 
         public string BinDirectory { get; }
         public string BackupsDirectory { get; }
-        
+
+        private int currentVerNumber;
         private static readonly DateTimeFormatInfo format = new();
 
         public DateTime VersionNameToDateTime(string versionPath) {
             var name = new DirectoryInfo(versionPath).Name.Replace('—', ':');
+            name = name[Math.Max(0, name.IndexOf(']') + 1)..]; //skip version number
             return DateTime.ParseExact(name, format.UniversalSortableDateTimePattern, format);
         }
 
@@ -57,7 +60,31 @@ namespace Backuper.Utils {
 
         internal string GenerateNewBackupVersionDirectory(DateTime dateTime) {
             var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern).Replace(':', '—');
-            return Path.Combine(BackupsDirectory, dateAsString);
+            currentVerNumber++;
+            var version = $"[{currentVerNumber}]{dateAsString}";
+            return Path.Combine(BackupsDirectory, version);
+        }
+
+        /// <summary>
+        /// Returns the latest version number, or 0 if there aren't any.
+        /// </summary>
+        /// <returns></returns>
+        private int GetLatestVersionNumber() {
+
+            if(!Directory.Exists(BackupsDirectory)) {
+                return 0;
+            } 
+
+            return Directory
+                .EnumerateDirectories(BackupsDirectory)
+                .Select(x => new DirectoryInfo(x).Name)
+                .Select(x => x[1..Math.Max(x.IndexOf(']'), 1)])
+                .Select(x => (valid: int.TryParse(x, out var val), value: val))
+                .Where(x => x.valid)
+                .Select(x => x.value)
+                .DefaultIfEmpty(0)
+                .Max();
+
         }
 
     }

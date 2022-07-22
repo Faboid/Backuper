@@ -39,6 +39,45 @@
         }
 
         [Fact]
+        public void GenerateCorrectVersionNumber() {
+            string GetDirName(string path) => new DirectoryInfo(path).Name;
+            string GetVersionString(string path) => GetDirName(path)[1..GetDirName(path).IndexOf(']')];
+            int GetVersionNumber(string path) => int.Parse(GetVersionString(path));
+
+            //arrange
+            string mainDir = Path.Combine(Directory.GetCurrentDirectory(), "Versions");
+            string backuperName = "nameHere";
+
+            try {
+                Paths paths = new(mainDir, backuperName);
+
+                //act
+                var noDirPathResult = paths.GenerateNewBackupVersionDirectory();
+                var noDirResult = GetVersionNumber(noDirPathResult);
+                Directory.CreateDirectory(noDirPathResult);
+                var oneDirResult = GetVersionNumber(paths.GenerateNewBackupVersionDirectory());
+                var twoDirPath = paths.GenerateNewBackupVersionDirectory();
+                var twoDirResult = GetVersionNumber(twoDirPath);
+
+                Directory.CreateDirectory(twoDirPath);
+                var newPaths = new Paths(mainDir, backuperName);
+                var newPathsVersionResult = GetVersionNumber(newPaths.GenerateNewBackupVersionDirectory());
+
+                //assert
+                Assert.Equal(1, noDirResult);
+                Assert.Equal(2, oneDirResult);
+                Assert.Equal(3, twoDirResult);
+                Assert.Equal(4, newPathsVersionResult);
+
+            } finally {
+
+                //dispose
+                Directory.Delete(mainDir, true);
+            }
+
+        }
+
+        [Fact]
         public void GeneratePreciseVersionName() {
 
             //arrange
@@ -70,7 +109,6 @@
             Assert.False(isValid);
 
         }
-        
 
     }
 }
