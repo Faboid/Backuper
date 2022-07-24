@@ -9,6 +9,7 @@ namespace Backuper.Core {
     public interface IBackuper {
 
         BackuperInfo Info { get; }
+        bool IsUpdated { get; }
 
         //todo - use better returns to send back results to the UI
         Task EraseBackupsAsync(CancellationToken token);
