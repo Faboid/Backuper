@@ -7,6 +7,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary x:Name="DefaultButton" Source="pack://application:,,,/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultDataGrid" Source="pack://application:,,,/Styles/DataGridStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultScrollbar" Source="pack://application:,,,/Styles/ScrollbarStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
