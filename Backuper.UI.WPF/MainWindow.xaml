@@ -79,12 +79,20 @@
                 />
 
         </Grid>
-        
-        <!--To be made dynamic-->
-        <views:CreateBackuperView
+
+        <DockPanel
             Grid.Row="2"
             Grid.Column="1"
-            Background="#FF121212"/>
+            Background="#FF121212"
+            >
+            
+            <!--To be made dynamic-->
+            <views:CreateBackuperView
+                Margin="15"
+                DataContext="{Binding CurrentViewModel}"
+                />
+            
+        </DockPanel>
         
     </Grid>
 </Window>
