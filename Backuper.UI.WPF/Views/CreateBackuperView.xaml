@@ -53,6 +53,7 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="2"
+            Text="{Binding BackuperName}"
             />
 
         <Label
@@ -64,6 +65,7 @@
         <TextBox
             Grid.Row="2"
             Grid.Column="2"
+            Text="{Binding SourcePath}"
             />
         
         <Label
@@ -75,6 +77,7 @@
         <TextBox
             Grid.Row="3"
             Grid.Column="2"
+            Text="{Binding MaxVersions}"
             />
 
         <Label
@@ -89,9 +92,10 @@
             FontSize="17"
             >
             <ComboBoxItem Content="No"/>
-            <ComboBoxItem Content="Yes"/>
+            <ComboBoxItem Content="Yes" 
+                          IsSelected="{Binding UpdateOnBoot, Mode=OneWayToSource}"
+                          />
         </ComboBox>
-
 
         <Grid
             Grid.Row="6"
@@ -108,12 +112,14 @@
                 Content="Cancel"
                 Grid.Column="0"
                 Margin="10, 10"
+                Command="{Binding CancelCommand}"
                 />
 
             <Button
-                Content="Create New Backuper"
+                Content="Submit"
                 Grid.Column="1"
                 Margin="10, 10"
+                Command="{Binding SubmitCommand}"
                 />
 
         </Grid>
