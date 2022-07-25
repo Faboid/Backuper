@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style TargetType="TextBlock">
+    <!--I'd like to make this the default, but it interacts negatively with the other components-->
+    <Style x:Key="DefTextBlock" TargetType="TextBlock">
 
         <Style.Setters>
             <Setter Property="Background" Value="#FF272121"/>
