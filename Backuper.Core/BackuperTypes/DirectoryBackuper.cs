@@ -24,21 +24,21 @@ public class DirectoryBackuper : IBackuper {
     //either set up creation of it in the StartBackupsAsync method,
     //or add some flag that throws if someone tries to backup after erasing.
     public async Task BinBackupsAsync(CancellationToken token = default) {
-        using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
         if(token.IsCancellationRequested) return;
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory).ConfigureAwait(false);
         Directory.Delete(paths.BackupsDirectory, true);
     }
     public async Task EraseBackupsAsync(CancellationToken token = default) {
-        using var lockd = await locker.GetLockAsync().ConfigureAwait(false);
+        using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
         if(token.IsCancellationRequested) return;
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
     public async Task StartBackupAsync(CancellationToken token = default) {
-        using var lockd = await locker.GetLockAsync().ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
+        using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
         using var threadHandler = ThreadsHandler.SetScopedForeground();
 
         if(IsUpToDate() || token.IsCancellationRequested) {
