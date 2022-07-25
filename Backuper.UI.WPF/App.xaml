@@ -12,6 +12,7 @@
                 <ResourceDictionary x:Name="DefaultTextBox" Source="pack://application:,,,/Styles/TextBoxStyle.xaml"/>
                 <ResourceDictionary x:Name="DefaultTextBlock" Source="pack://application:,,,/Styles/TextBlockStyle.xaml"/>
                 <ResourceDictionary x:Name="DefaultComboBox" Source="pack://application:,,,/Styles/ComboBoxStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultLabel" Source="pack://application:,,,/Styles/LabelStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
