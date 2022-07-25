@@ -77,4 +77,16 @@ public class FileBackuper : IBackuper {
 
     }
 
+
+    private bool isDisposed = false;
+    public void Dispose() {
+        if(isDisposed) {
+            return;
+        }
+        isDisposed = true;
+
+        locker.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
 }

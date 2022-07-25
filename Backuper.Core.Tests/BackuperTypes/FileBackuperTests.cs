@@ -36,7 +36,7 @@ public class FileBackuperTests : IDisposable {
         //arrange
         string name = "someName";
         BackuperInfo info = new(name, sourceFilePath, 3, false);
-        FileBackuper backuper = new(info, builder);
+        using FileBackuper backuper = new(info, builder);
         Paths paths = builder.Build(name);
 
         //act
@@ -57,7 +57,7 @@ public class FileBackuperTests : IDisposable {
         //arrange
         string name = "someName";
         BackuperInfo info = new(name, sourceFilePath, 3, false);
-        FileBackuper backuper = new(info, builder);
+        using FileBackuper backuper = new(info, builder);
         Paths paths = builder.Build(name);
 
         //act
@@ -83,7 +83,7 @@ public class FileBackuperTests : IDisposable {
         //arrange
         string name = "backuperName";
         BackuperInfo info = new(name, sourceFilePath, 3, false);
-        FileBackuper backuper = new(info, builder);
+        using FileBackuper backuper = new(info, builder);
         Paths paths = builder.Build(name);
         await backuper.StartBackupAsync();
 
@@ -106,7 +106,7 @@ public class FileBackuperTests : IDisposable {
         //arrange
         string name = "someNameHere";
         BackuperInfo info = new(name, sourceFilePath, 3, false);
-        FileBackuper backuper = new(info, builder);
+        using FileBackuper backuper = new(info, builder);
         Paths paths = builder.Build(name);
 
         //act

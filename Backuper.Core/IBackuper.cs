@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Backuper.Core {
-    public interface IBackuper {
+    public interface IBackuper : IDisposable {
 
         BackuperInfo Info { get; }
         bool IsUpdated { get; }

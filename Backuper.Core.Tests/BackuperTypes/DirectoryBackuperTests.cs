@@ -42,7 +42,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             //arrange
             string name = "someName";
             BackuperInfo info = new(name, sourceData, 3, false);
-            DirectoryBackuper backuper = new(info, builder);
+            using DirectoryBackuper backuper = new(info, builder);
             Paths paths = builder.Build(name);
 
             //act
@@ -63,7 +63,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             //arrange
             string name = "someName";
             BackuperInfo info = new(name, sourceData, 3, false);
-            DirectoryBackuper backuper = new(info, builder);
+            using DirectoryBackuper backuper = new(info, builder);
             Paths paths = builder.Build(name);
 
             //act
@@ -87,7 +87,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             //arrange
             string name = "backuperName";
             BackuperInfo info = new(name, sourceData, 3, false);
-            DirectoryBackuper backuper = new(info, builder);
+            using DirectoryBackuper backuper = new(info, builder);
             Paths paths = builder.Build(name);
             await backuper.StartBackupAsync();
 
@@ -110,7 +110,7 @@ namespace Backuper.Core.Tests.BackuperTypes {
             //arrange
             string name = "someNameHere";
             BackuperInfo info = new(name, sourceData, 3, false);
-            DirectoryBackuper backuper = new(info, builder);
+            using DirectoryBackuper backuper = new(info, builder);
             Paths paths = builder.Build(name);
 
             //act
