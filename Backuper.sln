@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.Extensions.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.TestUtils", "Backuper.TestUtils\Backuper.TestUtils.csproj", "{429DBAF9-38D8-494E-BD82-DE071A2FE71B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.UI.WPF", "Backuper.UI.WPF\Backuper.UI.WPF.csproj", "{846DFDA2-849A-4E03-9126-8A5D9E1B732D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.UI.WPF", "Backuper.UI.WPF\Backuper.UI.WPF.csproj", "{846DFDA2-849A-4E03-9126-8A5D9E1B732D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
