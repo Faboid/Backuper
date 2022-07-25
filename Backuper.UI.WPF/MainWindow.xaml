@@ -61,6 +61,7 @@
                 WindowChrome.IsHitTestVisibleInChrome="True"
                 Content="—"
                 Grid.Column="1" 
+                Command="{Binding MinimizeCommand}"
                 />
 
             <Button 
@@ -68,6 +69,7 @@
                 WindowChrome.IsHitTestVisibleInChrome="True"
                 Content="▢"
                 Grid.Column="2"
+                Command="{Binding ResizeCommand}"
                 />
 
             <Button 
@@ -76,6 +78,7 @@
                 WindowChrome.IsHitTestVisibleInChrome="True"
                 Content="✖"
                 Grid.Column="3"
+                Command="{Binding CloseCommand}"
                 />
 
         </Grid>
