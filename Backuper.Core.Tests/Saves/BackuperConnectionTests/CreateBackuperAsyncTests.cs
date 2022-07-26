@@ -53,6 +53,20 @@ public class CreateBackuperAsyncTests {
         Assert.Equal(CreateBackuperCode.BackuperExistsAlready, result);
 
     }
+
+    [Fact]
+    public async Task FailBecauseSourceDoesNotExist() {
+
+        //arrange
+        BackuperInfo info = new("FailName", "Path", 3, true);
+
+        //act
+        var result = await sut.CreateBackuperAsync(info);
+
+        //assert
+        Assert.Equal(CreateBackuperCode.SourceDoesNotExist, result);
+
+    }
     
     [Theory]
     [InlineData("   ")]
