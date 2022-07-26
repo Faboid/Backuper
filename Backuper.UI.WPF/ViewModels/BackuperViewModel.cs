@@ -1,6 +1,5 @@
 ﻿using Backuper.Core;
 using Backuper.Core.Models;
-using Backuper.UI.WPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
