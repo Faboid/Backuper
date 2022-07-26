@@ -1,6 +1,6 @@
 ﻿namespace Backuper.Core.Saves;
 
-public interface IDBConnection {
+internal interface IDBConnection {
 
     bool Exists(string path);
     IEnumerable<string> EnumerateNames();
