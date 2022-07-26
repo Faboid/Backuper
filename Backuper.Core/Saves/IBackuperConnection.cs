@@ -21,6 +21,7 @@ public enum CreateBackuperCode {
     Failure,
     NameNotValid,
     BackuperExistsAlready,
+    SourceDoesNotExist,
 }
 
 public enum GetBackuperCode {

@@ -27,6 +27,11 @@ public class BackuperConnection : IBackuperConnection {
         if(dbConnection.Exists(info.Name)) {
             return CreateBackuperCode.BackuperExistsAlready;
         }
+
+        if(!Directory.Exists(info.SourcePath) && !File.Exists(info.SourcePath)) {
+            return CreateBackuperCode.SourceDoesNotExist;
+        }
+
         var strings = info.ToStrings();
         await dbConnection.WriteAllLinesAsync(info.Name, strings);
         return CreateBackuperCode.Success;
