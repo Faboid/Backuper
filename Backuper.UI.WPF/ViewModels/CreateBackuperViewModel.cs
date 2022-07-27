@@ -48,7 +48,7 @@ public class CreateBackuperViewModel : ViewModelBase {
     public ICommand? CancelCommand { get; }
 
     public CreateBackuperViewModel(BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
-        SubmitCommand = new CreateBackuperCommand(this, backuperStore);
+        SubmitCommand = new CreateBackuperCommand(this, backuperStore, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
     }
 

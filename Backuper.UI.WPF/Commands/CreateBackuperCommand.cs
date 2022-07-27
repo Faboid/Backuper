@@ -1,20 +1,22 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Core.Saves;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
-
 namespace Backuper.UI.WPF.Commands; 
 
 public class CreateBackuperCommand : AsyncCommandBase {
 
     private readonly CreateBackuperViewModel createBackuperViewModel;
     private readonly BackuperStore backuperStore;
+    private readonly NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel;
 
-    public CreateBackuperCommand(CreateBackuperViewModel createBackuperViewModel, BackuperStore backuperStore) {
+    public CreateBackuperCommand(CreateBackuperViewModel createBackuperViewModel, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         this.createBackuperViewModel = createBackuperViewModel;
         this.backuperStore = backuperStore;
+        this.navigatorToBackuperListingViewModel = navigatorToBackuperListingViewModel;
     }
 
     protected override async Task ExecuteAsync(object? parameter) {
@@ -38,6 +40,10 @@ public class CreateBackuperCommand : AsyncCommandBase {
 
         //todo - show the result in a more graceful way
         MessageBox.Show(message);
+
+        if(result == CreateBackuperCode.Success) {
+            navigatorToBackuperListingViewModel.Navigate();
+        }
 
     }
 }
