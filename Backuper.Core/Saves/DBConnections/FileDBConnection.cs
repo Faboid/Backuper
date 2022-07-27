@@ -5,6 +5,7 @@ public class FileDBConnection : IDBConnection {
     public FileDBConnection() : this(Path.Combine(Directory.GetCurrentDirectory(), "Backupers")) { }
     internal FileDBConnection(string customPath) {
         directoryPath = new(customPath);
+        directoryPath.Create();
     }
 
     private readonly DirectoryInfo directoryPath;
