@@ -29,14 +29,21 @@ namespace Backuper.UI.WPF {
 
         protected override void OnStartup(StartupEventArgs e) {
 
-            var listingView = new BackuperListingViewModel(_backuperStore, _navigationStore);
-            _navigationStore.CurrentViewModel = listingView;
+            _navigationStore.CurrentViewModel = CreateBackuperListingViewModel();
 
             MainWindow = new MainWindow();
             MainWindow.DataContext = new MainViewModel(_navigationStore, MainWindow);
             MainWindow.Show();
 
             base.OnStartup(e);
+        }
+
+        private BackuperListingViewModel CreateBackuperListingViewModel() {
+            return new(_backuperStore, _navigationStore, CreateCreateBackuperViewModel);
+        }
+
+        private CreateBackuperViewModel CreateCreateBackuperViewModel() {
+            return new(_backuperStore, _navigationStore, CreateBackuperListingViewModel);
         }
 
     }
