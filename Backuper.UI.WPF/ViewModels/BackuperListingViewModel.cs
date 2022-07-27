@@ -1,4 +1,5 @@
-﻿using Backuper.UI.WPF.Commands;
+﻿using Backuper.Core;
+using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System.Collections.Generic;
@@ -9,26 +10,30 @@ namespace Backuper.UI.WPF.ViewModels {
     public class BackuperListingViewModel : ViewModelBase {
 
         private readonly ObservableCollection<BackuperViewModel> _backupers;
-
         public IEnumerable<BackuperViewModel> Backupers => _backupers;
 
         public ICommand? ChangeBackupPathCommand { get; }
         public ICommand? ToggleAutomaticBackupsCommand { get; }
         public ICommand? CreateBackuperCommand { get; }
         public ICommand? BackupAllCommand { get; }
-        private readonly BackuperStore _backuperStore;
 
-        public BackuperListingViewModel(BackuperStore backuperStore, NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel) {
-            _backuperStore = backuperStore;
+        private ICommand LoadBackupersCommand { get; }
+
+        private BackuperListingViewModel(BackuperStore backuperStore, NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel) {
+            LoadBackupersCommand = new LoadReservationsCommand(backuperStore, UpdateBackupers);
             CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
             _backupers = new();
-
-            UpdateBackupers();
         }
 
-        private void UpdateBackupers() {
+        public static BackuperListingViewModel LoadViewModel(BackuperStore backuperStore, NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel) {
+            BackuperListingViewModel vm = new(backuperStore, navigatorToCreateBackuperViewModel);
+            vm.LoadBackupersCommand.Execute(null);
+            return vm;
+        }
+
+        private void UpdateBackupers(IEnumerable<IBackuper> backupers) {
             _backupers.Clear();
-            foreach(var backuper in _backuperStore.Backupers) {
+            foreach(var backuper in backupers) {
                 var backuperViewModel = new BackuperViewModel(backuper);
                 _backupers.Add(backuperViewModel);
             }

@@ -17,7 +17,7 @@ namespace Backuper.UI.WPF {
             _navigationStore = new();
 
             var backuperFactory = new BackuperFactory();
-            var connection = ConnectionFactory.CreateConnection(ConnectionFactory.BackupType.Memory);
+            var connection = ConnectionFactory.CreateConnection(ConnectionFactory.BackupType.Text);
             _backuperStore = new(backuperFactory, connection);
         }
 
@@ -33,7 +33,7 @@ namespace Backuper.UI.WPF {
         }
 
         private BackuperListingViewModel CreateBackuperListingViewModel() {
-            return new(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel));
+            return BackuperListingViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel));
         }
 
         private CreateBackuperViewModel CreateCreateBackuperViewModel() {
