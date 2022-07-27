@@ -10,6 +10,7 @@ namespace Backuper.UI.WPF.Stores;
 public class BackuperStore {
     
     private readonly List<IBackuper> _backupers;
+    private readonly Lazy<Task> _initializationTask;
     private readonly IBackuperConnection _connection;
     private readonly BackuperFactory _factory;
 
@@ -18,12 +19,16 @@ public class BackuperStore {
 
     public BackuperStore(BackuperFactory factory, IBackuperConnection backuperConnection) {
         _backupers = new List<IBackuper>();
+        _initializationTask = new(Initialize);
         _connection = backuperConnection;
         _factory = factory;
     }
 
     public async Task Load() {
+        await _initializationTask.Value;
+    }
 
+    private async Task Initialize() {
         var infos = _connection.GetAllBackupersAsync();
 
         _backupers.Clear();
