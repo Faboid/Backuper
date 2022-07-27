@@ -2,12 +2,6 @@
 using Backuper.Core.Saves;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Backuper.UI.WPF {
@@ -39,11 +33,11 @@ namespace Backuper.UI.WPF {
         }
 
         private BackuperListingViewModel CreateBackuperListingViewModel() {
-            return new(_backuperStore, _navigationStore, CreateCreateBackuperViewModel);
+            return new(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel));
         }
 
         private CreateBackuperViewModel CreateCreateBackuperViewModel() {
-            return new(_backuperStore, _navigationStore, CreateBackuperListingViewModel);
+            return new(_backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Backuper.UI.WPF.Commands;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Windows.Input;
@@ -46,9 +47,9 @@ public class CreateBackuperViewModel : ViewModelBase {
     public ICommand? SubmitCommand { get; }
     public ICommand? CancelCommand { get; }
 
-    public CreateBackuperViewModel(BackuperStore backuperStore, NavigationStore navigationStore, Func<BackuperListingViewModel> createBackuperListingViewModel) {
+    public CreateBackuperViewModel(BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         SubmitCommand = new CreateBackuperCommand(this, backuperStore);
-        CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigationStore, createBackuperListingViewModel);
+        CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
     }
 
 }

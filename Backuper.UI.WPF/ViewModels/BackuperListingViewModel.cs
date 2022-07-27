@@ -1,5 +1,6 @@
 ﻿using Backuper.Core.Models;
 using Backuper.UI.WPF.Commands;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Backuper.UI.WPF.ViewModels {
         public ICommand? CreateBackuperCommand { get; }
         public ICommand? BackupAllCommand { get; }
 
-        public BackuperListingViewModel(BackuperStore backuperStore, NavigationStore navigationStore, Func<CreateBackuperViewModel> createCreateBackuperViewModel) {
+        public BackuperListingViewModel(BackuperStore backuperStore, NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel) {
             _backupers = new();
 
             //temporary values to make sure the UI functions
@@ -26,7 +27,7 @@ namespace Backuper.UI.WPF.ViewModels {
             _backupers.Add(new(new BackuperMock(new BackuperInfo("secondName", "pathHere", 1, true))));
             _backupers.Add(new(new BackuperMock(new BackuperInfo("anotherName", "newPath", 99, false))));
 
-            CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigationStore, createCreateBackuperViewModel);
+            CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
         }
 
     }
