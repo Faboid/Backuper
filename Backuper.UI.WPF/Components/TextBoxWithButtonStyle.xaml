@@ -1,0 +1,92 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Backuper.UI.WPF.Components" 
+                    xmlns:converters="clr-namespace:Backuper.UI.WPF.Converters">
+
+    <Style TargetType="local:TextBoxWithButton" BasedOn="{StaticResource {x:Type local:TextBoxWithPreview}}">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:TextBoxWithButton">
+
+                        <ControlTemplate.Resources>
+                            <BooleanToVisibilityConverter x:Key="MyBoolToVisibilityConverter"/>
+                            <converters:AddTwoLeftMarginConverter x:Key="MarginConverter"/>
+                            <SolidColorBrush x:Key="WhiteText" Color="White" Opacity="0.67"/>
+                        </ControlTemplate.Resources>
+
+                        <Border
+                            x:Name="PART_Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{StaticResource WhiteText}"
+                            BorderThickness="2"
+                            >
+
+                            <Grid
+                                Margin="{TemplateBinding Padding}"
+                                >
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label
+                                    Grid.Column="0"
+                                    x:Name="PART_PreviewTextLabel" 
+                                    Content="{Binding Path=PreviewText, RelativeSource={RelativeSource AncestorType=TextBox}}" 
+                                    Focusable="False" 
+                                    IsHitTestVisible="False"
+                                    Foreground="Gray" 
+                                    Background="Transparent"
+                                    Margin="2, 0, 0, 0"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Padding="{TemplateBinding Padding}" 
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Visibility="{Binding Path=Text.IsEmpty, RelativeSource={RelativeSource AncestorType=TextBox}, Converter={StaticResource MyBoolToVisibilityConverter}}"
+                                    />
+
+                                <ScrollViewer 
+                                    Grid.Column="0"
+                                    x:Name="PART_ContentHost" 
+                                    Padding="{TemplateBinding Padding}"
+                                    Focusable="false" 
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalScrollBarVisibility="Hidden" 
+                                    VerticalScrollBarVisibility="Hidden"
+                                    />
+
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="1"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource AncestorType=TextBox}}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Content="{Binding Path=ButtonText, RelativeSource={RelativeSource AncestorType=TextBox}}"
+                                    MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                    MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                                    />
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="PART_Border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="PART_Border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="PART_Border" Value="{StaticResource TextBox.Focus.Border}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+    
+</ResourceDictionary>

@@ -17,6 +17,7 @@
 
                 <!--Custom Control Styles-->
                 <ResourceDictionary x:Name="DefaultTextBoxWithPreview" Source="pack://application:,,,/Components/TextBoxWithPreviewStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultTextBoxWithButton" Source="pack://application:,,,/Components/TextBoxWithButtonStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
