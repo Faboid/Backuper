@@ -97,6 +97,9 @@
                 <DataTemplate DataType="{x:Type vms:CreateBackuperViewModel}">
                     <views:CreateBackuperView/>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:OpenPathDialogViewModel}">
+                    <views:OpenPathDialogView/>
+                </DataTemplate>
             </DockPanel.Resources>
 
             <ContentControl 
