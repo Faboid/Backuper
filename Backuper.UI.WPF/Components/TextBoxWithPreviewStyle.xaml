@@ -22,7 +22,8 @@
                             BorderThickness="2"
                             >
 
-                            <Grid>
+                            <Grid
+                                >
                                 <Label
                                     x:Name="PART_PreviewTextLabel" 
                                     Content="{Binding Path=PreviewText, RelativeSource={RelativeSource AncestorType=TextBox}}" 
@@ -30,7 +31,7 @@
                                     IsHitTestVisible="False"
                                     Foreground="Gray" 
                                     Background="Transparent"
-                                    Margin="{TemplateBinding Margin, Converter={StaticResource MarginConverter}}"
+                                    Margin="2, 0, 0, 0"
                                     FontSize="{TemplateBinding FontSize}"
                                     Padding="{TemplateBinding Padding}" 
                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
@@ -40,7 +41,6 @@
 
                                 <ScrollViewer 
                                     x:Name="PART_ContentHost" 
-                                    Margin="{TemplateBinding Margin}"
                                     Padding="{TemplateBinding Padding}"
                                     Focusable="false" 
                                     HorizontalScrollBarVisibility="Hidden" 
