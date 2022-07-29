@@ -5,6 +5,7 @@
     <Style x:Key="DefTextBlock" TargetType="TextBlock">
 
         <Style.Setters>
+            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="#FF272121"/>
             <Setter Property="Foreground">
                 <Setter.Value>

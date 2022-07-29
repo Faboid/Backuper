@@ -6,6 +6,7 @@
 
     <Style TargetType="TextBox">
         <Style.Setters>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Background" Value="#443737"/>
             <Setter Property="Foreground">
                 <Setter.Value>
