@@ -51,14 +51,14 @@
                 Grid.Column="1"
                 Margin="6"
                 FontSize="16"
-                Text="{Binding Path}"
+                Text="{Binding CurrentPath, UpdateSourceTrigger=PropertyChanged}"
                 />
 
             <components:TextBoxWithPreview
                 Grid.Column="2"
                 Margin="6"
                 FontSize="16"
-                Text=""
+                Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
                 VerticalContentAlignment="Center"
                 PreviewText="Search..."
                 />
@@ -73,7 +73,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -98,7 +98,9 @@
                 Grid.Column="0"
                 Grid.RowSpan="3"
                 Margin="5, 5, 0, 0"
-                ItemsSource="{Binding RootsCollection}"
+                IsReadOnly="True"
+                ItemsSource="{Binding Roots}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
                 >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Roots" Binding="{Binding Name}" Width="*"/>
@@ -118,7 +120,9 @@
                 Grid.Column="2"
                 Grid.Row="0"
                 Margin="0, 5, 5, 0"
-                ItemsSource="{Binding DirectoryCollection}"
+                IsReadOnly="True"
+                ItemsSource="{Binding Directories}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
                 >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Folder Name" Binding="{Binding Name}" Width="auto"/>
@@ -140,20 +144,15 @@
                 Grid.Column="2"
                 Grid.Row="2"
                 Margin="0, 0, 5, 0"
-                ItemsSource="{Binding FilesCollection}"
+                IsReadOnly="True"
+                ItemsSource="{Binding Files}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
                 >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="auto"/>
                     <DataGridTextColumn Header="Full Path" Binding="{Binding FullName}" Width="*"/>
                     <DataGridTextColumn Header="Last Update" Binding="{Binding LastWriteTime}" Width="auto"/>
                 </DataGrid.Columns>
-                <DataGrid.InputBindings>
-                    <MouseBinding
-                        MouseAction="LeftDoubleClick"
-                        Command="{Binding FilesDoubleClickCommand}"
-                        CommandParameter="{Binding ElementName=FilesDataGrid, Path=SelectedItem}"
-                        />
-                </DataGrid.InputBindings>
             </DataGrid>
 
         </Grid>
@@ -185,9 +184,12 @@
                 />
 
             <TextBox
+                IsReadOnly="True"
                 Grid.Column="1"
+                FontSize="16"
                 Grid.ColumnSpan="3"
                 Margin="0, 5, 5, 5"
+                Text="{Binding Selected, Mode=OneWay}"
                 />
 
             <Button

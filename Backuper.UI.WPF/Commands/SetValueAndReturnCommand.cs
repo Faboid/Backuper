@@ -17,7 +17,7 @@ public class SetValueAndReturnCommand : CommandBase {
     }
 
     public override void Execute(object? parameter) {
-        _setter?.Invoke(_pathDialog.Path);
+        _setter?.Invoke(_pathDialog.Selected);
         _navigationService.Navigate();
     }
 }

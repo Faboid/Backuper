@@ -1,7 +1,6 @@
 ﻿using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
-using System;
 using System.Windows.Input;
 
 namespace Backuper.UI.WPF.ViewModels; 
@@ -44,12 +43,15 @@ public class CreateBackuperViewModel : ViewModelBase {
         }
     }
 
-    public ICommand? SubmitCommand { get; }
-    public ICommand? CancelCommand { get; }
+    public ICommand SubmitCommand { get; }
+    public ICommand CancelCommand { get; }
+    public ICommand OpenPathDialogCommand { get; }
 
-    public CreateBackuperViewModel(BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
+    public CreateBackuperViewModel(BackuperStore backuperStore, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         SubmitCommand = new CreateBackuperCommand(this, backuperStore, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
+        var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
+        OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(new(navigationStore, () => new(navigateToSelf, (s) => SourcePath = s)));
     }
 
 }
