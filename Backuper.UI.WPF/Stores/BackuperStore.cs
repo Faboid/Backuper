@@ -9,19 +9,25 @@ namespace Backuper.UI.WPF.Stores;
 
 public class BackuperStore {
     
-    private readonly List<IBackuper> _backupers;
+    private readonly Dictionary<string, IBackuper> _backupers;
     private readonly Lazy<Task> _initializationTask;
     private readonly IBackuperConnection _connection;
     private readonly BackuperFactory _factory;
 
-    public Action<IBackuper>? OnBackuperCreated;
-    public IEnumerable<IBackuper> Backupers => _backupers;
+    public event Action? BackupersChanged;
+    public event Action<IBackuper>? BackuperCreated;
+    public event Action<IBackuper>? BackuperDeleted;
+
+    public IEnumerable<IBackuper> Backupers => _backupers.Values;
 
     public BackuperStore(BackuperFactory factory, IBackuperConnection backuperConnection) {
-        _backupers = new List<IBackuper>();
+        _backupers = new();
         _initializationTask = new(Initialize);
         _connection = backuperConnection;
         _factory = factory;
+
+        BackuperCreated += (a) => BackupersChanged?.Invoke();
+        BackuperDeleted += (a) => BackupersChanged?.Invoke();
     }
 
     public async Task Load() {
@@ -34,7 +40,7 @@ public class BackuperStore {
         _backupers.Clear();
         await foreach(var info in infos) {
             var backuper = _factory.CreateBackuper(info);
-            _backupers.Add(backuper);
+            _backupers.Add(backuper.Info.Name, backuper);
         }
     }
 
@@ -45,12 +51,34 @@ public class BackuperStore {
         if(result == CreateBackuperCode.Success) {
 
             var backuper = _factory.CreateBackuper(info);
-            _backupers.Add(backuper);
-            OnBackuperCreated?.Invoke(backuper);
+            _backupers.Add(backuper.Info.Name, backuper);
+            BackuperCreated?.Invoke(backuper);
         }
 
         return result;
 
+    }
+
+    public async Task<DeleteBackuperCode> DeleteBackuperAsync(string name) {
+
+        if(string.IsNullOrWhiteSpace(name)) {
+            return DeleteBackuperCode.NameNotValid;
+        }
+
+        if(!_backupers.TryGetValue(name, out var backuper)) {
+            return DeleteBackuperCode.BackuperDoesNotExist;
+        }
+
+        await backuper.BinBackupsAsync();
+        var result = _connection.DeleteBackuper(name);
+
+        if(result == DeleteBackuperCode.Success) {
+
+            _backupers.Remove(name);
+            BackuperDeleted?.Invoke(backuper);
+        }
+
+        return result;
     }
 
 }

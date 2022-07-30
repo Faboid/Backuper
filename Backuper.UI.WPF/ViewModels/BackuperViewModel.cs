@@ -1,5 +1,7 @@
 ﻿using Backuper.Core;
 using Backuper.Core.Models;
+using Backuper.UI.WPF.Commands;
+using Backuper.UI.WPF.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +23,18 @@ public class BackuperViewModel : ViewModelBase {
 
     public ICommand? BackupCommand { get; }
     public ICommand? EditCommand { get; }
-    public ICommand? DeleteCommand { get; }
+    public ICommand DeleteCommand { get; }
 
-    public BackuperViewModel(IBackuper backuper) {
-        _backuper = backuper;
-    }
-
-    public BackuperViewModel(string name, string source, int maxVersions, bool updateOnBoot) {
+    public BackuperViewModel(BackuperStore backuperStore, string name, string source, int maxVersions, bool updateOnBoot) {
         var info = new BackuperInfo(name, source, maxVersions, updateOnBoot);
         BackuperFactory factory = new();
         _backuper = factory.CreateBackuper(info);
+        DeleteCommand = new DeleteBackuperCommand(backuperStore);
+    }
+
+    public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper) {
+        _backuper = backuper;
+        DeleteCommand = new DeleteBackuperCommand(backuperStore);
     }
 
 }
