@@ -12,9 +12,9 @@ namespace Backuper.Core {
         bool IsUpdated { get; }
 
         //todo - use better returns to send back results to the UI
-        Task EraseBackupsAsync(CancellationToken token);
-        Task BinBackupsAsync(CancellationToken token);
-        Task StartBackupAsync(CancellationToken token);
+        Task EraseBackupsAsync(CancellationToken token = default);
+        Task BinBackupsAsync(CancellationToken token = default);
+        Task StartBackupAsync(CancellationToken token = default);
 
     }
 }
