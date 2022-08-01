@@ -1,4 +1,5 @@
 ﻿using Backuper.UI.WPF.Stores;
+using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -7,15 +8,17 @@ namespace Backuper.UI.WPF.Commands;
 public class DeleteBackuperCommand : AsyncCommandBase {
 
     private readonly BackuperStore _backuperStore;
+    private readonly BackuperViewModel _backuperVM;
 
-    public DeleteBackuperCommand(BackuperStore backuperStore) {
+    public DeleteBackuperCommand(BackuperViewModel backuperVM, BackuperStore backuperStore) {
         _backuperStore = backuperStore;
+        _backuperVM = backuperVM;
     }
 
     protected override async Task ExecuteAsync(object? parameter) {
 
-        var name = parameter as string;
-        var result = await _backuperStore.DeleteBackuperAsync(name!);
+        var name = _backuperVM.Name;
+        var result = await _backuperStore.DeleteBackuperAsync(name);
 
         var message = result switch {
             Core.Saves.DeleteBackuperCode.Success => $"The backuper {name} has been deleted successfully.",

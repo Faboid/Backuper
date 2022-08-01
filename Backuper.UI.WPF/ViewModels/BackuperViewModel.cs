@@ -29,12 +29,12 @@ public class BackuperViewModel : ViewModelBase {
         var info = new BackuperInfo(name, source, maxVersions, updateOnBoot);
         BackuperFactory factory = new();
         _backuper = factory.CreateBackuper(info);
-        DeleteCommand = new DeleteBackuperCommand(backuperStore);
+        DeleteCommand = new DeleteBackuperCommand(this, backuperStore);
     }
 
     public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper) {
         _backuper = backuper;
-        DeleteCommand = new DeleteBackuperCommand(backuperStore);
+        DeleteCommand = new DeleteBackuperCommand(this, backuperStore);
     }
 
 }

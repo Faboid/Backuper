@@ -94,7 +94,6 @@
                             <Button
                                 Content="Delete"
                                 Command="{Binding DeleteCommand}"
-                                CommandParameter="{Binding Name}"
                                 />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
