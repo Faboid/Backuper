@@ -3,8 +3,6 @@ using Backuper.Core.Models;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Stores;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,6 +42,8 @@ public class BackuperViewModel : ViewModelBase {
     }
 
     private async Task Edit() {
+
+        //todo - implement the EditBackuperView to use this button
 
     }
 
