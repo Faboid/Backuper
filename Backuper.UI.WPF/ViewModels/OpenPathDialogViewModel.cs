@@ -3,8 +3,10 @@ using Backuper.UI.WPF.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Backuper.UI.WPF.ViewModels {
@@ -16,9 +18,12 @@ namespace Backuper.UI.WPF.ViewModels {
         private readonly ObservableCollection<DirectoryInfo> _directories = new();
         private readonly ObservableCollection<FileInfo> _files = new();
 
+        private readonly ICollectionView _directoriesCollectionView;
+        private readonly ICollectionView _filesCollectionView;
+
         public IEnumerable<DirectoryInfo> Roots => _roots;
-        public IEnumerable<DirectoryInfo> Directories => _directories.Where(x => x.Name.Contains(Search, StringComparison.InvariantCultureIgnoreCase));
-        public IEnumerable<FileInfo> Files => _files.Where(x => x.Name.Contains(Search, StringComparison.InvariantCultureIgnoreCase));
+        public IEnumerable<DirectoryInfo> Directories => _directories;
+        public IEnumerable<FileInfo> Files => _files;
 
         private string _currentPath = _defaultPath;
         public string CurrentPath {
@@ -33,11 +38,10 @@ namespace Backuper.UI.WPF.ViewModels {
         private string _search = "";
         public string Search {
             get { return _search; }
-            set { 
-                _search = value;
-                OnPropertyChanged(nameof(Search));
-                OnPropertyChanged(nameof(Directories));
-                OnPropertyChanged(nameof(Files));
+            set {
+                SetAndRaise(nameof(Search), ref _search, value);
+                _directoriesCollectionView.Refresh();
+                _filesCollectionView.Refresh();
             }
         }
 
@@ -65,6 +69,12 @@ namespace Backuper.UI.WPF.ViewModels {
         public ICommand DirectoriesDoubleClickCommand { get; }
 
         public OpenPathDialogViewModel(NavigationService<ViewModelBase> navigateToSender, Action<string> setter) {
+
+            _directoriesCollectionView = CollectionViewSource.GetDefaultView(_directories);
+            _filesCollectionView = CollectionViewSource.GetDefaultView(_files);
+            _directoriesCollectionView.Filter = SearchFilter;
+            _filesCollectionView.Filter = SearchFilter;
+
             CancelCommand = new NavigateCommand<ViewModelBase>(navigateToSender);
             SubmitCommand = new SetValueAndReturnCommand(this, navigateToSender, setter);
             ParentFolderCommand = new MoveToParentFolderCommand(this);
@@ -77,6 +87,15 @@ namespace Backuper.UI.WPF.ViewModels {
             }
 
             Load();
+        }
+
+        private bool SearchFilter(object obj) {
+
+            if(obj is FileSystemInfo info) {
+                return info.Name.Contains(Search, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            return false;
         }
 
         private void Load() {
@@ -95,9 +114,6 @@ namespace Backuper.UI.WPF.ViewModels {
 
                 SelectedPath = new DirectoryInfo(_currentPath);
             }
-
-            OnPropertyChanged(nameof(Directories));
-            OnPropertyChanged(nameof(Files));
         }
 
         private static bool HasPermissions(FileSystemInfo path) {
