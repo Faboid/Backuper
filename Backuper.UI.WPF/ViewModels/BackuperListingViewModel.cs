@@ -14,7 +14,7 @@ namespace Backuper.UI.WPF.ViewModels {
     public class BackuperListingViewModel : ViewModelBase {
 
         private readonly BackuperStore _backuperStore;
-        private readonly ICollectionView BackupersCollectionView;
+        private readonly ICollectionView _backupersCollectionView;
 
         private readonly ObservableCollection<BackuperViewModel> _backupers;
         public IEnumerable<BackuperViewModel> Backupers => _backupers;
@@ -24,7 +24,7 @@ namespace Backuper.UI.WPF.ViewModels {
             get => _search;
             set {
                 SetAndRaise(nameof(Search), ref _search, value);
-                BackupersCollectionView.Refresh();
+                _backupersCollectionView.Refresh();
             }
         }
 
@@ -39,8 +39,8 @@ namespace Backuper.UI.WPF.ViewModels {
             LoadBackupersCommand = new LoadReservationsCommand(backuperStore, UpdateBackupers);
             CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
             _backupers = new();
-            BackupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
-            BackupersCollectionView.Filter = BackupersFilter;
+            _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
+            _backupersCollectionView.Filter = BackupersFilter;
 
             _backuperStore = backuperStore;
             _backuperStore.BackupersChanged += RefreshBackupers;
