@@ -2,17 +2,31 @@
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Backuper.UI.WPF.ViewModels {
     public class BackuperListingViewModel : ViewModelBase {
 
         private readonly BackuperStore _backuperStore;
+        private readonly ICollectionView BackupersCollectionView;
 
         private readonly ObservableCollection<BackuperViewModel> _backupers;
         public IEnumerable<BackuperViewModel> Backupers => _backupers;
+
+        private string _search = "";
+        public string Search {
+            get => _search;
+            set {
+                SetAndRaise(nameof(Search), ref _search, value);
+                BackupersCollectionView.Refresh();
+            }
+        }
 
         public ICommand? ChangeBackupPathCommand { get; }
         public ICommand? ToggleAutomaticBackupsCommand { get; }
@@ -25,6 +39,9 @@ namespace Backuper.UI.WPF.ViewModels {
             LoadBackupersCommand = new LoadReservationsCommand(backuperStore, UpdateBackupers);
             CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
             _backupers = new();
+            BackupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
+            BackupersCollectionView.Filter = BackupersFilter;
+
             _backuperStore = backuperStore;
             _backuperStore.BackupersChanged += RefreshBackupers;
         }
@@ -37,6 +54,15 @@ namespace Backuper.UI.WPF.ViewModels {
 
         private void RefreshBackupers() {
             LoadBackupersCommand?.Execute(null);
+        }
+
+        private bool BackupersFilter(object obj) {
+
+            if(obj is BackuperViewModel vm) {
+                return vm.Name.Contains(Search, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            return false;
         }
 
         private void UpdateBackupers(IEnumerable<IBackuper> backupers) {

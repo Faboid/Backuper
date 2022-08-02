@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Backuper.UI.WPF.Views"
+             xmlns:components="clr-namespace:Backuper.UI.WPF.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
@@ -28,16 +29,19 @@
         <Button
             Grid.Column="1"
             Grid.Row="1"
-            Content="Change Backup Main Path"
-            Command="{Binding ChangeBackupPathCommand}"
+            Content="Settings"
+            Command="{Binding SettingsCommand}"
             />
 
-        <Button
+        <components:TextBoxWithButton
             Grid.Column="2"
             Grid.Row="1"
-            Content="Turn ON Automatic Backuping"
-            Command="{Binding ToggleAutomaticBackupsCommand}"
-        />
+            Padding="2"
+            FontSize="14"
+            PreviewText="Search Backuper..."
+            ButtonText="🔍"
+            Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
+            />
 
         <Button
             Grid.Column="4"
