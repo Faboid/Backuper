@@ -15,10 +15,10 @@ using System.Windows.Shapes;
 
 namespace Backuper.UI.WPF.Views {
     /// <summary>
-    /// Interaction logic for MainPathEditorView.xaml
+    /// Interaction logic for SettingsView.xaml
     /// </summary>
-    public partial class MainPathEditorView : UserControl {
-        public MainPathEditorView() {
+    public partial class SettingsView : UserControl {
+        public SettingsView() {
             InitializeComponent();
         }
     }
