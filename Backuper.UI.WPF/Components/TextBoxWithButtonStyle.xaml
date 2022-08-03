@@ -15,18 +15,26 @@
                             <SolidColorBrush x:Key="WhiteText" Color="White" Opacity="0.67"/>
                         </ControlTemplate.Resources>
 
-                        <StackPanel>
-                            
-                            <Border
-                            x:Name="PART_Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{StaticResource WhiteText}"
-                            BorderThickness="2"
+                        <Grid
                             >
 
-                                <Grid
-                                Margin="{TemplateBinding Padding}"
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Border
+                                Grid.Row="0"
+                                DockPanel.Dock="Top"
+                                x:Name="PART_Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource WhiteText}"
+                                BorderThickness="2"
                                 >
+
+                                <Grid
+                                    Margin="{TemplateBinding Padding}"
+                                    >
 
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -34,46 +42,48 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Label
-                                    Grid.Column="0"
-                                    x:Name="PART_PreviewTextLabel" 
-                                    Content="{Binding Path=PreviewText, RelativeSource={RelativeSource AncestorType=TextBox}}" 
-                                    Focusable="False" 
-                                    IsHitTestVisible="False"
-                                    Foreground="Gray" 
-                                    Background="Transparent"
-                                    Margin="2, 0, 0, 0"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Padding="{TemplateBinding Padding}" 
-                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Visibility="{Binding Path=Text.IsEmpty, RelativeSource={RelativeSource AncestorType=TextBox}, Converter={StaticResource MyBoolToVisibilityConverter}}"
-                                    />
+                                        Grid.Column="0"
+                                        x:Name="PART_PreviewTextLabel" 
+                                        Content="{Binding Path=PreviewText, RelativeSource={RelativeSource AncestorType=TextBox}}" 
+                                        Focusable="False" 
+                                        IsHitTestVisible="False"
+                                        Foreground="Gray" 
+                                        Background="Transparent"
+                                        Margin="2, 0, 0, 0"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Padding="{TemplateBinding Padding}" 
+                                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Visibility="{Binding Path=Text.IsEmpty, RelativeSource={RelativeSource AncestorType=TextBox}, Converter={StaticResource MyBoolToVisibilityConverter}}"
+                                        />
 
                                     <ScrollViewer 
-                                    Grid.Column="0"
-                                    x:Name="PART_ContentHost" 
-                                    Padding="{TemplateBinding Padding}"
-                                    Focusable="false" 
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalScrollBarVisibility="Hidden" 
-                                    VerticalScrollBarVisibility="Hidden"
-                                    />
+                                        Grid.Column="0"
+                                        x:Name="PART_ContentHost" 
+                                        Padding="{TemplateBinding Padding}"
+                                        Focusable="false" 
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalScrollBarVisibility="Hidden" 
+                                        VerticalScrollBarVisibility="Hidden"
+                                        />
 
                                     <Button
-                                    Grid.Column="1"
-                                    Margin="1"
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource AncestorType=TextBox}}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Content="{Binding Path=ButtonText, RelativeSource={RelativeSource AncestorType=TextBox}}"
-                                    MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                    MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
-                                    />
+                                        Grid.Column="1"
+                                        Margin="1"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding Path=ButtonCommand, RelativeSource={RelativeSource AncestorType=TextBox}}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Content="{Binding Path=ButtonText, RelativeSource={RelativeSource AncestorType=TextBox}}"
+                                        MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                        MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                                        />
 
                                 </Grid>
                             </Border>
 
-                            <ItemsControl ItemsSource="{TemplateBinding Validation.Errors}">
+                            <ItemsControl 
+                                ItemsSource="{TemplateBinding Validation.Errors}"
+                                Grid.Row="1">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Label 
@@ -87,7 +97,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                        </StackPanel>
+                        </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">
