@@ -44,6 +44,10 @@ public class BackuperStore {
         }
     }
 
+    public bool BackuperExists(string name) {
+        return _backupers.ContainsKey(name);
+    }
+
     public async Task<CreateBackuperCode> CreateBackuperAsync(BackuperInfo info) {
 
         var result = await _connection.CreateBackuperAsync(info);
