@@ -15,16 +15,17 @@
                             <SolidColorBrush x:Key="WhiteText" Color="White" Opacity="0.67"/>
                         </ControlTemplate.Resources>
 
-                        <Border
+                        <StackPanel>
+                            <Border
                             x:Name="PART_Border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{StaticResource WhiteText}"
                             BorderThickness="2"
                             >
 
-                            <Grid
+                                <Grid
                                 >
-                                <Label
+                                    <Label
                                     x:Name="PART_PreviewTextLabel" 
                                     Content="{Binding Path=PreviewText, RelativeSource={RelativeSource AncestorType=TextBox}}" 
                                     Focusable="False" 
@@ -39,7 +40,7 @@
                                     Visibility="{Binding Path=Text.IsEmpty, RelativeSource={RelativeSource AncestorType=TextBox}, Converter={StaticResource MyBoolToVisibilityConverter}}"
                                     />
 
-                                <ScrollViewer 
+                                    <ScrollViewer 
                                     x:Name="PART_ContentHost" 
                                     Padding="{TemplateBinding Padding}"
                                     Focusable="false" 
@@ -47,8 +48,23 @@
                                     VerticalScrollBarVisibility="Hidden"
                                     />
 
-                            </Grid>
-                        </Border>
+                                </Grid>
+                            </Border>
+
+                            <ItemsControl ItemsSource="{TemplateBinding Validation.Errors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label 
+                                            FontSize="12"
+                                            Foreground="Red" 
+                                            Background="Transparent" 
+                                            Content="{Binding ErrorContent}"
+                                            />
+
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">
