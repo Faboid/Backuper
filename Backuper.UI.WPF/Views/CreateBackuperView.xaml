@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
             <Style.Setters>
-                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
             </Style.Setters>
         </Style>
 
@@ -122,6 +122,7 @@
                 Content="Submit"
                 Grid.Column="1"
                 Margin="10, 10"
+                IsEnabled="{Binding CanCreate}"
                 Command="{Binding SubmitCommand}"
                 />
 
