@@ -54,7 +54,7 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="2"
-            Text="{Binding BackuperName}"
+            Text="{Binding BackuperName, UpdateSourceTrigger=PropertyChanged}"
             />
 
         <Label
@@ -66,7 +66,7 @@
         <components:TextBoxWithButton
             Grid.Row="2"
             Grid.Column="2"
-            Text="{Binding SourcePath}"
+            Text="{Binding SourcePath, UpdateSourceTrigger=PropertyChanged}"
             ButtonCommand="{Binding OpenPathDialogCommand}"
             ButtonText="🔍"
             />
@@ -80,7 +80,7 @@
         <TextBox
             Grid.Row="3"
             Grid.Column="2"
-            Text="{Binding MaxVersions}"
+            Text="{Binding MaxVersions, UpdateSourceTrigger=PropertyChanged}"
             />
 
         <Label
