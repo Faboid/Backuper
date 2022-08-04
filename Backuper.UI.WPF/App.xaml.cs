@@ -32,12 +32,20 @@ namespace Backuper.UI.WPF {
             base.OnStartup(e);
         }
 
+        private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {
+            return new(_backuperStore, backuper, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
+        }
+
         private BackuperListingViewModel CreateBackuperListingViewModel() {
-            return BackuperListingViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel));
+            return BackuperListingViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel), CreateBackuperViewModel);
         }
 
         private CreateBackuperViewModel CreateCreateBackuperViewModel() {
             return new(_backuperStore, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+        }
+
+        private EditBackuperViewModel CreateEditBackuperViewModel(IBackuper backuper) {
+            return new(backuper.Info, _backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
         }
 
     }

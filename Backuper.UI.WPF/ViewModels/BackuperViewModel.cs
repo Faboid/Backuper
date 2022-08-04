@@ -1,6 +1,7 @@
 ﻿using Backuper.Core;
 using Backuper.Core.Models;
 using Backuper.UI.WPF.Commands;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Threading;
@@ -25,10 +26,11 @@ public class BackuperViewModel : ViewModelBase {
     public ICommand? EditCommand { get; }
     public ICommand DeleteCommand { get; }
 
-    public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper) {
+    public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper, NavigationService<EditBackuperViewModel> navigatorToEditBackuperViewModel) {
         _backuper = backuper;
         _backuperStore = backuperStore;
         BackupCommand = new AsyncRelayCommand(Backup);
+        EditCommand = new NavigateCommand<EditBackuperViewModel>(navigatorToEditBackuperViewModel);
         DeleteCommand = new AsyncRelayCommand(Delete);
     }
 
@@ -38,12 +40,6 @@ public class BackuperViewModel : ViewModelBase {
         OnPropertyChanged(nameof(Updated));
 
         MessageBox.Show($"{Name} has been backed up successfully.");
-
-    }
-
-    private async Task Edit() {
-
-        //todo - implement the EditBackuperView to use this button
 
     }
 
@@ -62,33 +58,4 @@ public class BackuperViewModel : ViewModelBase {
 
     }
 
-}
-
-/// <summary>
-/// Temporary class that will be used to test the UI's functionality.
-/// </summary>
-internal class BackuperMock : IBackuper {
-
-    public BackuperMock(BackuperInfo info) {
-        Info = info;
-    }
-
-    public BackuperInfo Info { get; }
-    public bool IsUpdated { get; } = true;
-
-    public Task BinBackupsAsync(CancellationToken token) {
-        throw new NotImplementedException();
-    }
-
-    public void Dispose() {
-        throw new NotImplementedException();
-    }
-
-    public Task EraseBackupsAsync(CancellationToken token) {
-        throw new NotImplementedException();
-    }
-
-    public Task StartBackupAsync(CancellationToken token) {
-        throw new NotImplementedException();
-    }
 }
