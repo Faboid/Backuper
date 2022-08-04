@@ -93,6 +93,7 @@
             Grid.Row="4"
             Grid.Column="2"
             FontSize="17"
+            SelectedIndex="1"
             >
             <ComboBoxItem Content="No"/>
             <ComboBoxItem Content="Yes" 
