@@ -3,10 +3,119 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Backuper.UI.WPF.Views"
+             xmlns:local="clr-namespace:Backuper.UI.WPF.Views" 
+             xmlns:converters="clr-namespace:Backuper.UI.WPF.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+
+    <UserControl.Resources>
+        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Style.Setters>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+            </Style.Setters>
+        </Style>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Style.Setters>
+                <Setter Property="Margin" Value="0, 3"/>
+            </Style.Setters>
+        </Style>
+
+        <converters:BoolToYesOrNoSelectedIndexConverter x:Key="BoolToYesOrNoSelectedIndexConverter"/>
+
+    </UserControl.Resources>
+
+    <Grid
+        Margin="5"
+        Background="#FF272121"
+        >
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="15"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition MinHeight="50" MaxHeight="80" Height="*"/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+
+        <Label
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="Name: "
+            />
+
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="2"
+            Text="{Binding BackuperName, UpdateSourceTrigger=PropertyChanged}"
+            />
+
+        <Label
+            Grid.Row="2"
+            Grid.Column="1"
+            Content="Max Versions: "
+            />
+
+        <TextBox
+            Grid.Row="2"
+            Grid.Column="2"
+            Text="{Binding MaxVersions, UpdateSourceTrigger=PropertyChanged}"
+            />
+
+        <Label
+            Grid.Row="3"
+            Grid.Column="1"
+            Content="UpdateOnBoot: "
+            />
+
+        <ComboBox
+            Grid.Row="3"
+            Grid.Column="2"
+            FontSize="17"
+            SelectedIndex="{Binding UpdateOnBoot, Converter={StaticResource BoolToYesOrNoSelectedIndexConverter}}"
+            >
+            <ComboBoxItem Content="No"/>
+            <ComboBoxItem Content="Yes" 
+                          IsSelected="{Binding UpdateOnBoot, Mode=OneWayToSource}"
+                          />
+        </ComboBox>
+
+        <Grid
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                Content="Cancel"
+                Grid.Column="0"
+                Margin="10, 10"
+                Command="{Binding CancelCommand}"
+                />
+
+            <Button
+                Content="Submit"
+                Grid.Column="1"
+                Margin="10, 10"
+                IsEnabled="{Binding CanEdit}"
+                Command="{Binding SubmitCommand}"
+                />
+
+        </Grid>
+
     </Grid>
 </UserControl>
