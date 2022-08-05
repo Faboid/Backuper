@@ -17,7 +17,8 @@ public class FileBackuper : IBackuper {
     public BackuperInfo Info { get; private set; }
     public bool IsUpdated { get; private set; }
 
-    private readonly Paths paths;
+    private Paths paths;
+    private readonly PathsBuilder pathsBuilder;
     private readonly Locker locker = new();
 
     public async Task BinBackupsAsync(CancellationToken token = default) {
@@ -36,6 +37,32 @@ public class FileBackuper : IBackuper {
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
+    public async Task EditBackuperAsync(string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null, CancellationToken token = default) {
+        using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        if(token.IsCancellationRequested)
+            return;
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
+
+        if(newMaxVersions != null) {
+            Info.MaxVersions = newMaxVersions <= 0 ? Info.MaxVersions : (int)newMaxVersions;
+        }
+
+        Info.UpdateOnBoot = newUpdateOnBoot ?? Info.UpdateOnBoot;
+
+        //if the name is updated, the backups must migrate to the new directory
+        if(!string.IsNullOrWhiteSpace(newName) && Info.Name != newName) {
+            DirectoryInfo currDir = new(paths.BackupsDirectory);
+            Paths newPaths = pathsBuilder.Build(newName);
+
+            await currDir.CopyToAsync(newPaths.BackupsDirectory);
+            currDir.Delete(true);
+
+            paths = newPaths;
+        }
+
+        DeleteExtraVersions();
+    }
+
     public async Task StartBackupAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
         using var threadHandler = ThreadsHandler.SetScopedForeground();
@@ -49,13 +76,16 @@ public class FileBackuper : IBackuper {
         var filePath = Path.Combine(path, Source.Name);
         await Source.CopyToAsync(filePath);
 
-        //delete extra versions
+        DeleteExtraVersions();
+
+        IsUpdated = true;
+    }
+
+    private void DeleteExtraVersions() {
         Directory.EnumerateDirectories(paths.BackupsDirectory)
             .OrderByDescending(x => Directory.GetCreationTime(x))
             .Skip(Info.MaxVersions)
             .ForEach(x => Directory.Delete(x, true));
-
-        IsUpdated = true;
     }
 
     private bool IsUpToDate() {

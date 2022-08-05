@@ -7,6 +7,7 @@ public class DirectoryBackuper : IBackuper {
 
     public DirectoryBackuper(BackuperInfo info, PathsBuilder pathsBuilder) {
         Info = info;
+        this.pathsBuilder = pathsBuilder;
         paths = pathsBuilder.Build(info.Name);
         Directory.CreateDirectory(paths.BackupsDirectory);
         Source = new(info.SourcePath);
@@ -17,7 +18,8 @@ public class DirectoryBackuper : IBackuper {
     public BackuperInfo Info { get; init; }
     public bool IsUpdated { get; private set; }
 
-    private readonly Paths paths;
+    private Paths paths;
+    private readonly PathsBuilder pathsBuilder;
     private readonly Locker locker = new();
 
     //todo - these methods delete the main directory of this backuper.
@@ -30,6 +32,7 @@ public class DirectoryBackuper : IBackuper {
         await new DirectoryInfo(paths.BackupsDirectory).CopyToAsync(paths.BinDirectory).ConfigureAwait(false);
         Directory.Delete(paths.BackupsDirectory, true);
     }
+
     public async Task EraseBackupsAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
         if(token.IsCancellationRequested) return;
@@ -37,6 +40,31 @@ public class DirectoryBackuper : IBackuper {
         Directory.Delete(paths.BackupsDirectory, true);
     }
 
+    public async Task EditBackuperAsync(string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null, CancellationToken token = default) {
+        using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        if(token.IsCancellationRequested) return;
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
+
+        if(newMaxVersions != null) {
+            Info.MaxVersions = newMaxVersions <= 0 ? Info.MaxVersions : (int)newMaxVersions;
+        }
+
+        Info.UpdateOnBoot = newUpdateOnBoot ?? Info.UpdateOnBoot;
+
+        //if the name is updated, the backups must migrate to the new directory
+        if(!string.IsNullOrWhiteSpace(newName) && Info.Name != newName) {
+            DirectoryInfo currDir = new(paths.BackupsDirectory);
+            Paths newPaths = pathsBuilder.Build(newName);
+
+            await currDir.CopyToAsync(newPaths.BackupsDirectory);
+            currDir.Delete(true);
+
+            paths = newPaths;
+        }
+
+        DeleteExtraVersions();
+    }
+    
     public async Task StartBackupAsync(CancellationToken token = default) {
         using var lockd = await locker.GetLockAsync(CancellationToken.None).ConfigureAwait(false); //todo - return special code when the lock doesn't get obtained quickly
         using var threadHandler = ThreadsHandler.SetScopedForeground();
@@ -47,14 +75,16 @@ public class DirectoryBackuper : IBackuper {
 
         var path = paths.GenerateNewBackupVersionDirectory();
         await Source.CopyToAsync(path).ConfigureAwait(false);
+        DeleteExtraVersions();
 
-        //delete extra versions
+        IsUpdated = true;
+    }
+
+    private void DeleteExtraVersions() {
         Directory.EnumerateDirectories(paths.BackupsDirectory)
             .OrderByDescending(x => Directory.GetCreationTime(x))
             .Skip(Info.MaxVersions)
             .ForEach(x => Directory.Delete(x, true));
-
-        IsUpdated = true;
     }
 
     private bool IsUpToDate() {
@@ -93,4 +123,5 @@ public class DirectoryBackuper : IBackuper {
         locker.Dispose();
         GC.SuppressFinalize(this);
     }
+
 }

@@ -15,6 +15,7 @@ namespace Backuper.Core {
         Task EraseBackupsAsync(CancellationToken token = default);
         Task BinBackupsAsync(CancellationToken token = default);
         Task StartBackupAsync(CancellationToken token = default);
+        Task EditBackuperAsync(string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null, CancellationToken token = default);
 
     }
 }
