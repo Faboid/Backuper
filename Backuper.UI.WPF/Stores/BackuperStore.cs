@@ -10,9 +10,10 @@ namespace Backuper.UI.WPF.Stores;
 public class BackuperStore {
     
     private readonly Dictionary<string, IBackuper> _backupers;
-    private readonly Lazy<Task> _initializationTask;
     private readonly IBackuperConnection _connection;
     private readonly BackuperFactory _factory;
+    
+    private Lazy<Task> _initializationTask;
 
     public event Action? BackupersChanged;
     public event Action<IBackuper>? BackuperCreated;
@@ -80,6 +81,38 @@ public class BackuperStore {
 
             _backupers.Remove(name);
             BackuperDeleted?.Invoke(backuper);
+        }
+
+        return result;
+    }
+
+    public async Task<UpdateBackuperCode> UpdateBackuperAsync(string name, string? newName, int newMaxVersions = 0, bool? newUpdateOnBoot = null) {
+
+        if(!BackuperExists(name)) {
+            return UpdateBackuperCode.BackuperDoesNotExist;
+        }
+
+        var result = await _connection.UpdateBackuperAsync(name, newName, newMaxVersions, newUpdateOnBoot);
+
+        if(result == UpdateBackuperCode.Success) {
+
+            var updatedName = string.IsNullOrWhiteSpace(newName) ? name : newName;
+            //to avoid duplicating the logic on value validation, it's simpler to refresh the backuper's data.
+            var updatedBackuper = await _connection.GetBackuperAsync(updatedName);
+            _backupers.Remove(name);
+
+            var info = updatedBackuper.Or(null!);
+
+            if(info == null) {
+
+                //if it fails to get the updated value, refresh the whole list.
+                _initializationTask = new(Initialize);
+
+            } else {
+
+                _backupers.Add(info.Name, _factory.CreateBackuper(info));
+
+            }
         }
 
         return result;

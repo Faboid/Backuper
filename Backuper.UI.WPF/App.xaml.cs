@@ -45,7 +45,7 @@ namespace Backuper.UI.WPF {
         }
 
         private EditBackuperViewModel CreateEditBackuperViewModel(IBackuper backuper) {
-            return new(backuper.Info, _backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
+            return new(backuper, _backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
         }
 
     }

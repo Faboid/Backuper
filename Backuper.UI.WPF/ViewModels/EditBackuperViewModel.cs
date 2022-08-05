@@ -1,4 +1,5 @@
-﻿using Backuper.Core.Models;
+﻿using Backuper.Core;
+using Backuper.Core.Models;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
@@ -11,9 +12,11 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
 
-    private readonly BackuperInfo _original;
+    private readonly IBackuper _original;
     private readonly BackuperStore _backuperStore;
     private readonly ErrorsViewModel _errorsViewModel = new();
+    
+    public string PreviousName => _original.Info.Name;
 
     private string _backuperName = "";
     public string BackuperName {
@@ -22,7 +25,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
             SetAndRaise(nameof(BackuperName), ref _backuperName, value);
 
             _errorsViewModel.ClearErrors(nameof(BackuperName));
-            if(value != _original.Name && _backuperStore.BackuperExists(_backuperName)) {
+            if(value != _original.Info.Name && _backuperStore.BackuperExists(_backuperName)) {
                 _errorsViewModel.AddError(nameof(BackuperName), "The given name is already in use.");
             }
             if(string.IsNullOrEmpty(_backuperName)) {
@@ -55,15 +58,15 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
     public ICommand SubmitCommand { get; }
     public ICommand CancelCommand { get; }
 
-    public EditBackuperViewModel(BackuperInfo backuperInfo, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
+    public EditBackuperViewModel(IBackuper backuper, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         _backuperStore = backuperStore;
-        _original = backuperInfo;
+        _original = backuper;
 
-        BackuperName = backuperInfo.Name;
-        MaxVersions = backuperInfo.MaxVersions;
-        UpdateOnBoot = backuperInfo.UpdateOnBoot;
+        BackuperName = backuper.Info.Name;
+        MaxVersions = backuper.Info.MaxVersions;
+        UpdateOnBoot = backuper.Info.UpdateOnBoot;
 
-        SubmitCommand = new EditBackuperCommand(this, backuperStore, navigatorToBackuperListingViewModel);
+        SubmitCommand = new EditBackuperCommand(backuper, this, backuperStore, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
         _errorsViewModel.ErrorsChanged += OnErrorsChanged;
     }
