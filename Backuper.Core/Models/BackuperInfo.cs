@@ -20,7 +20,7 @@ public class BackuperInfo {
     /// The key of this backuper. There cannot be multiple backupers with the same name.
     /// </summary>
     public string Name { get; set; }
-    
+
     /// <summary>
     /// The path to the source; to what this backuper backups.
     /// </summary>
@@ -36,8 +36,32 @@ public class BackuperInfo {
     /// </summary>
     public bool UpdateOnBoot { get; set; }
 
+    public InfoValid IsValid() {
+
+        if(string.IsNullOrWhiteSpace(Name)) {
+            return InfoValid.NameEmptyOrSpaces;
+        }
+
+        if(!Directory.Exists(SourcePath) && !File.Exists(SourcePath)) {
+            return InfoValid.SourceDoesNotExist;
+        }
+
+        if(MaxVersions < 1) {
+            return InfoValid.NegativeMaxVersions;
+        }
+
+        return InfoValid.Valid;
+    }
+
+    public enum InfoValid {
+        Unknown,
+        Valid,
+        NameEmptyOrSpaces,
+        SourceDoesNotExist,
+        NegativeMaxVersions,
+    }
+
     private const string separator = ",";
-    //todo - test the below methods
     public override string ToString() {
         var values = ToStrings();
         return new StringBuilder()
