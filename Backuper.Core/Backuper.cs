@@ -51,6 +51,7 @@ public class Backuper {
             return BackupResponseCode.Cancelled;
         }
 
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
         var newVersionPath = _versioning.GenerateNewBackupVersionDirectory();
         await _backuperService.BackupAsync(newVersionPath, token);
         _versioning.DeleteExtraVersions(MaxVersions);
@@ -83,6 +84,8 @@ public class Backuper {
             return EditBackuperResponseCode.SourceCannotBeChanged;
         }
 
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
+
         if(newInfo.Name != Name) {
             await _versioning.MigrateTo(newInfo.Name);
         }
@@ -93,7 +96,8 @@ public class Backuper {
     }
 
     public async Task BinAsync() {
-        using var lockd = await _locker.GetLockAsync(CancellationToken.None);
+        using var lockd = await _locker.GetLockAsync();
+        using var threadHandler = ThreadsHandler.SetScopedForeground();
         await _versioning.Bin();
         _connection.Delete(Name);
     }
