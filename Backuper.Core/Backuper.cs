@@ -1,6 +1,7 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Core.Rewrite;
 using Backuper.Core.Services;
+using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
 using Backuper.Utils;
 
@@ -11,6 +12,7 @@ public class Backuper {
     private readonly IBackuperService _backuperService;
     private readonly IBackuperConnection _connection;
     private readonly IBackuperVersioning _versioning;
+    private readonly IBackuperValidator _validator;
     private readonly Locker _locker = new();
 
     private BackuperInfo _info;
@@ -23,13 +25,20 @@ public class Backuper {
                 BackuperInfo info,
                 IBackuperService backuperService,
                 IBackuperConnection connection,
-                IBackuperVersioning versioning
-            ) {
+                IBackuperVersioning versioning,
+                IBackuperValidator validator
+        ) {
 
         _info = info;
         _backuperService = backuperService;
         _connection = connection;
         _versioning = versioning;
+        _validator = validator;
+
+        var valid = _validator.IsValid(info);
+        if(valid != BackuperValid.Valid) {
+            throw new ArgumentException($"The given backuper info contains a non-valid value. Error code: {valid}.", nameof(info));
+        }
     }
 
     public async Task<BackupResponseCode> BackupAsync(CancellationToken token = default) {
@@ -52,13 +61,15 @@ public class Backuper {
     public async Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo) {
         using var lockd = await _locker.GetLockAsync(CancellationToken.None);
 
-        var isValid = newInfo.IsValid();
-        if(isValid != BackuperInfo.InfoValid.Valid) {
+        var isValid = _validator.IsValid(newInfo);
+        if(isValid != BackuperValid.Valid) {
 
             return isValid switch {
-                BackuperInfo.InfoValid.NameEmptyOrSpaces => EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces,
-                BackuperInfo.InfoValid.SourceDoesNotExist => EditBackuperResponseCode.NewSourceDoesNotExist,
-                BackuperInfo.InfoValid.NegativeMaxVersions => EditBackuperResponseCode.NewMaxVersionsAreNegative,
+                BackuperValid.NameIsEmpty => EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces,
+                BackuperValid.NameHasIllegalCharacters => EditBackuperResponseCode.NameContainsIllegalCharacters,
+                //BackuperValid.SourceIsEmpty => EditBackuperResponseCode.SourceIsEmptyOrWhiteSpaces,
+                //BackuperValid.SourceDoesNotExist => EditBackuperResponseCode.NewSourceDoesNotExist,
+                BackuperValid.ZeroOrNegativeMaxVersions => EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative,
                 _ => EditBackuperResponseCode.Unknown
             };
         }
@@ -106,7 +117,9 @@ public enum EditBackuperResponseCode {
     Success,
     NewNameIsEmptyOrWhiteSpaces,
     NewSourceDoesNotExist,
-    NewMaxVersionsAreNegative,
+    NewMaxVersionsIsZeroOrNegative,
     NewNameIsOccupied,
     SourceCannotBeChanged,
+    NameContainsIllegalCharacters,
+    SourceIsEmptyOrWhiteSpaces,
 }
