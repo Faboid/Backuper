@@ -32,35 +32,44 @@ public class Backuper {
         _versioning = versioning;
     }
 
-    public async Task BackupAsync(CancellationToken token = default) {
+    public async Task<BackupResponseCode> BackupAsync(CancellationToken token = default) {
         using var lockd = await _locker.GetLockAsync(CancellationToken.None);
-        if(IsUpdated() || token.IsCancellationRequested) {
-            return;
+        if(IsUpdated()) {
+            return BackupResponseCode.AlreadyUpdated;
+        }
+
+        if(token.IsCancellationRequested) {
+            return BackupResponseCode.Cancelled;
         }
 
         var newVersionPath = _versioning.GenerateNewBackupVersionDirectory();
         await _backuperService.BackupAsync(newVersionPath, token);
         _versioning.DeleteExtraVersions(MaxVersions);
+
+        return BackupResponseCode.Success;
     }
 
-    public async Task EditAsync(BackuperInfo newInfo) {
+    public async Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo) {
         using var lockd = await _locker.GetLockAsync(CancellationToken.None);
 
         var isValid = newInfo.IsValid();
         if(isValid != BackuperInfo.InfoValid.Valid) {
 
-            //build up error code response
-
-            return;
+            return isValid switch {
+                BackuperInfo.InfoValid.NameEmptyOrSpaces => EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces,
+                BackuperInfo.InfoValid.SourceDoesNotExist => EditBackuperResponseCode.NewSourceDoesNotExist,
+                BackuperInfo.InfoValid.NegativeMaxVersions => EditBackuperResponseCode.NewMaxVersionsAreNegative,
+                _ => EditBackuperResponseCode.Unknown
+            };
         }
 
         if(_connection.Exists(newInfo.Name)) {
-            return;
+            return EditBackuperResponseCode.NewNameIsOccupied;
         }
 
         //not supporting changing source
         if(newInfo.SourcePath != SourcePath) {
-            return;
+            return EditBackuperResponseCode.SourceCannotBeChanged;
         }
 
         if(newInfo.Name != Name) {
@@ -69,6 +78,7 @@ public class Backuper {
 
         await _connection.OverwriteAsync(Name, newInfo);
         _info = newInfo;
+        return EditBackuperResponseCode.Success;
     }
 
     public async Task BinAsync() {
@@ -81,4 +91,22 @@ public class Backuper {
         return _versioning.GetLastBackupTimeUTC() >= _backuperService.GetSourceLastWriteTimeUTC();
     }
 
+}
+
+public enum BackupResponseCode {
+    Unknown,
+    Success,
+    AlreadyUpdated,
+    Cancelled,
+    Failure
+}
+
+public enum EditBackuperResponseCode {
+    Unknown,
+    Success,
+    NewNameIsEmptyOrWhiteSpaces,
+    NewSourceDoesNotExist,
+    NewMaxVersionsAreNegative,
+    NewNameIsOccupied,
+    SourceCannotBeChanged,
 }
