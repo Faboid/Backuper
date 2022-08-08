@@ -7,7 +7,7 @@ using Backuper.Utils;
 
 namespace Backuper.Core; 
 
-public class Backuper {
+public class Backuper : Rewrite.IBackuper {
 
     private readonly IBackuperService _backuperService;
     private readonly IBackuperConnection _connection;
