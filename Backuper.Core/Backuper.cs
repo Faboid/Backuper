@@ -2,6 +2,7 @@
 using Backuper.Core.Rewrite;
 using Backuper.Core.Services;
 using Backuper.Core.Versioning;
+using Backuper.Utils;
 
 namespace Backuper.Core; 
 
@@ -10,6 +11,7 @@ public class Backuper {
     private readonly IBackuperService _backuperService;
     private readonly IBackuperConnection _connection;
     private readonly IBackuperVersioning _versioning;
+    private readonly Locker _locker = new();
 
     private BackuperInfo _info;
     public string Name => _info.Name;
@@ -31,6 +33,7 @@ public class Backuper {
     }
 
     public async Task BackupAsync(CancellationToken token = default) {
+        using var lockd = await _locker.GetLockAsync(CancellationToken.None);
         if(IsUpdated() || token.IsCancellationRequested) {
             return;
         }
@@ -41,6 +44,7 @@ public class Backuper {
     }
 
     public async Task EditAsync(BackuperInfo newInfo) {
+        using var lockd = await _locker.GetLockAsync(CancellationToken.None);
 
         var isValid = newInfo.IsValid();
         if(isValid != BackuperInfo.InfoValid.Valid) {
@@ -68,6 +72,7 @@ public class Backuper {
     }
 
     public async Task BinAsync() {
+        using var lockd = await _locker.GetLockAsync(CancellationToken.None);
         await _versioning.Bin();
         _connection.Delete(Name);
     }
