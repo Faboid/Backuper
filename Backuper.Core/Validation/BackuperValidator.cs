@@ -9,7 +9,9 @@ public class BackuperValidator : IBackuperValidator {
             return NameValid.EmptyOrWhiteSpace;
         }
 
-        //todo - implement invalid characters check
+        if(Path.GetInvalidFileNameChars().Any(x => name.Contains(x))) {
+            return NameValid.HasIllegalCharacters;
+        }
 
         return NameValid.Valid;
 
