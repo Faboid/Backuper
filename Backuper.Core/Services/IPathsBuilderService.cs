@@ -9,6 +9,8 @@ namespace Backuper.Core.Services {
 
         DateTime VersionNameToDateTime(string versionPath);
         string GenerateNewBackupVersionDirectory(string backupsDirectory);
+        string GetBackuperDirectory(string name);
+        string GetBinDirectory(string name);
 
     }
 }

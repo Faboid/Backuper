@@ -4,7 +4,15 @@ namespace Backuper.Core.Services;
 
 public class PathsBuilderService : IPathsBuilderService {
 
+    public PathsBuilderService(string mainBackupersDirectory) {
+        _mainBackupersDirectory = mainBackupersDirectory;
+    }
+
     private static readonly DateTimeFormatInfo format = new();
+    private readonly string _mainBackupersDirectory;
+
+    public string GetBackuperDirectory(string name) => Path.Combine(_mainBackupersDirectory, "Backups", name);
+    public string GetBinDirectory(string name) => Path.Combine(_mainBackupersDirectory, "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
         var name = new DirectoryInfo(versionPath).Name.Replace('—', ':');
