@@ -24,7 +24,7 @@ internal class BackuperVersioning : IBackuperVersioning {
     }
 
     public string GenerateNewBackupVersionDirectory() {
-        return _pathsBuilderService.GenerateNewBackupVersionDirectory(_backupsDirectory.FullName);
+        return _pathsBuilderService.GenerateNewBackupVersionDirectory(_backuperName);
     }
 
     public async Task MigrateTo(string newName) {

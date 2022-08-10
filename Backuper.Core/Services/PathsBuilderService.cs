@@ -20,11 +20,12 @@ public class PathsBuilderService : IPathsBuilderService {
         return DateTime.ParseExact(name, format.UniversalSortableDateTimePattern, format);
     }
 
-    public string GenerateNewBackupVersionDirectory(string backupsDirectory) {
-        return GenerateNewBackupVersionDirectory(backupsDirectory, DateTime.Now);
+    public string GenerateNewBackupVersionDirectory(string backuperName) {
+        return GenerateNewBackupVersionDirectory(backuperName, DateTime.Now);
     }
 
-    internal static string GenerateNewBackupVersionDirectory(string backupsDirectory, DateTime dateTime) {
+    internal string GenerateNewBackupVersionDirectory(string backuperName, DateTime dateTime) {
+        var backupsDirectory = GetBackuperDirectory(backuperName);
         var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern).Replace(':', '—');
         var version = $"[{GetLatestVersionNumber(backupsDirectory)}]{dateAsString}";
         return Path.Combine(backupsDirectory, version);

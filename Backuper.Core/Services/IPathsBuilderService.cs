@@ -8,7 +8,7 @@ namespace Backuper.Core.Services {
     public interface IPathsBuilderService {
 
         DateTime VersionNameToDateTime(string versionPath);
-        string GenerateNewBackupVersionDirectory(string backupsDirectory);
+        string GenerateNewBackupVersionDirectory(string backuperName);
         string GetBackuperDirectory(string name);
         string GetBinDirectory(string name);
 
