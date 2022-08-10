@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
 
 namespace Backuper.Core.Services; 
 
@@ -10,9 +11,10 @@ public class PathsBuilderService : IPathsBuilderService {
 
     private static readonly DateTimeFormatInfo format = new();
     private readonly string _mainBackupersDirectory;
+    private const string _backuper = "Backuper";
 
-    public string GetBackuperDirectory(string name) => Path.Combine(_mainBackupersDirectory, "Backups", name);
-    public string GetBinDirectory(string name) => Path.Combine(_mainBackupersDirectory, "Bin", name);
+    public string GetBackuperDirectory(string name) => Path.Combine(_mainBackupersDirectory, _backuper, "Backups", name);
+    public string GetBinDirectory(string name) => Path.Combine(_mainBackupersDirectory, _backuper, "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
         var name = new DirectoryInfo(versionPath).Name.Replace('—', ':');
@@ -27,7 +29,7 @@ public class PathsBuilderService : IPathsBuilderService {
     internal string GenerateNewBackupVersionDirectory(string backuperName, DateTime dateTime) {
         var backupsDirectory = GetBackuperDirectory(backuperName);
         var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern).Replace(':', '—');
-        var version = $"[{GetLatestVersionNumber(backupsDirectory)}]{dateAsString}";
+        var version = $"[{GetLatestVersionNumber(backupsDirectory) + 1}]{dateAsString}";
         return Path.Combine(backupsDirectory, version);
     }
 
