@@ -1,4 +1,4 @@
-﻿namespace Backuper.Utils.Wrappers; 
+﻿namespace Backuper.DependencyInversion;
 
 public interface IDateTimeProvider {
     DateTime Now { get; }

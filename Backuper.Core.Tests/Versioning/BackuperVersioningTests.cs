@@ -1,12 +1,7 @@
 ﻿using Backuper.Core.Services;
 using Backuper.Core.Versioning;
-using Backuper.Utils.Wrappers;
+using Backuper.DependencyInversion;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Backuper.Core.Tests.Versioning {
     public class BackuperVersioningTests : IDisposable {

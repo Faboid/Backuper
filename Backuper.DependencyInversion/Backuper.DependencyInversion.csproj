@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Backuper.DependencyInversion\Backuper.DependencyInversion.csproj" />
     <ProjectReference Include="..\Backuper.Extensions\Backuper.Extensions.csproj" />
-    <ProjectReference Include="..\Backuper.Utils\Backuper.Utils.csproj" />
   </ItemGroup>
 
 </Project>

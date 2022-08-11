@@ -1,6 +1,6 @@
 ﻿using Backuper.Core.Services;
+using Backuper.DependencyInversion;
 using Backuper.Extensions;
-using Backuper.Utils.Wrappers;
 using Moq;
 
 namespace Backuper.Core.Tests.Services; 

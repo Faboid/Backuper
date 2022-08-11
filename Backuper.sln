@@ -23,6 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.TestUtils", "Backu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.UI.WPF", "Backuper.UI.WPF\Backuper.UI.WPF.csproj", "{846DFDA2-849A-4E03-9126-8A5D9E1B732D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.DependencyInversion", "Backuper.DependencyInversion\Backuper.DependencyInversion.csproj", "{3ED37D42-7B6C-4730-BD6A-9C2495109409}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424} = {9DF8066D-12E9-4E86-B9AB-FD4D886F1424}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +74,10 @@ Global
 		{846DFDA2-849A-4E03-9126-8A5D9E1B732D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{846DFDA2-849A-4E03-9126-8A5D9E1B732D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{846DFDA2-849A-4E03-9126-8A5D9E1B732D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
