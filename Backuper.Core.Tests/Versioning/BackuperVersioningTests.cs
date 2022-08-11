@@ -1,5 +1,6 @@
 ﻿using Backuper.Core.Services;
 using Backuper.Core.Versioning;
+using Backuper.Utils.Wrappers;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Backuper.Core.Tests.Versioning {
-    public class BackuperVersioningTests {
+    public class BackuperVersioningTests : IDisposable {
 
         public BackuperVersioningTests() {
-            _pathsBuilderService = new PathsBuilderService(mainDirectory);
+            _dateTimeProvider = new DateTimeProvider();
+            _pathsBuilderService = new PathsBuilderService(_mainDirectory, _dateTimeProvider);
             _sutFactory = new BackuperVersioningFactory(_pathsBuilderService); 
         }
 
-        private readonly string mainDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackuperVersioningTestsMainDirectory");
+        private readonly string _mainDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackuperVersioningTestsMainDirectory");
         private readonly IBackuperVersioningFactory _sutFactory;
         private readonly IPathsBuilderService _pathsBuilderService;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
         [Theory]
         [InlineData(1)]
@@ -47,8 +50,10 @@ namespace Backuper.Core.Tests.Versioning {
             //assert
             Assert.Equal(maxVersions, GetCurrentVersions(backuperName));
 
-        }
+            //dispose
+            Directory.Delete(_pathsBuilderService.GetBackuperDirectory(backuperName), true);
 
+        }
 
         [Theory]
         [InlineData("SomeName")]
@@ -69,5 +74,11 @@ namespace Backuper.Core.Tests.Versioning {
 
         }
 
+        public void Dispose() {
+            if(Directory.Exists(_mainDirectory)) {
+                Directory.Delete(_mainDirectory, true);
+            }
+            GC.SuppressFinalize(this);
+        }
     }
 }

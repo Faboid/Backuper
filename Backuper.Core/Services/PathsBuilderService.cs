@@ -1,15 +1,19 @@
-﻿using System.Collections.Concurrent;
+﻿using Backuper.Utils.Wrappers;
+using System.Collections.Concurrent;
 using System.Globalization;
 
 namespace Backuper.Core.Services; 
 
 public class PathsBuilderService : IPathsBuilderService {
 
-    public PathsBuilderService(string mainBackupersDirectory) {
+    public PathsBuilderService(string mainBackupersDirectory, IDateTimeProvider dateTimeProvider) {
         _mainBackupersDirectory = mainBackupersDirectory;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     private static readonly DateTimeFormatInfo format = new();
+    
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _mainBackupersDirectory;
     private const string _backuper = "Backuper";
 
@@ -23,7 +27,7 @@ public class PathsBuilderService : IPathsBuilderService {
     }
 
     public string GenerateNewBackupVersionDirectory(string backuperName) {
-        return GenerateNewBackupVersionDirectory(backuperName, DateTime.Now);
+        return GenerateNewBackupVersionDirectory(backuperName, _dateTimeProvider.Now);
     }
 
     internal string GenerateNewBackupVersionDirectory(string backuperName, DateTime dateTime) {

@@ -1,9 +1,13 @@
 ﻿using Backuper.Core.Services;
 using Backuper.Extensions;
+using Backuper.Utils.Wrappers;
+using Moq;
 
 namespace Backuper.Core.Tests.Services; 
 
 public class PathsBuilderServiceTests {
+
+    private readonly IDateTimeProvider _dateTimeProvider = new DateTimeProvider();
 
     [Theory]
     [InlineData("ghjrhwk")] //paths doesn't currently check for validity.
@@ -12,7 +16,7 @@ public class PathsBuilderServiceTests {
 
         //arrange
         string bcpName = "Heyyo";
-        var paths = new PathsBuilderService(mainDir);
+        var paths = new PathsBuilderService(mainDir, _dateTimeProvider);
 
         //act
         mainDir = Path.Combine(mainDir, "Backuper");
@@ -31,7 +35,7 @@ public class PathsBuilderServiceTests {
         //arrange
         string mainDir = Directory.GetCurrentDirectory();
         var name = "SomeName";
-        var paths = new PathsBuilderService(mainDir);
+        var paths = new PathsBuilderService(mainDir, _dateTimeProvider);
         var backupsDirectory = paths.GetBackuperDirectory(name);
 
         //act
@@ -55,7 +59,7 @@ public class PathsBuilderServiceTests {
         string backuperName = "nameHere";
 
         try {
-            PathsBuilderService paths = new(mainDir);
+            PathsBuilderService paths = new(mainDir, _dateTimeProvider);
 
             //act
             var noDirPathResult = paths.GenerateNewBackupVersionDirectory(backuperName);
@@ -74,7 +78,7 @@ public class PathsBuilderServiceTests {
             var overTenDirResult = GetVersionNumber(overTenDirPath);
 
             Directory.CreateDirectory(overTenDirPath);
-            var newPaths = new PathsBuilderService(mainDir);
+            var newPaths = new PathsBuilderService(mainDir, _dateTimeProvider);
             var newPathsVersionResult = GetVersionNumber(newPaths.GenerateNewBackupVersionDirectory(backuperName));
 
             //assert
@@ -96,15 +100,17 @@ public class PathsBuilderServiceTests {
 
         //arrange
         string mainDir = Directory.GetCurrentDirectory();
-        PathsBuilderService paths = new(mainDir);
         DateTime time = DateTime.Now;
+        Mock<IDateTimeProvider> mockDateTimeProvider = new();
+        mockDateTimeProvider.Setup(x => x.Now).Returns(() => time);
+        PathsBuilderService paths = new(mainDir, mockDateTimeProvider.Object);
         
         //act
-        var version = paths.GenerateNewBackupVersionDirectory("SomeName", time);
+        var version = paths.GenerateNewBackupVersionDirectory("SomeName");
         DateTime parsedTime = paths.VersionNameToDateTime(version);
 
         //assert
-        Assert.Equal(time, parsedTime, TimeSpan.FromSeconds(5));
+        Assert.Equal(time, parsedTime, TimeSpan.FromSeconds(1));
 
     }
 
@@ -113,7 +119,7 @@ public class PathsBuilderServiceTests {
 
         //arrange
         var invalid = Path.GetInvalidFileNameChars();
-        PathsBuilderService paths = new(Directory.GetCurrentDirectory());
+        PathsBuilderService paths = new(Directory.GetCurrentDirectory(), _dateTimeProvider);
 
         //act
         var versDir = paths.GenerateNewBackupVersionDirectory("someName");
