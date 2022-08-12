@@ -1,4 +1,5 @@
 ﻿using Backuper.Core.Services;
+using Backuper.DependencyInversion;
 using Backuper.Extensions;
 using System.Diagnostics.CodeAnalysis;
 
@@ -6,12 +7,14 @@ namespace Backuper.Core.Versioning;
 
 internal class BackuperVersioning : IBackuperVersioning {
 
+    private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IPathsBuilderService _pathsBuilderService;
-    private DirectoryInfo _backupsDirectory;
-    private DirectoryInfo _binDirectory;
+    private IDirectoryInfoWrapper _backupsDirectory;
+    private IDirectoryInfoWrapper _binDirectory;
     private string _backuperName;
 
-    public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService) {
+    public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider) {
+        _directoryInfoProvider = directoryInfoProvider;
         _pathsBuilderService = pathsBuilderService;
         _backuperName = backuperName;
         SetDirectories();
@@ -19,8 +22,8 @@ internal class BackuperVersioning : IBackuperVersioning {
 
     [MemberNotNull(nameof(_backupsDirectory), nameof(_binDirectory))]
     private void SetDirectories() {
-        _backupsDirectory = new(_pathsBuilderService.GetBackuperDirectory(_backuperName));
-        _binDirectory = new(_pathsBuilderService.GetBinDirectory(_backuperName));
+        _backupsDirectory = _directoryInfoProvider.Create(_pathsBuilderService.GetBackuperDirectory(_backuperName));
+        _binDirectory = _directoryInfoProvider.Create(_pathsBuilderService.GetBinDirectory(_backuperName));
     }
 
     public string GenerateNewBackupVersionDirectory() {
@@ -28,7 +31,7 @@ internal class BackuperVersioning : IBackuperVersioning {
     }
 
     public async Task MigrateTo(string newName) {
-        DirectoryInfo newDir = new(_pathsBuilderService.GetBackuperDirectory(newName));
+        IDirectoryInfoWrapper newDir = _directoryInfoProvider.Create(_pathsBuilderService.GetBackuperDirectory(newName));
 
         await _backupsDirectory.CopyToAsync(newDir.FullName);
         _backupsDirectory.Delete(true);
