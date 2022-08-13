@@ -9,8 +9,8 @@ internal class BackuperVersioning : IBackuperVersioning {
 
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IPathsBuilderService _pathsBuilderService;
-    private IDirectoryInfoWrapper _backupsDirectory;
-    private IDirectoryInfoWrapper _binDirectory;
+    private IDirectoryInfo _backupsDirectory;
+    private IDirectoryInfo _binDirectory;
     private string _backuperName;
 
     public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider) {
@@ -31,7 +31,7 @@ internal class BackuperVersioning : IBackuperVersioning {
     }
 
     public async Task MigrateTo(string newName) {
-        IDirectoryInfoWrapper newDir = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(newName));
+        IDirectoryInfo newDir = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(newName));
 
         await _backupsDirectory.CopyToAsync(newDir.FullName);
         _backupsDirectory.Delete(true);

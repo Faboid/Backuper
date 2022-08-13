@@ -2,7 +2,7 @@
 
 namespace Backuper.DependencyInversion;
 
-public class DirectoryInfoWrapper : IDirectoryInfoWrapper {
+public class DirectoryInfoWrapper : IDirectoryInfo {
 
     private readonly DirectoryInfo _info;
 
@@ -23,11 +23,11 @@ public class DirectoryInfoWrapper : IDirectoryInfoWrapper {
 
     public void Delete(bool recursively) => _info.Delete(recursively);
 
-    public IEnumerable<IDirectoryInfoWrapper> EnumerateDirectories(string searchPattern, SearchOption searchOption) {
+    public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption) {
         return _info.EnumerateDirectories(searchPattern, searchOption).Select(x => new DirectoryInfoWrapper(x));
     }
 
-    public IEnumerable<IDirectoryInfoWrapper> EnumerateDirectories() {
+    public IEnumerable<IDirectoryInfo> EnumerateDirectories() {
         return _info.EnumerateDirectories().Select(x => new DirectoryInfoWrapper(x));
     }
 
