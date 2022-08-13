@@ -1,7 +1,7 @@
 ﻿namespace Backuper.DependencyInversion;
 
 public class DirectoryInfoProvider : IDirectoryInfoProvider {
-    public IDirectoryInfoWrapper Create(string path) {
+    public IDirectoryInfoWrapper FromDirectoryPath(string path) {
         return new DirectoryInfoWrapper(path);
     }
 }

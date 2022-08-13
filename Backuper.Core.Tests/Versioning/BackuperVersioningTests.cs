@@ -8,12 +8,14 @@ namespace Backuper.Core.Tests.Versioning {
 
         public BackuperVersioningTests() {
             _dateTimeProvider = new DateTimeProvider();
-            _pathsBuilderService = new PathsBuilderService(_mainDirectory, _dateTimeProvider);
-            _sutFactory = new BackuperVersioningFactory(_pathsBuilderService); 
+            _directoryInfoProvider = new DirectoryInfoProvider();
+            _pathsBuilderService = new PathsBuilderService(_mainDirectory, _dateTimeProvider, _directoryInfoProvider);
+            _sutFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider); 
         }
 
         private readonly string _mainDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackuperVersioningTestsMainDirectory");
         private readonly IBackuperVersioningFactory _sutFactory;
+        private readonly IDirectoryInfoProvider _directoryInfoProvider;
         private readonly IPathsBuilderService _pathsBuilderService;
         private readonly IDateTimeProvider _dateTimeProvider;
 
@@ -59,7 +61,7 @@ namespace Backuper.Core.Tests.Versioning {
             Mock<IPathsBuilderService> _mockPathsBuilderService = new();
             _mockPathsBuilderService.Setup(x => x.GetBackuperDirectory(It.IsAny<string>())).Returns<string>(x => x);
             _mockPathsBuilderService.Setup(x => x.GetBinDirectory(It.IsAny<string>())).Returns<string>(x => x);
-            BackuperVersioning sut = new(backuperName, _mockPathsBuilderService.Object);
+            BackuperVersioning sut = new(backuperName, _mockPathsBuilderService.Object, _directoryInfoProvider);
 
             //act
             _ = sut.GenerateNewBackupVersionDirectory();

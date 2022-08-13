@@ -5,13 +5,15 @@ namespace Backuper.Core.Services;
 
 public class PathsBuilderService : IPathsBuilderService {
 
-    public PathsBuilderService(string mainBackupersDirectory, IDateTimeProvider dateTimeProvider) {
+    public PathsBuilderService(string mainBackupersDirectory, IDateTimeProvider dateTimeProvider, IDirectoryInfoProvider directoryInfoProvider) {
         _mainBackupersDirectory = mainBackupersDirectory;
         _dateTimeProvider = dateTimeProvider;
+        _directoryInfoProvider = directoryInfoProvider;
     }
 
     private static readonly DateTimeFormatInfo format = new();
-    
+
+    private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _mainBackupersDirectory;
     private const string _backuper = "Backuper";
@@ -20,7 +22,7 @@ public class PathsBuilderService : IPathsBuilderService {
     public string GetBinDirectory(string name) => Path.Combine(_mainBackupersDirectory, _backuper, "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
-        var name = new DirectoryInfo(versionPath).Name.Replace('—', ':');
+        var name = _directoryInfoProvider.FromDirectoryPath(versionPath).Name.Replace('—', ':');
         name = name[Math.Max(0, name.IndexOf(']') + 1)..]; //skip version number
         return DateTime.ParseExact(name, format.UniversalSortableDateTimePattern, format);
     }
@@ -40,15 +42,17 @@ public class PathsBuilderService : IPathsBuilderService {
     /// Returns the latest version number, or 0 if there aren't any.
     /// </summary>
     /// <returns></returns>
-    private static int GetLatestVersionNumber(string backupsDirectory) {
+    private int GetLatestVersionNumber(string backupsDirectoryPath) {
 
-        if(!Directory.Exists(backupsDirectory)) {
+        var backupsDirectory = _directoryInfoProvider.FromDirectoryPath(backupsDirectoryPath);
+
+        if(!backupsDirectory.Exists) {
             return 0;
         }
 
-        return Directory
-            .EnumerateDirectories(backupsDirectory)
-            .Select(x => new DirectoryInfo(x).Name)
+        return backupsDirectory
+            .EnumerateDirectories()
+            .Select(x => x.Name)
             .Select(x => x[1..Math.Max(x.IndexOf(']'), 1)])
             .Select(x => (valid: int.TryParse(x, out var val), value: val))
             .Where(x => x.valid)

@@ -17,6 +17,11 @@ public interface IDirectoryInfoWrapper {
     /// </summary>
     DateTime CreationTimeUtc { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the directory exists.
+    /// </summary>
+    bool Exists { get; }
+
     IEnumerable<IDirectoryInfoWrapper> EnumerateDirectories(string searchPattern, SearchOption searchOption);
     IEnumerable<IDirectoryInfoWrapper> EnumerateDirectories();
     Task CopyToAsync(string path);
