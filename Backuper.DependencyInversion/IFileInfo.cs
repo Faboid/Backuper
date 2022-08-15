@@ -1,6 +1,6 @@
 ﻿namespace Backuper.DependencyInversion;
 
-public interface IDirectoryInfo {
+public interface IFileInfo {
 
     /// <summary>
     /// Gets the full path.
@@ -21,13 +21,5 @@ public interface IDirectoryInfo {
     /// Gets a value indicating whether the directory exists.
     /// </summary>
     bool Exists { get; }
-
-    IEnumerable<IFileInfo> EnumerateFiles();
-    IEnumerable<IFileInfo> EnumerateFiles(string searchPattern, SearchOption searchOption);
-
-    IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption);
-    IEnumerable<IDirectoryInfo> EnumerateDirectories();
-    Task CopyToAsync(string path);
-    void Delete(bool recursively);
 
 }

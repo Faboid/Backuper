@@ -31,6 +31,14 @@ public class DirectoryInfoWrapper : IDirectoryInfo {
         return _info.EnumerateDirectories().Select(x => new DirectoryInfoWrapper(x));
     }
 
+    public IEnumerable<IFileInfo> EnumerateFiles() {
+        return _info.EnumerateFiles().Select(x => new FileInfoWrapper(x));
+    }
+
+    public IEnumerable<IFileInfo> EnumerateFiles(string searchPattern, SearchOption searchOption) {
+        throw new NotImplementedException();
+    }
+
     public static implicit operator DirectoryInfoWrapper(DirectoryInfo info) => new(info);
     public static implicit operator DirectoryInfo(DirectoryInfoWrapper info) => info._info;
 
