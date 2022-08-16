@@ -1,7 +1,6 @@
 ﻿using Backuper.Abstractions;
 using Backuper.Core.Services;
 using Backuper.Core.Versioning;
-using Backuper.DependencyInversion;
 using Moq;
 
 namespace Backuper.Core.Tests.Versioning {

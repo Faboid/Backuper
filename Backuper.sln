@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.TestUtils", "Backu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.UI.WPF", "Backuper.UI.WPF\Backuper.UI.WPF.csproj", "{846DFDA2-849A-4E03-9126-8A5D9E1B732D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.Abstractions", "Backuper.DependencyInversion\Backuper.Abstractions.csproj", "{3ED37D42-7B6C-4730-BD6A-9C2495109409}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.Abstractions", "Backuper.Abstractions\Backuper.Abstractions.csproj", "{3ED37D42-7B6C-4730-BD6A-9C2495109409}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424} = {9DF8066D-12E9-4E86-B9AB-FD4D886F1424}
 	EndProjectSection
