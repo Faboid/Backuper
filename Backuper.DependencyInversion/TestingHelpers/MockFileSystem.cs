@@ -1,6 +1,6 @@
 ﻿using Backuper.Extensions;
 using System.Text.RegularExpressions;
-namespace Backuper.DependencyInversion.TestingHelpers;
+namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockFileSystem {
 

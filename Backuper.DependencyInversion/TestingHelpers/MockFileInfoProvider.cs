@@ -1,4 +1,4 @@
-﻿namespace Backuper.DependencyInversion.TestingHelpers;
+﻿namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockFileInfoProvider : IFileInfoProvider {
 

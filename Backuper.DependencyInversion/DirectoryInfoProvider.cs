@@ -1,4 +1,4 @@
-﻿namespace Backuper.DependencyInversion;
+﻿namespace Backuper.Abstractions;
 
 public class DirectoryInfoProvider : IDirectoryInfoProvider {
     public IDirectoryInfo FromDirectoryPath(string path) {

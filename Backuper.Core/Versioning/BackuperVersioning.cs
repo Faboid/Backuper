@@ -1,9 +1,9 @@
-﻿using Backuper.Core.Services;
-using Backuper.DependencyInversion;
+﻿using Backuper.Abstractions;
+using Backuper.Core.Services;
 using Backuper.Extensions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Backuper.Core.Versioning; 
+namespace Backuper.Core.Versioning;
 
 internal class BackuperVersioning : IBackuperVersioning {
 

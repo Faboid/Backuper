@@ -1,5 +1,5 @@
 ﻿using Backuper.Extensions;
-namespace Backuper.DependencyInversion.TestingHelpers; 
+namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockDirectoryInfo : IDirectoryInfo {
 

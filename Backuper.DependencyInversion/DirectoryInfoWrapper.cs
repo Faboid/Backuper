@@ -1,6 +1,6 @@
 ﻿using Backuper.Extensions;
 
-namespace Backuper.DependencyInversion;
+namespace Backuper.Abstractions;
 
 public class DirectoryInfoWrapper : IDirectoryInfo {
 
