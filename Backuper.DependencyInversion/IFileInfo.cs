@@ -22,4 +22,11 @@ public interface IFileInfo {
     /// </summary>
     bool Exists { get; }
 
+    /// <summary>
+    /// Copies the file asynchronously to <paramref name="path"/>.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    Task CopyToAsync(string path);
+
 }

@@ -1,4 +1,6 @@
-﻿namespace Backuper.DependencyInversion; 
+﻿using Backuper.Extensions;
+
+namespace Backuper.DependencyInversion; 
 
 public class FileInfoWrapper : IFileInfo {
 
@@ -17,4 +19,7 @@ public class FileInfoWrapper : IFileInfo {
     public DateTime CreationTimeUtc => _info.CreationTimeUtc;
     public bool Exists => _info.Exists;
 
+    public Task CopyToAsync(string path) {
+        return _info.CopyToAsync(path);
+    }
 }

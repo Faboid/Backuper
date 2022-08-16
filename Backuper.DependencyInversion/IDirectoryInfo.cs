@@ -27,6 +27,12 @@ public interface IDirectoryInfo {
 
     IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption);
     IEnumerable<IDirectoryInfo> EnumerateDirectories();
+
+    /// <summary>
+    /// Copies the directory and its contents asynchronously to <paramref name="path"/>.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     Task CopyToAsync(string path);
     void Delete(bool recursively);
 
