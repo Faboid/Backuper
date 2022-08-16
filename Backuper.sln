@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backuper.Abstractions", "Ba
 		{9DF8066D-12E9-4E86-B9AB-FD4D886F1424} = {9DF8066D-12E9-4E86-B9AB-FD4D886F1424}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backuper.Abstractions.Tests", "Backuper.Abstractions.Tests\Backuper.Abstractions.Tests.csproj", "{5CD41570-C5B7-4550-B5C9-BD881829D3FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ED37D42-7B6C-4730-BD6A-9C2495109409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD41570-C5B7-4550-B5C9-BD881829D3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD41570-C5B7-4550-B5C9-BD881829D3FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD41570-C5B7-4550-B5C9-BD881829D3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD41570-C5B7-4550-B5C9-BD881829D3FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
