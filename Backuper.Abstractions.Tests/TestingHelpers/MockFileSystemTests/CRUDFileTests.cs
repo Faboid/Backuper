@@ -3,8 +3,8 @@ namespace Backuper.Abstractions.Tests.TestingHelpers.MockFileSystemTests;
 public class CRUDFileTests {
 
     [Theory]
-    [InlineData(@"D:\\FileName\\Yo\\sup.txt", "Head", "Body", "Footer")]
-    [InlineData(@"D:\\FileName\\SomeFolder\\empty.txt")]
+    [InlineData("D:\\FileName\\Yo\\sup.txt", "Head", "Body", "Footer")]
+    [InlineData("D:\\FileName\\SomeFolder\\empty.txt")]
     public void CreateThenReadFile(string fileName, params string[] data) {
 
         //arrange
