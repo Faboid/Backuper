@@ -60,6 +60,7 @@ public class MockFileSystem {
     }
 
     public void DeleteDirectory(string path) {
+        EnumerateFiles(path, "*", SearchOption.AllDirectories).ForEach(x => DeleteFile(x.FullName));
         EnumerateDirectories(path, "*", SearchOption.AllDirectories).ForEach(x => _directories.Remove(x.FullName));
         _directories.Remove(path);
     }
