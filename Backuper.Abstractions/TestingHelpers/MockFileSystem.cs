@@ -1,5 +1,4 @@
 ﻿using Backuper.Extensions;
-using System.Text.RegularExpressions;
 namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockFileSystem {
@@ -41,11 +40,11 @@ public class MockFileSystem {
 
         if(searchOption == SearchOption.TopDirectoryOnly) {
             return EnumerateFiles(path)
-                .Where(x => Regex.IsMatch(x.FullName, searchPattern));
+                .Where(x => SearchPatternMatch(x.FullName, searchPattern));
         }
 
         return _files.Keys
-            .Where(x => x.StartsWith(path) && Regex.IsMatch(x, searchPattern))
+            .Where(x => x.StartsWith(path) && SearchPatternMatch(x, searchPattern))
             .Select(x => _fileInfoProvider.FromFilePath(x));
     }
 
@@ -83,17 +82,19 @@ public class MockFileSystem {
 
         if(searchOption == SearchOption.TopDirectoryOnly) {
             return EnumerateDirectories(path)
-                .Where(x => Regex.IsMatch(x.FullName, searchPattern));
+                .Where(x => SearchPatternMatch(x.FullName, searchPattern));
         }
 
         return _directories.Keys
-            .Where(x => x.StartsWith(path) && x != path && Regex.IsMatch(x, searchPattern))
+            .Where(x => x.StartsWith(path) && x != path && SearchPatternMatch(x, searchPattern))
             .Select(x => _directoryInfoProvider.CreateWithCustomCreationTime(x, _directories[x]));
     }
 
     public bool DirectoryExists(string path) {
         return _directories.ContainsKey(path);
     }
+
+    private static bool SearchPatternMatch(string path, string searchPattern) => SearchPattern.Match(path, searchPattern);
 
     private static Stack<DirectoryInfo> PathToStack(string path) {
         Stack<DirectoryInfo> directories = new();
