@@ -2,9 +2,9 @@
 
 public class MockDirectoryInfoProvider : IDirectoryInfoProvider {
 
-    private readonly MockFileSystem _mockFileSystem;
+    private readonly IMockFileSystem _mockFileSystem;
 
-    public MockDirectoryInfoProvider(MockFileSystem mockFileSystem) {
+    public MockDirectoryInfoProvider(IMockFileSystem mockFileSystem) {
         _mockFileSystem = mockFileSystem;
     }
 

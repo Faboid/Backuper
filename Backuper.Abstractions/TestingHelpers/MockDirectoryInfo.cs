@@ -3,13 +3,13 @@ namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockDirectoryInfo : IDirectoryInfo {
 
-    private readonly MockFileSystem _fileSystem;
+    private readonly IMockFileSystem _fileSystem;
     private readonly DirectoryInfo _info;
     private readonly DateTime _creationTime;
 
-    public MockDirectoryInfo(string path, MockFileSystem mockFileSystem) : this(path, mockFileSystem, DateTime.Now) { }
+    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem) : this(path, mockFileSystem, DateTime.Now) { }
 
-    public MockDirectoryInfo(string path, MockFileSystem mockFileSystem, DateTime creationTime) {
+    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem, DateTime creationTime) {
         _info = new DirectoryInfo(path);
         _fileSystem = mockFileSystem;
         _creationTime = creationTime;

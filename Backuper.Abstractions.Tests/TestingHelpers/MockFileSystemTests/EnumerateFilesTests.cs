@@ -4,7 +4,7 @@ namespace Backuper.Abstractions.Tests.TestingHelpers.MockFileSystemTests;
 public class EnumerateFilesTests {
 
     public EnumerateFilesTests() {
-        _sut = new();
+        _sut = new MockFileSystem();
         _sut.CreateDirectory(_directory);
         _filesFullPath = _files.Select(x => Path.Combine(_directory, x)).ToArray();
         _filesFullPath.ForEach(x => _sut.CreateFile(x, Array.Empty<string>()));
@@ -13,7 +13,7 @@ public class EnumerateFilesTests {
     private readonly string _directory = "D:\\Some\\Folder\\And\\Directory";
     private readonly string[] _filesFullPath;
     private readonly string[] _files = new string[] { "FirstFile.txt", "SecondFile.rar", "SomeExecutable.exe", "Nested\\AndFileHere.txt" };
-    private readonly MockFileSystem _sut;
+    private readonly IMockFileSystem _sut;
 
     [Fact]
     public void EnumerateTopDirectoryFiles() {

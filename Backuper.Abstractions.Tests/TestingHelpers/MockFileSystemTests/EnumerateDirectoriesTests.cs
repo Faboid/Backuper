@@ -4,7 +4,7 @@ namespace Backuper.Abstractions.Tests.TestingHelpers.MockFileSystemTests;
 public class EnumerateDirectoriesTests {
 
     public EnumerateDirectoriesTests() {
-        _sut = new();
+        _sut = new MockFileSystem();
         _sut.CreateDirectory(_mainDirectory);
 
         _directoriesFullPath = _directories
@@ -17,7 +17,7 @@ public class EnumerateDirectoriesTests {
 
     private readonly string _mainDirectory = "D:\\Some\\Folder\\And\\Directory";
     private readonly string[] _directoriesFullPath;
-    private readonly MockFileSystem _sut;
+    private readonly IMockFileSystem _sut;
 
     private readonly string[] _directories = new string[] { 
         "Dir", "Dir\\SomeNesting", "Dir\\SomeNesting\\Here", 

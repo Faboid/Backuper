@@ -1,7 +1,7 @@
 ﻿using Backuper.Extensions;
 namespace Backuper.Abstractions.TestingHelpers;
 
-public class MockFileSystem {
+public class MockFileSystem : IMockFileSystem {
 
     private readonly Dictionary<string, string[]> _files = new();
     private readonly Dictionary<string, DateTime> _directories = new();

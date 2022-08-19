@@ -2,12 +2,12 @@
 
 public class MockFileInfo : IFileInfo {
 
-    private readonly MockFileSystem _mockFileSystem;
+    private readonly IMockFileSystem _mockFileSystem;
 
     public string FullName { get; init; }
     public string Name { get; init; }
 
-    public MockFileInfo(string fullName, MockFileSystem mockFileSystem) {
+    public MockFileInfo(string fullName, IMockFileSystem mockFileSystem) {
         FullName = fullName;
         Name = new FileInfo(fullName).Name;
         _mockFileSystem = mockFileSystem;
