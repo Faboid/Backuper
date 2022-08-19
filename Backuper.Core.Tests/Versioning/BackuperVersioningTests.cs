@@ -10,9 +10,9 @@ namespace Backuper.Core.Tests.Versioning;
 public class BackuperVersioningTests {
 
     public BackuperVersioningTests() {
-        _mockFileSystem = new MockFileSystem();
+        _fileSystem = new MockFileSystem();
         _dateTimeProvider = new DateTimeProvider();
-        _directoryInfoProvider = new MockDirectoryInfoProvider(_mockFileSystem);
+        _directoryInfoProvider = new MockDirectoryInfoProvider(_fileSystem);
         _pathsBuilderService = new PathsBuilderService(_mainDirectory, _dateTimeProvider, _directoryInfoProvider);
         _sutFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider);
     }
@@ -22,7 +22,38 @@ public class BackuperVersioningTests {
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IPathsBuilderService _pathsBuilderService;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IMockFileSystem _mockFileSystem;
+    private readonly IMockFileSystem _fileSystem;
+
+    [Theory]
+    [InlineData("ANewName")]
+    [InlineData("SomeOtherNa!me")]
+    public void MigrateCorrectly(string newName) {
+
+        //arrange
+        ResetFileSystem();
+        string backuperName = "SomeName";
+        var backuperPath = _pathsBuilderService.GetBackuperDirectory(backuperName);
+        var lastVerDir = _pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName);
+        string filePath = Path.Combine(lastVerDir, "Hello.txt");
+        string[] fileText = new string[] { "Header", "Body", "Footer" };
+        _fileSystem.CreateDirectory(lastVerDir);
+        _fileSystem.CreateFile(filePath, fileText);
+
+        var sut = _sutFactory.CreateVersioning(backuperName);
+
+        var expectedNewFilePath = filePath.Replace(backuperName, newName);
+
+        //act
+        sut.MigrateTo(newName);
+
+        //assert
+        Assert.False(_fileSystem.DirectoryExists(backuperPath));
+        Assert.True(_fileSystem.DirectoryExists(_pathsBuilderService.GetBackuperDirectory(newName)));
+        Assert.True(_fileSystem.DirectoryExists(lastVerDir.Replace(backuperName, newName)));
+        Assert.True(_fileSystem.FileExists(expectedNewFilePath));
+        Assert.Equal(fileText, _fileSystem.ReadFile(expectedNewFilePath));
+
+    }
 
     [Theory]
     [InlineData(1)]
@@ -43,7 +74,7 @@ public class BackuperVersioningTests {
         Enumerable
             .Range(0, 15)
             .Select(x => _pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName))
-            .ForEach(x => _mockFileSystem.CreateDirectory(x));
+            .ForEach(x => _fileSystem.CreateDirectory(x));
 
         var startingVersiong = GetCurrentVersions(backuperName);
 
@@ -75,7 +106,7 @@ public class BackuperVersioningTests {
     }
 
     private void ResetFileSystem() {
-        _mockFileSystem.Reset();
-        _mockFileSystem.CreateDirectory(_mainDirectory);
+        _fileSystem.Reset();
+        _fileSystem.CreateDirectory(_mainDirectory);
     }
 }
