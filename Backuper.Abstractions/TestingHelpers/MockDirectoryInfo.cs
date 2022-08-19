@@ -40,11 +40,13 @@ public class MockDirectoryInfo : IDirectoryInfo {
         _fileSystem
             .EnumerateDirectories(FullName, "*", SearchOption.AllDirectories)
             .Select(x => x.FullName.Replace(FullName, path))
+            .ToList()
             .ForEach(x => _fileSystem.CreateDirectory(x));
 
         _fileSystem
             .EnumerateFiles(FullName, "*", SearchOption.AllDirectories)
             .Select(x => (File: x, NewFile: x.FullName.Replace(FullName, path)))
+            .ToList()
             .ForEach(x => x.File.CopyToAsync(x.NewFile));
 
         return Task.CompletedTask;
