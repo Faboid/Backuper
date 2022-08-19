@@ -13,4 +13,5 @@ public interface IMockFileSystem {
     IEnumerable<IFileInfo> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
     bool FileExists(string path);
     string[] ReadFile(string path);
+    void Reset();
 }

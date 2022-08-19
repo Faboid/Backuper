@@ -14,6 +14,11 @@ public class MockFileSystem : IMockFileSystem {
         _directoryInfoProvider = new(this);
     }
 
+    public void Reset() {
+        _files.Clear();
+        _directories.Clear();
+    }
+
     public bool FileExists(string path) {
         return _files.ContainsKey(path);
     }
