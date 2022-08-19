@@ -2,6 +2,13 @@
 
 public static class EnumerableExtensions {
 
+    /// <summary>
+    /// Enumerates the collection, executes the given <paramref name="action"/>, and then returns the collection, unchanged.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="enumerable"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
         foreach(var item in enumerable) {
             action.Invoke(item);
