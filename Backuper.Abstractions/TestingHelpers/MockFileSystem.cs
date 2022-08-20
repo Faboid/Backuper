@@ -3,7 +3,9 @@ namespace Backuper.Abstractions.TestingHelpers;
 
 public class MockFileSystem : IMockFileSystem {
 
-    private readonly Dictionary<string, string[]> _files = new();
+    private record File(string Path, string[] Text, DateTime CustomTime);
+
+    private readonly Dictionary<string, File> _files = new();
     private readonly Dictionary<string, DateTime> _directories = new();
 
     private readonly MockFileInfoProvider _fileInfoProvider;
@@ -27,18 +29,20 @@ public class MockFileSystem : IMockFileSystem {
         _files.Remove(path);
     }
 
-    public void CreateFile(string path, string[] lines) {
-        _files.Add(path, lines);
+    public void CreateFile(string path, string[] lines) => CreateFile(path, lines, DateTime.Now);
+
+    public void CreateFile(string path, string[] lines, DateTime customTime) {
+        _files.Add(path, new(path, lines, customTime));
     }
 
     public string[] ReadFile(string path) {
-        return _files[path];
+        return _files[path].Text;
     }
 
     public IEnumerable<IFileInfo> EnumerateFiles(string path) {
-        return _files.Keys
-            .Where(x => x.StartsWith(path) && new FileInfo(x).DirectoryName == path)
-            .Select(x => _fileInfoProvider.FromFilePath(x));
+        return _files.Values
+            .Where(x => x.Path.StartsWith(path) && new FileInfo(x.Path).DirectoryName == path)
+            .Select(x => _fileInfoProvider.CreateWithCustomCreationTime(x.Path, x.CustomTime));
     }
 
     public IEnumerable<IFileInfo> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) {
@@ -48,9 +52,9 @@ public class MockFileSystem : IMockFileSystem {
                 .Where(x => SearchPatternMatch(x.FullName, searchPattern));
         }
 
-        return _files.Keys
-            .Where(x => x.StartsWith(path) && SearchPatternMatch(x, searchPattern))
-            .Select(x => _fileInfoProvider.FromFilePath(x));
+        return _files.Values
+            .Where(x => x.Path.StartsWith(path) && SearchPatternMatch(x.Path, searchPattern))
+            .Select(x => _fileInfoProvider.CreateWithCustomCreationTime(x.Path, x.CustomTime));
     }
 
     public void CreateDirectory(string path) => CreateDirectory(path, DateTime.Now);

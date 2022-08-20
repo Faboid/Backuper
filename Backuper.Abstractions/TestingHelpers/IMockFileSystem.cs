@@ -4,6 +4,7 @@ public interface IMockFileSystem {
     void CreateDirectory(string path);
     void CreateDirectory(string path, DateTime creationTime);
     void CreateFile(string path, string[] lines);
+    void CreateFile(string path, string[] lines, DateTime customTime);
     void DeleteDirectory(string path);
     void DeleteFile(string path);
     bool DirectoryExists(string path);

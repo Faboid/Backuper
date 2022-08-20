@@ -5,20 +5,20 @@ public class MockDirectoryInfo : IDirectoryInfo {
 
     private readonly IMockFileSystem _fileSystem;
     private readonly DirectoryInfo _info;
-    private readonly DateTime _creationTime;
+    private readonly DateTime _customTime;
 
     public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem) : this(path, mockFileSystem, DateTime.Now) { }
 
-    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem, DateTime creationTime) {
+    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem, DateTime customTime) {
         _info = new DirectoryInfo(path);
         _fileSystem = mockFileSystem;
-        _creationTime = creationTime;
+        _customTime = customTime;
     }
 
     public string FullName => _info.FullName;
     public string Name => _info.Name;
-    public DateTime CreationTimeUtc => _creationTime;
-    public DateTime LastWriteTimeUtc => throw new NotImplementedException();
+    public DateTime CreationTimeUtc => _customTime;
+    public DateTime LastWriteTimeUtc => _customTime;
     public bool Exists => _fileSystem.DirectoryExists(FullName);
 
     public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption) {

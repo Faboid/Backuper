@@ -3,19 +3,22 @@
 public class MockFileInfo : IFileInfo {
 
     private readonly IMockFileSystem _mockFileSystem;
+    private readonly DateTime _customTime;
 
     public string FullName { get; init; }
     public string Name { get; init; }
 
-    public MockFileInfo(string fullName, IMockFileSystem mockFileSystem) {
+    public MockFileInfo(string fullName, IMockFileSystem mockFileSystem) : this(fullName, mockFileSystem, DateTime.Now) { }
+    public MockFileInfo(string fullName, IMockFileSystem mockFileSystem, DateTime customTime) {
         FullName = fullName;
         Name = new FileInfo(fullName).Name;
         _mockFileSystem = mockFileSystem;
+        _customTime = customTime;
     }
 
     public bool Exists => _mockFileSystem.FileExists(FullName);
-    public DateTime CreationTimeUtc => throw new NotImplementedException("MockFileInfo doesn't implement CreationTimeUtc.");
-    public DateTime LastWriteTimeUtc => throw new NotImplementedException("MockFileInfo doesn't implement LastWriteTimeUtc");
+    public DateTime CreationTimeUtc => _customTime;
+    public DateTime LastWriteTimeUtc => _customTime;
 
     public string[] ReadAllLines() => _mockFileSystem.ReadFile(FullName);
     public void WriteAllLines(string[] lines) => _mockFileSystem.CreateFile(FullName, lines);

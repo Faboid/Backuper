@@ -9,6 +9,9 @@ public class MockFileInfoProvider : IFileInfoProvider {
     }
 
     public IFileInfo FromFilePath(string fullName) => new MockFileInfo(fullName, _mockFileSystem);
+    public IFileInfo CreateWithCustomCreationTime(string path, DateTime creationTime) {
+        return new MockFileInfo(path, _mockFileSystem, creationTime);
+    }
 
 }
 
