@@ -24,10 +24,38 @@ public class BackuperVersioningTests {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IMockFileSystem _fileSystem;
 
+    [Fact]
+    public async Task BinCorrectly() {
+
+        //arrange
+        ResetFileSystem();
+        string backuperName = "SomeName";
+        var backuperPath = _pathsBuilderService.GetBackuperDirectory(backuperName);
+        var lastVerDir = _pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName);
+        string filePath = Path.Combine(lastVerDir, "Hello.txt");
+        string[] fileText = new string[] { "Header", "Body", "Footer" };
+        _fileSystem.CreateDirectory(lastVerDir);
+        _fileSystem.CreateFile(filePath, fileText);
+
+        var sut = _sutFactory.CreateVersioning(backuperName);
+
+        var expectedNewFilePath = filePath.Replace("Backups", "Bin");
+
+        //act
+        await sut.Bin();
+
+        //assert
+        Assert.False(_fileSystem.DirectoryExists(backuperPath));
+        Assert.True(_fileSystem.DirectoryExists(lastVerDir.Replace("Backups", "Bin")));
+        Assert.True(_fileSystem.FileExists(expectedNewFilePath));
+        Assert.Equal(fileText, _fileSystem.ReadFile(expectedNewFilePath));
+
+    }
+
     [Theory]
     [InlineData("ANewName")]
     [InlineData("SomeOtherNa!me")]
-    public void MigrateCorrectly(string newName) {
+    public async Task MigrateCorrectly(string newName) {
 
         //arrange
         ResetFileSystem();
@@ -44,7 +72,7 @@ public class BackuperVersioningTests {
         var expectedNewFilePath = filePath.Replace(backuperName, newName);
 
         //act
-        sut.MigrateTo(newName);
+        await sut.MigrateTo(newName);
 
         //assert
         Assert.False(_fileSystem.DirectoryExists(backuperPath));
