@@ -1,12 +1,12 @@
-﻿using Backuper.Extensions;
+﻿using Backuper.Abstractions;
 
 namespace Backuper.Core.Services; 
 
 public class FileBackuperService : IBackuperService {
 
-    private readonly FileInfo _source;
+    private readonly IFileInfo _source;
 
-    public FileBackuperService(FileInfo source) {
+    public FileBackuperService(IFileInfo source) {
         _source = source;
     }
     

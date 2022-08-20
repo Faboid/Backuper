@@ -1,12 +1,13 @@
-﻿using Backuper.Extensions;
+﻿using Backuper.Abstractions;
+using Backuper.Extensions;
 
 namespace Backuper.Core.Services; 
 
 public class DirectoryBackuperService : IBackuperService {
 
-    private readonly DirectoryInfo _source;
+    private readonly IDirectoryInfo _source;
 
-    public DirectoryBackuperService(DirectoryInfo source) {
+    public DirectoryBackuperService(IDirectoryInfo source) {
         _source = source;
     }
 
