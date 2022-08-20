@@ -18,6 +18,11 @@ public interface IDirectoryInfo {
     DateTime CreationTimeUtc { get; }
 
     /// <summary>
+    /// Gets a UTC time of when the directory was last written to.
+    /// </summary>
+    DateTime LastWriteTimeUtc { get; }
+
+    /// <summary>
     /// Gets a value indicating whether the directory exists.
     /// </summary>
     bool Exists { get; }

@@ -18,6 +18,11 @@ public interface IFileInfo {
     DateTime CreationTimeUtc { get; }
 
     /// <summary>
+    /// Gets the time this file was last written to.
+    /// </summary>
+    DateTime LastWriteTimeUtc { get; }
+
+    /// <summary>
     /// Gets a value indicating whether the directory exists.
     /// </summary>
     bool Exists { get; }

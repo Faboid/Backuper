@@ -17,6 +17,7 @@ public class DirectoryInfoWrapper : IDirectoryInfo {
     public string FullName => _info.FullName;
     public string Name => _info.Name;
     public DateTime CreationTimeUtc => _info.CreationTimeUtc;
+    public DateTime LastWriteTimeUtc => _info.LastWriteTimeUtc;
     public bool Exists => _info.Exists;
 
     public Task CopyToAsync(string path) => _info.CopyToAsync(path);

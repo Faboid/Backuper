@@ -18,6 +18,7 @@ public class MockDirectoryInfo : IDirectoryInfo {
     public string FullName => _info.FullName;
     public string Name => _info.Name;
     public DateTime CreationTimeUtc => _creationTime;
+    public DateTime LastWriteTimeUtc => throw new NotImplementedException();
     public bool Exists => _fileSystem.DirectoryExists(FullName);
 
     public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption) {
