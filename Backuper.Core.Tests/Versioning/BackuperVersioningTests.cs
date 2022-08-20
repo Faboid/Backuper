@@ -24,6 +24,33 @@ public class BackuperVersioningTests {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IMockFileSystem _fileSystem;
 
+    public static IEnumerable<object[]> GetCorrectLastBackupTimeData() {
+        static object[] NewTestCase(params DateTime[] dates) => new object[] { dates.Max(), dates };
+
+        var now = DateTime.Now;
+
+        yield return NewTestCase(now.AddDays(1), now.Subtract(TimeSpan.FromHours(5)));
+        yield return NewTestCase(Enumerable.Range(0, 15).Select(x => now.Subtract(TimeSpan.FromHours(x))).ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetCorrectLastBackupTimeData))]
+    public void GetCorrectLastBackupTime(DateTime expected, params DateTime[] dates) {
+
+        //arrange
+        ResetFileSystem();
+        string backuperName = "SomeName";
+        dates.ForEach(x => _fileSystem.CreateDirectory(_pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName), x));
+        var sut = _sutFactory.CreateVersioning(backuperName);
+
+        //act
+        var actual = sut.GetLastBackupTimeUTC();
+
+        //assert
+        Assert.Equal(expected, actual);
+
+    }
+
     [Fact]
     public async Task BinCorrectly() {
 
