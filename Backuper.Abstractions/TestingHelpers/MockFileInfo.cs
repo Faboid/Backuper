@@ -14,7 +14,7 @@ public class MockFileInfo : IFileInfo {
     }
 
     public bool Exists => _mockFileSystem.FileExists(FullName);
-    public DateTime CreationTimeUtc => throw new NotImplementedException();
+    public DateTime CreationTimeUtc => throw new NotImplementedException("MockFileInfo doesn't implement CreationTimeUtc.");
 
     public string[] ReadAllLines() => _mockFileSystem.ReadFile(FullName);
     public void WriteAllLines(string[] lines) => _mockFileSystem.CreateFile(FullName, lines);
