@@ -2,11 +2,11 @@
 
 internal interface IDBConnection {
 
-    bool Exists(string path);
+    bool Exists(string name);
     IEnumerable<string> EnumerateNames();
-    Task WriteAllLinesAsync(string path, string[] lines);
-    Task<string[]> ReadAllLinesAsync(string path);
-    void Delete(string path);
+    Task WriteAllLinesAsync(string name, string[] lines);
+    Task<string[]> ReadAllLinesAsync(string name);
+    void Delete(string name);
 
 }
 
