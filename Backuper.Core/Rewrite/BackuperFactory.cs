@@ -5,9 +5,9 @@ using Backuper.Core.Versioning;
 using Backuper.Extensions;
 using Backuper.Utils;
 
-namespace Backuper.Core.Rewrite; 
+namespace Backuper.Core.Rewrite;
 
-public class BackuperFactory {
+public class BackuperFactory : IBackuperFactory {
 
     private readonly IBackuperVersioningFactory _versioningFactory;
     private readonly IBackuperServiceFactory _serviceFactory;
@@ -42,7 +42,7 @@ public class BackuperFactory {
 
         //create backuper in db
         _connection.SaveAsync(info);
-        
+
         var service = _serviceFactory.CreateBackuperService(info.SourcePath);
         var versioning = _versioningFactory.CreateVersioning(info.Name);
         Backuper backuper = new(info, service, _connection, versioning, _validator);
