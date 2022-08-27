@@ -21,11 +21,17 @@ public class DirectoryBackuperService : IBackuperService {
         //therefore, it's needed to go through all children directories
         var latestChange = _source
             .EnumerateDirectories("*", SearchOption.AllDirectories)
-            .Select(x => x.EnumerateFiles().Max(x => x.LastWriteTimeUtc))
+            .Select(GetLatestBetweenFiles)
+            .Where(x => x != default)
             .DefaultIfEmpty()
             .Max();
 
-        return latestChange;
+        return (latestChange > _source.LastWriteTimeUtc)? latestChange : _source.LastWriteTimeUtc;
 
     }
+
+    private DateTime GetLatestBetweenFiles(IDirectoryInfo directory) {
+        return directory.EnumerateFiles().Select(x => x.LastWriteTimeUtc).DefaultIfEmpty().Max();
+    }
+
 }
