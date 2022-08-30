@@ -21,7 +21,7 @@ public class BackuperFactory : IBackuperFactory {
         _validator = validator;
     }
 
-    public Option<IBackuper, CreateBackuperFailureCode> CreateBackuper(BackuperInfo info) {
+    public async Task<Option<IBackuper, CreateBackuperFailureCode>> CreateBackuper(BackuperInfo info) {
 
         var isValid = _validator.IsValid(info);
         if(isValid != BackuperValid.Valid) {
@@ -41,7 +41,7 @@ public class BackuperFactory : IBackuperFactory {
         }
 
         //create backuper in db
-        _connection.SaveAsync(info);
+        await _connection.SaveAsync(info);
 
         var service = _serviceFactory.CreateBackuperService(info.SourcePath);
         var versioning = _versioningFactory.CreateVersioning(info.Name);
