@@ -1,7 +1,16 @@
-﻿using Backuper.Core.Models;
+﻿using Backuper.Abstractions;
+using Backuper.Core.Models;
 namespace Backuper.Core.Validation; 
 
 public class BackuperValidator : IBackuperValidator {
+
+    private readonly IDirectoryInfoProvider _directoryInfoProvider;
+    private readonly IFileInfoProvider _fileInfoProvider;
+
+    public BackuperValidator(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider) {
+        _directoryInfoProvider = directoryInfoProvider;
+        _fileInfoProvider = fileInfoProvider;
+    }
 
     public NameValid IsNameValid(string name) {
         
@@ -23,7 +32,7 @@ public class BackuperValidator : IBackuperValidator {
             return SourcePathValid.EmptyOrWhiteSpace;
         }
 
-        if(!Directory.Exists(sourcePath) && !File.Exists(sourcePath)) {
+        if(!_directoryInfoProvider.FromDirectoryPath(sourcePath).Exists && !_fileInfoProvider.FromFilePath(sourcePath).Exists) {
             return SourcePathValid.DoesNotExist;
         }
 

@@ -1,10 +1,21 @@
-﻿using Backuper.Core.Validation;
+﻿using Backuper.Abstractions.TestingHelpers;
+using Backuper.Core.Validation;
 
 namespace Backuper.Core.Tests.Validation; 
 
 public class BackuperValidatorTests {
 
-    private readonly IBackuperValidator _sut = new BackuperValidator();
+    public BackuperValidatorTests() {
+        var fileSystem = new MockFileSystem();
+        fileSystem.CreateDirectory(_existingPath);
+
+        var fileInfoProvider = new MockFileInfoProvider(fileSystem);
+        var dirInfoProvider = new MockDirectoryInfoProvider(fileSystem);
+        _sut = new BackuperValidator(dirInfoProvider, fileInfoProvider);
+    }
+
+    private static readonly string _existingPath = Directory.GetCurrentDirectory();
+    private readonly IBackuperValidator _sut;
 
     private static object[] InvalidChars() => new object[] { new object[] { new string(Path.GetInvalidFileNameChars()), NameValid.HasIllegalCharacters } };
 
@@ -30,7 +41,7 @@ public class BackuperValidatorTests {
         Assert.Equal(expected, actual);
     }
 
-    private static object[] RealDirectoryTestData() => new object[] { new object[] { Directory.GetCurrentDirectory(), SourcePathValid.Valid } };
+    private static object[] RealDirectoryTestData() => new object[] { new object[] { _existingPath, SourcePathValid.Valid } };
 
     [Theory]
     [MemberData(nameof(RealDirectoryTestData))]
