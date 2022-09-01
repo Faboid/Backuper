@@ -12,6 +12,33 @@ public class BackuperTests {
     private static readonly string _existingDirectoryPath = Directory.GetCurrentDirectory();
 
     [Fact]
+    public async Task Backup_CallsBackupingMethod() {
+
+        //arrange
+        var now = DateTime.UtcNow;
+        string newVersionPath = "ANewVersionPath";
+        var info = GetGenericData();
+        var serviceMock = new Mock<IBackuperService>();
+        var versioningMock = new Mock<IBackuperVersioning>();
+        versioningMock.Setup(x => x.GenerateNewBackupVersionDirectory()).Returns(newVersionPath);
+        versioningMock.Setup(x => x.GetLastBackupTimeUTC()).Returns(now.Subtract(TimeSpan.FromDays(1)));
+        serviceMock.Setup(x => x.GetSourceLastWriteTimeUTC()).Returns(now);
+
+        var sut = new Backuper(info, serviceMock.Object, Mock.Of<IBackuperConnection>(), versioningMock.Object, ValidatorMocks.GetAlwaysValid());
+
+        //act
+        var actual = await sut.BackupAsync();
+
+        //assert
+        Assert.Equal(BackupResponseCode.Success, actual);
+        versioningMock.Verify(x => x.GenerateNewBackupVersionDirectory());
+        serviceMock.Verify(x => x.BackupAsync(newVersionPath, It.IsAny<CancellationToken>()));
+        versioningMock.Verify(x => x.DeleteExtraVersions(info.MaxVersions));
+
+    }
+    
+
+    [Fact]
     public async Task Backup_IsAlreadyUpdated() {
 
         //arrange
@@ -36,7 +63,7 @@ public class BackuperTests {
 
     [Fact]
     public async Task Bin_CallsVersioningBinAndDeletesBackuperConnection() {
-
+        
         //arrange
         var connectionMock = new Mock<IBackuperConnection>();
         var versioningMock = new Mock<IBackuperVersioning>();
@@ -48,7 +75,7 @@ public class BackuperTests {
         await sut.BinAsync();
 
         //assert
-        connectionMock.Verify(x => x.Delete(It.Is<string>(x => x == info.Name)));
+        connectionMock.Verify(x => x.Delete(info.Name));
         versioningMock.Verify(x => x.Bin());
 
     }
