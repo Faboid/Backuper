@@ -49,6 +49,11 @@ public class BackuperValidator : IBackuperValidator {
     }
 
     public BackuperValid IsValid(BackuperInfo info) {
+
+        if(info == null) {
+            return BackuperValid.IsNull;
+        }
+
         var nameValid = IsNameValid(info.Name);
         if(nameValid != NameValid.Valid) {
 

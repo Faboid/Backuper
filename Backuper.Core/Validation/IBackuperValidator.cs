@@ -18,6 +18,7 @@ public enum BackuperValid {
     SourceIsEmpty,
     SourceDoesNotExist,
     ZeroOrNegativeMaxVersions,
+    IsNull,
 }
 
 public enum NameValid {
