@@ -29,7 +29,7 @@ public class Backuper : Rewrite.IBackuper {
                 IBackuperValidator validator
         ) {
 
-        _info = info;
+        _info = new BackuperInfo(info.Name, info.SourcePath, info.MaxVersions, info.UpdateOnBoot);
         _backuperService = backuperService;
         _connection = connection;
         _versioning = versioning;
