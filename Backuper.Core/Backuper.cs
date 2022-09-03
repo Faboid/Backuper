@@ -95,7 +95,7 @@ public class Backuper : Rewrite.IBackuper {
         }
 
         await _connection.OverwriteAsync(Name, newInfo);
-        _info = newInfo;
+        _info = new BackuperInfo(newInfo.Name, newInfo.SourcePath, newInfo.MaxVersions, newInfo.UpdateOnBoot);
         return EditBackuperResponseCode.Success;
     }
 
