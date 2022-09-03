@@ -2,6 +2,7 @@ using Backuper.Core.Models;
 using Backuper.Core.Rewrite;
 using Backuper.Core.Services;
 using Backuper.Core.Tests.Mocks;
+using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
 using Moq;
 
@@ -58,6 +59,66 @@ public class BackuperTests {
         //assert
         Assert.Equal(BackupResponseCode.AlreadyUpdated, actual);
         serviceMock.Verify(x => x.BackupAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never());
+
+    }
+
+    [Theory]
+    [InlineData(BackuperValid.Unknown, EditBackuperResponseCode.Unknown)]
+    [InlineData(BackuperValid.NameHasIllegalCharacters, EditBackuperResponseCode.NameContainsIllegalCharacters)]
+    [InlineData(BackuperValid.NameIsEmpty, EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces)]
+    [InlineData(BackuperValid.ZeroOrNegativeMaxVersions, EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative)]
+    public async Task Edit_ReturnsCorrectErrorCode(BackuperValid fromValidator, EditBackuperResponseCode expected) {
+
+        //arrange
+        var validatorMock = new Mock<IBackuperValidator>();
+
+        //set to return valid only during the creation of the object
+        validatorMock.Setup(x => x.IsValid(It.IsAny<BackuperInfo>())).Returns(BackuperValid.Valid);
+        var sut = new Backuper(GetGenericData(), Mock.Of<IBackuperService>(), Mock.Of<IBackuperConnection>(), Mock.Of<IBackuperVersioning>(), validatorMock.Object);
+        validatorMock.Setup(x => x.IsValid(It.IsAny<BackuperInfo>())).Returns(fromValidator);
+
+        //act
+        var actual = await sut.EditAsync(GetGenericData());
+
+        //assert
+        Assert.Equal(actual, expected);
+
+    }
+
+    [Fact]
+    public async Task Edit_ReturnsExistsAlreadyResult() {
+
+        //arrange
+        var connectionMock = new Mock<IBackuperConnection>();
+        var info = GetGenericData();
+        connectionMock.Setup(x => x.Exists(info.Name)).Returns(true);
+        var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, Mock.Of<IBackuperVersioning>(), ValidatorMocks.GetAlwaysValid());
+
+        //act
+        var actual = await sut.EditAsync(info);
+
+        //assert
+        Assert.Equal(EditBackuperResponseCode.NewNameIsOccupied, actual);
+
+    }
+
+    [Fact]
+    public async Task Edit_PrioritizesMakingSureSourceIsUnchanged() {
+
+        //arrange
+        var info = GetGenericData();
+        var sut = new Backuper(info, Mock.Of<IBackuperService>(), Mock.Of<IBackuperConnection>(), Mock.Of<IBackuperVersioning>(), ValidatorMocks.GetAlwaysValid());
+
+        //By changing this directly, we're also testing if the properties in the class are actually read-only
+        //as they should be changed only through the EditAsync method, changing the object that was used as a base
+        //should not change the private values
+        info.SourcePath = "";
+
+        //act
+        var actual = await sut.EditAsync(info);
+
+        //assert
+        Assert.Equal(EditBackuperResponseCode.SourceCannotBeChanged, actual);
 
     }
 

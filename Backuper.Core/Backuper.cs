@@ -62,6 +62,15 @@ public class Backuper : Rewrite.IBackuper {
     public async Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo) {
         using var lockd = await _locker.GetLockAsync(CancellationToken.None);
 
+        if(newInfo == null) {
+            return EditBackuperResponseCode.GivenInfoIsNull;
+        }
+
+        //not supporting changing source
+        if(newInfo.SourcePath != SourcePath) {
+            return EditBackuperResponseCode.SourceCannotBeChanged;
+        }
+
         var isValid = _validator.IsValid(newInfo);
         if(isValid != BackuperValid.Valid) {
 
@@ -77,11 +86,6 @@ public class Backuper : Rewrite.IBackuper {
 
         if(_connection.Exists(newInfo.Name)) {
             return EditBackuperResponseCode.NewNameIsOccupied;
-        }
-
-        //not supporting changing source
-        if(newInfo.SourcePath != SourcePath) {
-            return EditBackuperResponseCode.SourceCannotBeChanged;
         }
 
         using var threadHandler = ThreadsHandler.SetScopedForeground();
@@ -126,4 +130,5 @@ public enum EditBackuperResponseCode {
     SourceCannotBeChanged,
     NameContainsIllegalCharacters,
     SourceIsEmptyOrWhiteSpaces,
+    GivenInfoIsNull,
 }
