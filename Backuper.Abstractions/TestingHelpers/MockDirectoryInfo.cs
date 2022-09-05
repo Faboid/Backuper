@@ -53,6 +53,8 @@ public class MockDirectoryInfo : IDirectoryInfo {
         return Task.CompletedTask;
     }
 
+    public void Create() => _fileSystem.CreateDirectory(FullName);
+
     public void Delete(bool recursively) {
         _fileSystem.DeleteDirectory(FullName);
     }

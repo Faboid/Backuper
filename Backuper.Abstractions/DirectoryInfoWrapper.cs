@@ -21,7 +21,7 @@ public class DirectoryInfoWrapper : IDirectoryInfo {
     public bool Exists => _info.Exists;
 
     public Task CopyToAsync(string path) => _info.CopyToAsync(path);
-
+    public void Create() => _info.Create();
     public void Delete(bool recursively) => _info.Delete(recursively);
 
     public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption) {

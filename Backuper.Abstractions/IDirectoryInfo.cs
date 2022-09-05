@@ -40,5 +40,5 @@ public interface IDirectoryInfo {
     /// <returns></returns>
     Task CopyToAsync(string path);
     void Delete(bool recursively);
-
+    void Create();
 }
