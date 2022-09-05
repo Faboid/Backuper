@@ -11,5 +11,6 @@ public interface IBackuper {
     Task<BackupResponseCode> BackupAsync(CancellationToken token = default);
     Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo);
     Task BinAsync();
+    public bool IsUpdated();
 
 }
