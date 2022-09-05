@@ -62,6 +62,69 @@ public class BackuperTests {
 
     }
 
+    [Fact]
+    public async Task Edit_ChangesValuesCorrectly() {
+        static bool Equal(BackuperInfo info, Backuper backuper) =>
+            info.Name == backuper.Name
+            && info.SourcePath == backuper.SourcePath
+            && info.MaxVersions == backuper.MaxVersions
+            && info.UpdateOnBoot == backuper.UpdateOnBoot;
+
+        //arrange
+        var info = GetGenericData();
+        var connectionMock = new Mock<IBackuperConnection>();
+        connectionMock.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
+        var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, Mock.Of<IBackuperVersioning>(), ValidatorMocks.GetAlwaysValid());
+
+        //act
+        var startsEqual = Equal(info, sut);
+        info.Name = "ANewLeaf";
+        info.MaxVersions += 10;
+        info.UpdateOnBoot = !info.UpdateOnBoot;
+        var isEqualAfterEditingTheInfoSource = Equal(info, sut);
+
+        _ = await sut.EditAsync(info);
+        var isEqualAfterEdit = Equal(info, sut);
+        info.Name = "ChangedOnceMore";
+        var isEqualWhenChangingAfterEditing = Equal(info, sut);
+
+        //assert
+        Assert.True(startsEqual);
+        Assert.False(isEqualAfterEditingTheInfoSource);
+        Assert.True(isEqualAfterEdit);
+        Assert.False(isEqualWhenChangingAfterEditing);
+    
+    }
+
+    [Theory]
+    [InlineData("SomeName", "SomeNewName")]
+    [InlineData("SomeName", "SomeName")]
+    public async Task Edit_MigratesIfNameChanges(string oldName, string newName) {
+
+        //arrange
+        var info = GetGenericData();
+        info.Name = oldName;
+        var connectionMock = new Mock<IBackuperConnection>();
+        connectionMock.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
+        var versioningMock = new Mock<IBackuperVersioning>();
+        var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, versioningMock.Object, ValidatorMocks.GetAlwaysValid());
+        info.Name = newName;
+
+        //act
+        var actual = await sut.EditAsync(info);
+
+        //assert
+        Assert.Equal(EditBackuperResponseCode.Success, actual);
+        connectionMock.Verify(x => x.OverwriteAsync(oldName, info));
+
+        if(oldName == newName) {
+            versioningMock.Verify(x => x.MigrateTo(It.IsAny<string>()), Times.Never);
+        } else {
+            versioningMock.Verify(x => x.MigrateTo(newName));
+        }
+
+    }
+
     [Theory]
     [InlineData(BackuperValid.Unknown, EditBackuperResponseCode.Unknown)]
     [InlineData(BackuperValid.NameHasIllegalCharacters, EditBackuperResponseCode.NameContainsIllegalCharacters)]
