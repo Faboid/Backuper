@@ -24,6 +24,10 @@ internal class BackuperVersioning : IBackuperVersioning {
     private void SetDirectories() {
         _backupsDirectory = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(_backuperName));
         _binDirectory = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBinDirectory(_backuperName));
+
+        //if the directories don't exist, create them
+        _backupsDirectory.Create();
+        _binDirectory.Create();
     }
 
     public string GenerateNewBackupVersionDirectory() {
