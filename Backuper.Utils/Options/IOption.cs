@@ -1,6 +1,4 @@
-﻿using Backuper.Utils;
-
-namespace Backuper.Utils.Options;
+﻿namespace Backuper.Utils.Options;
 
 /// <summary>
 /// Represents an option result that could be either Some, Error, or None.
@@ -32,12 +30,12 @@ internal interface IOption<TValue, TError> {
     /// <summary>
     /// Returns the stored value if Some, otherwise returns <paramref name="def"/>.
     /// </summary>
-    TValue Or(TValue def);
+    TValue? Or(TValue? def);
 
     /// <summary>
     /// Returns the stored value if Error, otherwise returns <paramref name="def"/>.
     /// </summary>
-    TError OrError(TError def);
+    TError? OrError(TError? def);
 
 }
 
@@ -70,7 +68,7 @@ internal interface IOption<TValue> {
     /// <summary>
     /// Returns the stored value if Some, otherwise returns <paramref name="def"/>.
     /// </summary>
-    TValue Or(TValue def);
+    TValue? Or(TValue? def);
 
 }
 

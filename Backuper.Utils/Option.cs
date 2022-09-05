@@ -67,7 +67,7 @@ public struct Option<TValue> : IOption<TValue> {
     public T Match<T>(Func<TValue, T> some, Func<T> none) => GetOption.Match(some, none);
     public Option<T> Bind<T>(Func<TValue, Option<T>> func) => GetOption.Bind(func);
     public async Task<Option<T>> BindAsync<T>(Func<TValue, Task<Option<T>>> func) => await GetOption.BindAsync(func).ConfigureAwait(false);
-    public TValue Or(TValue def) => GetOption.Or(def);
+    public TValue? Or(TValue? def) => GetOption.Or(def);
 
     //static constructors
     public static Option<TValue> Some(TValue value) => new(value);
@@ -126,8 +126,8 @@ public struct Option<TValue, TError> : IOption<TValue, TError> {
     public T Match<T>(Func<TValue, T> some, Func<TError, T> error, Func<T> none) => GetOption.Match(some, error, none);
     public Option<T, TError> Bind<T>(Func<TValue, Option<T, TError>> func) => GetOption.Bind(func);
     public async Task<Option<T, TError>> BindAsync<T>(Func<TValue, Task<Option<T, TError>>> func) => await GetOption.BindAsync(func).ConfigureAwait(false);
-    public TValue Or(TValue def) => GetOption.Or(def);
-    public TError OrError(TError def) => GetOption.OrError(def);
+    public TValue? Or(TValue? def) => GetOption.Or(def);
+    public TError? OrError(TError? def) => GetOption.OrError(def);
 
 
     //static constructors
