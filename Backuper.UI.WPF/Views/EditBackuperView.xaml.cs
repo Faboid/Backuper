@@ -13,13 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Backuper.UI.WPF.Views {
-    /// <summary>
-    /// Interaction logic for EditBackuperView.xaml
-    /// </summary>
-    public partial class EditBackuperView : UserControl {
-        public EditBackuperView() {
-            InitializeComponent();
-        }
+namespace Backuper.UI.WPF.Views; 
+/// <summary>
+/// Interaction logic for EditBackuperView.xaml
+/// </summary>
+public partial class EditBackuperView : UserControl {
+    public EditBackuperView() {
+        InitializeComponent();
     }
 }

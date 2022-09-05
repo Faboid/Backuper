@@ -13,13 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Backuper.UI.WPF.Views {
-    /// <summary>
-    /// Interaction logic for SettingsView.xaml
-    /// </summary>
-    public partial class SettingsView : UserControl {
-        public SettingsView() {
-            InitializeComponent();
-        }
+namespace Backuper.UI.WPF.Views; 
+/// <summary>
+/// Interaction logic for SettingsView.xaml
+/// </summary>
+public partial class SettingsView : UserControl {
+    public SettingsView() {
+        InitializeComponent();
     }
 }

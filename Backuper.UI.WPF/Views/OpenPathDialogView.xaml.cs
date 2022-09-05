@@ -13,13 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Backuper.UI.WPF.Views {
-    /// <summary>
-    /// Interaction logic for OpenPathDialogView.xaml
-    /// </summary>
-    public partial class OpenPathDialogView : UserControl {
-        public OpenPathDialogView() {
-            InitializeComponent();
-        }
+namespace Backuper.UI.WPF.Views; 
+/// <summary>
+/// Interaction logic for OpenPathDialogView.xaml
+/// </summary>
+public partial class OpenPathDialogView : UserControl {
+    public OpenPathDialogView() {
+        InitializeComponent();
     }
 }
