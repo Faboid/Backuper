@@ -1,5 +1,4 @@
-﻿using Backuper.Core;
-using Backuper.Core.Models;
+﻿using Backuper.Core.Rewrite;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
@@ -16,7 +15,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
     private readonly BackuperStore _backuperStore;
     private readonly ErrorsViewModel _errorsViewModel = new();
     
-    public string PreviousName => _original.Info.Name;
+    public string PreviousName => _original.Name;
 
     private string _backuperName = "";
     public string BackuperName {
@@ -25,7 +24,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
             SetAndRaise(nameof(BackuperName), ref _backuperName, value);
 
             _errorsViewModel.ClearErrors(nameof(BackuperName));
-            if(value != _original.Info.Name && _backuperStore.BackuperExists(_backuperName)) {
+            if(value != _original.Name && _backuperStore.BackuperExists(_backuperName)) {
                 _errorsViewModel.AddError(nameof(BackuperName), "The given name is already in use.");
             }
             if(string.IsNullOrEmpty(_backuperName)) {
@@ -62,11 +61,11 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         _backuperStore = backuperStore;
         _original = backuper;
 
-        BackuperName = backuper.Info.Name;
-        MaxVersions = backuper.Info.MaxVersions;
-        UpdateOnBoot = backuper.Info.UpdateOnBoot;
+        BackuperName = backuper.Name;
+        MaxVersions = backuper.MaxVersions;
+        UpdateOnBoot = backuper.UpdateOnBoot;
 
-        SubmitCommand = new EditBackuperCommand(backuper, this, backuperStore, navigatorToBackuperListingViewModel);
+        SubmitCommand = new EditBackuperCommand(this, backuperStore, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
         _errorsViewModel.ErrorsChanged += OnErrorsChanged;
     }

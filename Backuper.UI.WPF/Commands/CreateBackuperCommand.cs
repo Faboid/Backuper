@@ -1,5 +1,4 @@
 ﻿using Backuper.Core.Models;
-using Backuper.Core.Saves;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
@@ -31,17 +30,20 @@ public class CreateBackuperCommand : AsyncCommandBase {
         var result = await backuperStore.CreateBackuperAsync(info);
 
         var message = result switch {
-            CreateBackuperCode.Success => "The backuper has been created.",
-            CreateBackuperCode.NameNotValid => "The given name cannot be empty.",
-            CreateBackuperCode.BackuperExistsAlready => "The given name is used by another backuper.",
-            CreateBackuperCode.SourceDoesNotExist => "The given source path does not exist.",
+            CreateBackuperResponse.Success => $"{info.Name} has been created.",
+            CreateBackuperResponse.NameIsEmpty => "The given name cannot be empty.",
+            CreateBackuperResponse.NameHasIllegalCharacters => $"The name '{info.Name}' contains illegal characters.",
+            CreateBackuperResponse.NameIsOccupied => $"{info.Name} is already used elsewhere.",
+            CreateBackuperResponse.SourceDoesNotExist => "The given source path does not exist.",
+            CreateBackuperResponse.SourceIsEmpty => "The source path cannot be empty.",
+            CreateBackuperResponse.ZeroOrNegativeMaxVersions => "The max versions cannot be less than one.",
             _ => "There has been an unknown error."
         };
 
         //todo - show the result in a more graceful way
         MessageBox.Show(message);
 
-        if(result == CreateBackuperCode.Success) {
+        if(result == CreateBackuperResponse.Success) {
             navigatorToBackuperListingViewModel.Navigate();
         }
 

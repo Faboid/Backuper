@@ -1,10 +1,8 @@
-﻿using Backuper.Core;
-using Backuper.Core.Models;
+﻿using Backuper.Core.Rewrite;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -16,11 +14,11 @@ public class BackuperViewModel : ViewModelBase {
     private readonly IBackuper _backuper;
     private readonly BackuperStore _backuperStore;
 
-    public bool Updated => _backuper.IsUpdated;
-    public bool UpdateOnBoot => _backuper.Info.UpdateOnBoot;
-    public string MaxVersions => _backuper.Info.MaxVersions.ToString();
-    public string Name => _backuper.Info.Name;
-    public string SourcePath => _backuper.Info.SourcePath;
+    public bool Updated => _backuper.IsUpdated();
+    public bool UpdateOnBoot => _backuper.UpdateOnBoot;
+    public string MaxVersions => _backuper.MaxVersions.ToString();
+    public string Name => _backuper.Name;
+    public string SourcePath => _backuper.SourcePath;
 
     public ICommand? BackupCommand { get; }
     public ICommand? EditCommand { get; }
@@ -36,10 +34,18 @@ public class BackuperViewModel : ViewModelBase {
 
     private async Task Backup() {
 
-        await _backuper.StartBackupAsync();
+        var response = await _backuper.BackupAsync();
         OnPropertyChanged(nameof(Updated));
 
-        MessageBox.Show($"{Name} has been backed up successfully.");
+        var message = response switch {
+            Core.BackupResponseCode.Unknown => throw new NotImplementedException(),
+            Core.BackupResponseCode.Success => $"{Name} has been backed up successfully.",
+            Core.BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
+            Core.BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
+            _ => $"{Name}'s backup has failed for an unknown reason.",
+        };
+
+        MessageBox.Show(message);
 
     }
 
@@ -49,8 +55,9 @@ public class BackuperViewModel : ViewModelBase {
         var result = await _backuperStore.DeleteBackuperAsync(name);
 
         var message = result switch {
-            Core.Saves.DeleteBackuperCode.Success => $"The backuper {name} has been deleted successfully.",
-            Core.Saves.DeleteBackuperCode.BackuperDoesNotExist => $"The backuper {name} does not exist.",
+            DeleteBackuperResponse.Success => $"The backuper {name} has been deleted successfully.",
+            DeleteBackuperResponse.BackuperNotFound => $"The backuper {name} does not exist.",
+            DeleteBackuperResponse.NameIsNullOrWhiteSpace => "The given name cannot be empty.",
             _ => "There has been an unknown error.",
         };
 

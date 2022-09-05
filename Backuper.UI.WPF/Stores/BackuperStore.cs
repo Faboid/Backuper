@@ -1,6 +1,5 @@
-﻿using Backuper.Core;
+﻿using Backuper.Core.Rewrite;
 using Backuper.Core.Models;
-using Backuper.Core.Saves;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,8 +9,7 @@ namespace Backuper.UI.WPF.Stores;
 public class BackuperStore {
     
     private readonly Dictionary<string, IBackuper> _backupers;
-    private readonly IBackuperConnection _connection;
-    private readonly BackuperFactory _factory;
+    private readonly IBackuperFactory _backuperFactory;
     
     private Lazy<Task> _initializationTask;
 
@@ -21,11 +19,10 @@ public class BackuperStore {
 
     public IEnumerable<IBackuper> Backupers => _backupers.Values;
 
-    public BackuperStore(BackuperFactory factory, IBackuperConnection backuperConnection) {
+    public BackuperStore(IBackuperFactory factory) {
         _backupers = new();
         _initializationTask = new(Initialize);
-        _connection = backuperConnection;
-        _factory = factory;
+        _backuperFactory = factory;
 
         BackuperCreated += (a) => BackupersChanged?.Invoke();
         BackuperDeleted += (a) => BackupersChanged?.Invoke();
@@ -36,12 +33,11 @@ public class BackuperStore {
     }
 
     private async Task Initialize() {
-        var infos = _connection.GetAllBackupersAsync();
+        var backupers = _backuperFactory.LoadBackupers();
 
         _backupers.Clear();
-        await foreach(var info in infos) {
-            var backuper = _factory.CreateBackuper(info);
-            _backupers.Add(backuper.Info.Name, backuper);
+        await foreach(var backuper in backupers) {
+            _backupers.Add(backuper.Name, backuper);
         }
     }
 
@@ -49,73 +45,110 @@ public class BackuperStore {
         return _backupers.ContainsKey(name);
     }
 
-    public async Task<CreateBackuperCode> CreateBackuperAsync(BackuperInfo info) {
+    public async Task<CreateBackuperResponse> CreateBackuperAsync(BackuperInfo info) {
 
-        var result = await _connection.CreateBackuperAsync(info);
-
-        if(result == CreateBackuperCode.Success) {
-
-            var backuper = _factory.CreateBackuper(info);
-            _backupers.Add(backuper.Info.Name, backuper);
-            BackuperCreated?.Invoke(backuper);
-        }
-
-        return result;
+        var result = await _backuperFactory.CreateBackuper(info);
+        return result.Match(
+            some => {
+                _backupers.Add(some.Name, some);
+                BackuperCreated?.Invoke(some);
+                return CreateBackuperResponse.Success;
+            },
+            error => error switch {
+                BackuperFactory.CreateBackuperFailureCode.NameIsOccupied => CreateBackuperResponse.NameIsOccupied,
+                BackuperFactory.CreateBackuperFailureCode.NameIsEmpty => CreateBackuperResponse.NameIsEmpty,
+                BackuperFactory.CreateBackuperFailureCode.NameHasIllegalCharacters => CreateBackuperResponse.NameHasIllegalCharacters,
+                BackuperFactory.CreateBackuperFailureCode.SourceDoesNotExist => CreateBackuperResponse.SourceDoesNotExist,
+                BackuperFactory.CreateBackuperFailureCode.SourceIsEmpty => CreateBackuperResponse.SourceIsEmpty,
+                BackuperFactory.CreateBackuperFailureCode.ZeroOrNegativeMaxVersions => CreateBackuperResponse.ZeroOrNegativeMaxVersions,
+                _ => CreateBackuperResponse.UnknownError,
+            },
+            () => CreateBackuperResponse.UnknownError
+        );
 
     }
 
-    public async Task<DeleteBackuperCode> DeleteBackuperAsync(string name) {
+    public async Task<DeleteBackuperResponse> DeleteBackuperAsync(string name) {
 
         if(string.IsNullOrWhiteSpace(name)) {
-            return DeleteBackuperCode.NameNotValid;
+            return DeleteBackuperResponse.NameIsNullOrWhiteSpace;
         }
 
         if(!_backupers.TryGetValue(name, out var backuper)) {
-            return DeleteBackuperCode.BackuperDoesNotExist;
+            return DeleteBackuperResponse.BackuperNotFound;
         }
 
-        await backuper.BinBackupsAsync();
-        var result = _connection.DeleteBackuper(name);
+        await backuper.BinAsync();
+        _backupers.Remove(name);
+        BackuperDeleted?.Invoke(backuper);
 
-        if(result == DeleteBackuperCode.Success) {
-
-            _backupers.Remove(name);
-            BackuperDeleted?.Invoke(backuper);
-        }
-
-        return result;
+        return DeleteBackuperResponse.Success;
     }
 
-    public async Task<UpdateBackuperCode> UpdateBackuperAsync(string name, string? newName, int newMaxVersions = 0, bool? newUpdateOnBoot = null) {
-
-        if(!BackuperExists(name)) {
-            return UpdateBackuperCode.BackuperDoesNotExist;
+    public async Task<UpdateBackuperResponse> UpdateBackuperAsync(string name, string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null) {
+        
+        if(string.IsNullOrWhiteSpace(name)) {
+            return UpdateBackuperResponse.NameIsNullOrWhiteSpace;
         }
 
-        var result = await _connection.UpdateBackuperAsync(name, newName, newMaxVersions, newUpdateOnBoot);
-
-        if(result == UpdateBackuperCode.Success) {
-
-            var updatedName = string.IsNullOrWhiteSpace(newName) ? name : newName;
-            //to avoid duplicating the logic on value validation, it's simpler to refresh the backuper's data.
-            var updatedBackuper = await _connection.GetBackuperAsync(updatedName);
-            _backupers.Remove(name);
-
-            var info = updatedBackuper.Or(null!);
-
-            if(info == null) {
-
-                //if it fails to get the updated value, refresh the whole list.
-                _initializationTask = new(Initialize);
-
-            } else {
-
-                _backupers.Add(info.Name, _factory.CreateBackuper(info));
-
-            }
+        if(!_backupers.TryGetValue(name, out var backuper)) {
+            return UpdateBackuperResponse.BackuperNotFound;
         }
 
-        return result;
+        var infoName = newName ?? backuper.Name;
+        var infoSource = backuper.SourcePath;
+        var infoVersions = newMaxVersions ?? backuper.MaxVersions;
+        var infoUpdateOnBoot = newUpdateOnBoot ?? backuper.UpdateOnBoot;
+        
+        var info = new BackuperInfo(infoName, infoSource, infoVersions, infoUpdateOnBoot);
+        return await UpdateBackuperAsync(backuper, info);
+
     }
 
+
+    private static async Task<UpdateBackuperResponse> UpdateBackuperAsync(IBackuper backuper, BackuperInfo info) {
+
+        var result = await backuper.EditAsync(info);
+        return result switch {
+            Core.EditBackuperResponseCode.Success => UpdateBackuperResponse.Success,
+            Core.EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative => UpdateBackuperResponse.NewMaxVersionsIsZeroOrNegative,
+            Core.EditBackuperResponseCode.NewNameIsOccupied => UpdateBackuperResponse.NewNameIsOccupied,
+            Core.EditBackuperResponseCode.NameContainsIllegalCharacters => UpdateBackuperResponse.NewNameContainsIllegalCharacters,
+            _ => UpdateBackuperResponse.UnknownError,
+        };
+
+    }
+
+}
+
+//UI Responses
+public enum CreateBackuperResponse {
+    UnknownError,
+    Success,
+    Failure,
+    NameIsOccupied,
+    NameHasIllegalCharacters,
+    NameIsEmpty,
+    SourceDoesNotExist,
+    SourceIsEmpty,
+    ZeroOrNegativeMaxVersions,
+}
+
+public enum DeleteBackuperResponse {
+    UnknownError,
+    Success,
+    Failure,
+    NameIsNullOrWhiteSpace,
+    BackuperNotFound,
+}
+
+public enum UpdateBackuperResponse {
+    UnknownError,
+    Success,
+    Failure,
+    BackuperNotFound,
+    NewMaxVersionsIsZeroOrNegative,
+    NewNameIsOccupied,
+    NewNameContainsIllegalCharacters,
+    NameIsNullOrWhiteSpace,
 }

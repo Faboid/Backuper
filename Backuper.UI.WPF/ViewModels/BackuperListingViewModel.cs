@@ -1,4 +1,4 @@
-﻿using Backuper.Core;
+﻿using Backuper.Core.Rewrite;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
@@ -41,7 +41,7 @@ public class BackuperListingViewModel : ViewModelBase {
                                     Func<IBackuper, BackuperViewModel> createBackuperViewModel
                                     ) {
         _createBackuperViewModel = createBackuperViewModel;
-        LoadBackupersCommand = new LoadReservationsCommand(backuperStore, UpdateBackupers);
+        LoadBackupersCommand = new LoadBackupersCommand(backuperStore, UpdateBackupers);
         CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
         _backupers = new();
         _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);

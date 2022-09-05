@@ -21,8 +21,9 @@ public class DeleteBackuperCommand : AsyncCommandBase {
         var result = await _backuperStore.DeleteBackuperAsync(name);
 
         var message = result switch {
-            Core.Saves.DeleteBackuperCode.Success => $"The backuper {name} has been deleted successfully.",
-            Core.Saves.DeleteBackuperCode.BackuperDoesNotExist => $"The backuper {name} does not exist.",
+            DeleteBackuperResponse.Success => $"The backuper {name} has been deleted successfully.",
+            DeleteBackuperResponse.BackuperNotFound => $"The backuper {name} does not exist.",
+            DeleteBackuperResponse.NameIsNullOrWhiteSpace => "The name cannot be empty.",
             _ => "There has been an unknown error.",
         };
 

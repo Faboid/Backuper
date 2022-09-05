@@ -1,6 +1,4 @@
-﻿using Backuper.Core;
-using Backuper.Core.Saves;
-using Backuper.UI.WPF.Services;
+﻿using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
@@ -11,12 +9,10 @@ namespace Backuper.UI.WPF.Commands;
 public class EditBackuperCommand : AsyncCommandBase {
 
     private readonly EditBackuperViewModel _editBackuperViewModel;
-    private readonly IBackuper _backuper;
     private readonly BackuperStore _backuperStore;
     private readonly NavigationService<BackuperListingViewModel> _navigatorToBackuperListingViewModel;
 
-    public EditBackuperCommand(IBackuper backuper, EditBackuperViewModel editBackuperViewModel, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
-        _backuper = backuper;
+    public EditBackuperCommand(EditBackuperViewModel editBackuperViewModel, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         _editBackuperViewModel = editBackuperViewModel;
         _backuperStore = backuperStore;
         _navigatorToBackuperListingViewModel = navigatorToBackuperListingViewModel;
@@ -31,25 +27,19 @@ public class EditBackuperCommand : AsyncCommandBase {
             _editBackuperViewModel.UpdateOnBoot
             );
 
-        //migrate existing backups
-        if(result == UpdateBackuperCode.Success) {
-            await _backuper.EditBackuperAsync(
-                _editBackuperViewModel.BackuperName,
-                _editBackuperViewModel.MaxVersions,
-                _editBackuperViewModel.UpdateOnBoot
-                );
-        }
+        var newName = _editBackuperViewModel.BackuperName ?? _editBackuperViewModel.PreviousName;
 
         var message = result switch {
-            UpdateBackuperCode.Success => "The backuper has been edited successfully.",
-            UpdateBackuperCode.BackuperDoesNotExist => "The backuper you're trying to edit does not exist.",
-            UpdateBackuperCode.NameNotValid => "The new name is not valid.",
-            _ => "An unknown error has occurred when trying to edit the backuper.",
+            UpdateBackuperResponse.Success => $"{newName} has been edited successfully.",
+            UpdateBackuperResponse.BackuperNotFound => $"{_editBackuperViewModel.PreviousName} has not been found.",
+            UpdateBackuperResponse.NewMaxVersionsIsZeroOrNegative => "The max versions cannot be less than one.",
+            UpdateBackuperResponse.NewNameIsOccupied => $"{_editBackuperViewModel.BackuperName} is already in use.",
+            _ => "An error has occurred when trying to edit the backuper.",
         };
 
-        MessageBox.Show(message, "Edit Result");
+        MessageBox.Show(message, "Result");
 
-        if(result == UpdateBackuperCode.Success) { 
+        if(result == UpdateBackuperResponse.Success) { 
             _navigatorToBackuperListingViewModel.Navigate();
         }
 

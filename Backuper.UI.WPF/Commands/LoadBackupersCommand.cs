@@ -1,4 +1,4 @@
-﻿using Backuper.Core;
+﻿using Backuper.Core.Rewrite;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace Backuper.UI.WPF.Commands; 
-public class LoadReservationsCommand : AsyncCommandBase {
+public class LoadBackupersCommand : AsyncCommandBase {
 
     private readonly BackuperStore _backuperStore;
     private readonly Action<IEnumerable<IBackuper>> loadBackupers;
 
-    public LoadReservationsCommand(BackuperStore backuperStore, Action<IEnumerable<IBackuper>> loadBackupers) {
+    public LoadBackupersCommand(BackuperStore backuperStore, Action<IEnumerable<IBackuper>> loadBackupers) {
         _backuperStore = backuperStore;
         this.loadBackupers = loadBackupers;
     }
