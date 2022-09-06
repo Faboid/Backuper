@@ -2,7 +2,6 @@
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -38,7 +37,6 @@ public class BackuperViewModel : ViewModelBase {
         OnPropertyChanged(nameof(Updated));
 
         var message = response switch {
-            BackupResponseCode.Unknown => throw new NotImplementedException(),
             BackupResponseCode.Success => $"{Name} has been backed up successfully.",
             BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
             BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
