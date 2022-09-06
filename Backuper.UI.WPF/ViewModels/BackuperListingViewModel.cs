@@ -31,8 +31,8 @@ public class BackuperListingViewModel : ViewModelBase {
 
     public ICommand? ChangeBackupPathCommand { get; }
     public ICommand? ToggleAutomaticBackupsCommand { get; }
-    public ICommand? CreateBackuperCommand { get; }
-    public ICommand? BackupAllCommand { get; }
+    public ICommand CreateBackuperCommand { get; }
+    public ICommand BackupAllCommand { get; }
 
     private ICommand LoadBackupersCommand { get; }
 
@@ -43,6 +43,7 @@ public class BackuperListingViewModel : ViewModelBase {
         _createBackuperViewModel = createBackuperViewModel;
         LoadBackupersCommand = new LoadBackupersCommand(backuperStore, UpdateBackupers);
         CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
+        BackupAllCommand = new BackupAllCommand(backuperStore);
         _backupers = new();
         _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
         _backupersCollectionView.Filter = BackupersFilter;
