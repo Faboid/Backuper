@@ -1,21 +1,20 @@
 ﻿using Backuper.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
-namespace Backuper.Core {
-    public interface IBackuper : IDisposable {
+[assembly:InternalsVisibleTo("Backuper.Core.Tests")]
+namespace Backuper.Core;
 
-        BackuperInfo Info { get; }
-        bool IsUpdated { get; }
+public interface IBackuper
+{
 
-        //todo - use better returns to send back results to the UI
-        Task EraseBackupsAsync(CancellationToken token = default);
-        Task BinBackupsAsync(CancellationToken token = default);
-        Task StartBackupAsync(CancellationToken token = default);
-        Task EditBackuperAsync(string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null, CancellationToken token = default);
+    public string Name { get; }
+    public string SourcePath { get; }
+    public int MaxVersions { get; }
+    public bool UpdateOnBoot { get; }
 
-    }
+    Task<BackupResponseCode> BackupAsync(CancellationToken token = default);
+    Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo);
+    Task BinAsync();
+    public bool IsUpdated();
+
 }

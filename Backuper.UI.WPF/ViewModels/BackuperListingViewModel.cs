@@ -1,4 +1,4 @@
-﻿using Backuper.Core.Rewrite;
+﻿using Backuper.Core;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;

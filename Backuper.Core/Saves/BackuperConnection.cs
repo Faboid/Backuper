@@ -1,97 +1,59 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Core.Saves.DBConnections;
 using Backuper.Extensions;
-using Backuper.Utils;
-using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Core.Saves;
 
-public class BackuperConnection : IBackuperConnection {
+public class BackuperConnection : IBackuperConnection
+{
 
     public BackuperConnection() : this(new FileDBConnection()) { }
-    internal BackuperConnection(IDBConnection dbConnection) {
+    internal BackuperConnection(IDBConnection dbConnection)
+    {
         this.dbConnection = dbConnection;
     }
 
     private readonly IDBConnection dbConnection;
 
-    //todo - consider whether to use a wrapper to validate the given parameters
-    //or to check them here
-
-    public async Task<CreateBackuperCode> CreateBackuperAsync(BackuperInfo info) {
-        if(string.IsNullOrWhiteSpace(info.Name)) {
-            return CreateBackuperCode.NameNotValid;
-        }
-
-        if(dbConnection.Exists(info.Name)) {
-            return CreateBackuperCode.BackuperExistsAlready;
-        }
-
-        if(!Directory.Exists(info.SourcePath) && !File.Exists(info.SourcePath)) {
-            return CreateBackuperCode.SourceDoesNotExist;
-        }
-
-        var strings = info.ToStrings();
-        await dbConnection.WriteAllLinesAsync(info.Name, strings);
-        return CreateBackuperCode.Success;
+    public bool Exists(string name)
+    {
+        return dbConnection.Exists(name);
     }
 
-    public async Task<Option<BackuperInfo, GetBackuperCode>> GetBackuperAsync(string name) {
-        if(string.IsNullOrWhiteSpace(name)) {
-            return GetBackuperCode.NameNotValid;
-        }
+    public async Task SaveAsync(BackuperInfo info)
+    {
+        var strings = info.ToStrings();
+        await dbConnection.WriteAllLinesAsync(info.Name, strings);
+    }
 
-        if(!dbConnection.Exists(name)) {
-            return GetBackuperCode.BackuperDoesNotExist;
-        }
+    public async Task<BackuperInfo> GetAsync(string name)
+    {
         var lines = await dbConnection.ReadAllLinesAsync(name);
         return BackuperInfo.Parse(lines);
     }
 
-    public IAsyncEnumerable<BackuperInfo> GetAllBackupersAsync() {
+    public IAsyncEnumerable<BackuperInfo> GetAllBackupersAsync()
+    {
         return dbConnection
             .EnumerateNames()
             .SelectAsync(x => dbConnection.ReadAllLinesAsync(x))
             .Select(x => BackuperInfo.Parse(x)); //todo - error handling in case the data of that backuper was corrupted
     }
 
-    public async Task<UpdateBackuperCode> UpdateBackuperAsync(string name, string? newName = null, int newMaxVersions = 0, bool? newUpdateOnBoot = null) {
-        if(string.IsNullOrWhiteSpace(name)) {
-            return UpdateBackuperCode.NameNotValid;
+    public async Task OverwriteAsync(string name, BackuperInfo info)
+    {
+
+        await SaveAsync(info);
+
+        if (name != info.Name)
+        {
+            Delete(name);
         }
-
-        if(!dbConnection.Exists(name)) {
-            return UpdateBackuperCode.BackuperDoesNotExist;
-        }
-
-        var curr = BackuperInfo.Parse(await dbConnection.ReadAllLinesAsync(name));
-        curr.Name = string.IsNullOrWhiteSpace(newName) ? curr.Name : newName;
-        curr.MaxVersions = newMaxVersions <= 0 ? curr.MaxVersions : newMaxVersions;
-        curr.UpdateOnBoot = newUpdateOnBoot ?? curr.UpdateOnBoot;
-
-        var newValues = curr.ToStrings();
-        await dbConnection.WriteAllLinesAsync(curr.Name, newValues);
-        if(!string.IsNullOrWhiteSpace(newName)) {
-            //if the name has changed, delete the old backuper file
-            dbConnection.Delete(name);
-        }
-
-        return UpdateBackuperCode.Success;
     }
 
-    public DeleteBackuperCode DeleteBackuper(string name) {
-        if(string.IsNullOrWhiteSpace(name)) {
-            return DeleteBackuperCode.NameNotValid;
-        }
-
-        if(!dbConnection.Exists(name)) {
-            return DeleteBackuperCode.BackuperDoesNotExist;
-        }
-
+    public void Delete(string name)
+    {
         dbConnection.Delete(name);
-        return DeleteBackuperCode.Success;
     }
 
 }
-

@@ -1,45 +1,21 @@
 ﻿using Backuper.Core.Models;
-using Backuper.Utils;
-namespace Backuper.Core.Saves;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-/// <summary>
-/// Provides methods to save backupers between sessions.
-/// </summary>
-public interface IBackuperConnection {
+namespace Backuper.Core.Saves
+{
+    public interface IBackuperConnection
+    {
 
-    Task<CreateBackuperCode> CreateBackuperAsync(BackuperInfo info);
-    Task<Option<BackuperInfo, GetBackuperCode>> GetBackuperAsync(string name);
-    IAsyncEnumerable<BackuperInfo> GetAllBackupersAsync();
-    Task<UpdateBackuperCode> UpdateBackuperAsync(string name, string? newName = null, int newMaxVersions = 0, bool? newUpdateOnBoot = null);
-    DeleteBackuperCode DeleteBackuper(string name);
+        bool Exists(string name);
+        Task SaveAsync(BackuperInfo info);
+        Task<BackuperInfo> GetAsync(string name);
+        IAsyncEnumerable<BackuperInfo> GetAllBackupersAsync();
+        Task OverwriteAsync(string name, BackuperInfo info);
+        void Delete(string name);
 
-}
-
-public enum CreateBackuperCode {
-    Unknown,
-    Success,
-    Failure,
-    NameNotValid,
-    BackuperExistsAlready,
-    SourceDoesNotExist,
-}
-
-public enum GetBackuperCode {
-    Unknown,
-    BackuperDoesNotExist,
-    NameNotValid,
-}
-
-public enum UpdateBackuperCode {
-    Unknown,
-    Success,
-    BackuperDoesNotExist,
-    NameNotValid
-}
-
-public enum DeleteBackuperCode {
-    Unknown,
-    Success,
-    BackuperDoesNotExist,
-    NameNotValid,
+    }
 }

@@ -1,11 +1,11 @@
-﻿using Backuper.Core.Rewrite;
+﻿using Backuper.Core;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 public class LoadBackupersCommand : AsyncCommandBase {
 
     private readonly BackuperStore _backuperStore;

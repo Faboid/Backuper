@@ -1,8 +1,9 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Utils;
 
-namespace Backuper.Core.Rewrite;
-public interface IBackuperFactory {
+namespace Backuper.Core;
+public interface IBackuperFactory
+{
     Task<Option<IBackuper, BackuperFactory.CreateBackuperFailureCode>> CreateBackuper(BackuperInfo info);
     IAsyncEnumerable<IBackuper> LoadBackupers();
 }

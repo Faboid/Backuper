@@ -1,7 +1,7 @@
 using Backuper.Abstractions;
 using Backuper.Abstractions.TestingHelpers;
 using Backuper.Core.Models;
-using Backuper.Core.Rewrite;
+using Backuper.Core.Saves;
 using Backuper.Core.Saves.DBConnections;
 using Backuper.Core.Services;
 using Backuper.Core.Tests.Mocks;
@@ -9,14 +9,15 @@ using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
 using Backuper.Utils.Options;
 using Moq;
-using static Backuper.Core.Rewrite.BackuperFactory;
-using NewClasses = Backuper.Core.Rewrite;
+using static Backuper.Core.BackuperFactory;
 
-namespace Backuper.Core.Tests.Rewrite;
+namespace Backuper.Core.Tests;
 
-public class BackuperFactoryTests {
+public class BackuperFactoryTests
+{
 
-    public BackuperFactoryTests() {
+    public BackuperFactoryTests()
+    {
 
         _dateTimeProvider = new DateTimeProvider();
         _fileInfoProvider = new MockFileInfoProvider(_fileSystem);
@@ -46,15 +47,16 @@ public class BackuperFactoryTests {
     [InlineData(BackuperValid.SourceDoesNotExist, CreateBackuperFailureCode.SourceDoesNotExist)]
     [InlineData(BackuperValid.ZeroOrNegativeMaxVersions, CreateBackuperFailureCode.ZeroOrNegativeMaxVersions)]
     [InlineData(BackuperValid.Unknown, CreateBackuperFailureCode.Unknown)]
-    public async Task ReturnsErrorWhenGivenInvalidValues(BackuperValid invalidResultErrorCode, CreateBackuperFailureCode expected) {
+    public async Task ReturnsErrorWhenGivenInvalidValues(BackuperValid invalidResultErrorCode, CreateBackuperFailureCode expected)
+    {
 
         //arrange
         var mockedValidator = new Mock<IBackuperValidator>();
         mockedValidator.Setup(x => x.IsValid(It.IsAny<BackuperInfo>())).Returns(invalidResultErrorCode);
-        var sut = new NewClasses.BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object);
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object);
 
         //act
-        var actual = await sut.CreateBackuper(new ("SomeName", _existingDirectoryPath, 5, false));
+        var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
 
         //assert
         Assert.Equal(expected, actual);
@@ -62,12 +64,13 @@ public class BackuperFactoryTests {
     }
 
     [Fact]
-    public async Task NameIsOccupiedResult() {
+    public async Task NameIsOccupiedResult()
+    {
 
         //arrange
         var mockedConnection = new Mock<IBackuperConnection>();
         mockedConnection.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
-        var sut = new NewClasses.BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid());
 
         //act
         var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
@@ -78,10 +81,11 @@ public class BackuperFactoryTests {
     }
 
     [Fact]
-    public async Task SavesBackuperToConnection() {
+    public async Task SavesBackuperToConnection()
+    {
 
         //arrange
-        var sut = new NewClasses.BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());
         var info = new BackuperInfo("SomeName", _existingDirectoryPath, 3, false);
 
         //act
@@ -95,7 +99,7 @@ public class BackuperFactoryTests {
         Assert.Equal(info.UpdateOnBoot, createdResult.UpdateOnBoot);
 
         Assert.Equal(OptionResult.Some, actual.Result());
-        
+
         var createdBackuper = actual.Or(default!);
         Assert.NotNull(createdBackuper);
         Assert.Equal(info.Name, createdBackuper.Name);

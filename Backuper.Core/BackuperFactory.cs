@@ -1,36 +1,80 @@
-﻿using Backuper.Core.BackuperTypes;
-using Backuper.Core.Models;
+﻿using Backuper.Core.Models;
+using Backuper.Core.Saves;
+using Backuper.Core.Services;
+using Backuper.Core.Validation;
+using Backuper.Core.Versioning;
+using Backuper.Extensions;
 using Backuper.Utils;
 
-namespace Backuper.Core; 
+namespace Backuper.Core;
 
-public class BackuperFactory {
+public class BackuperFactory : IBackuperFactory
+{
 
-    public BackuperFactory() {
-        pathsBuilder = new();
+    private readonly IBackuperVersioningFactory _versioningFactory;
+    private readonly IBackuperServiceFactory _serviceFactory;
+    private readonly IBackuperConnection _connection;
+    private readonly IBackuperValidator _validator;
+
+    public BackuperFactory(IBackuperVersioningFactory versioningFactory, IBackuperServiceFactory serviceFactory, IBackuperConnection connection, IBackuperValidator validator)
+    {
+        _versioningFactory = versioningFactory;
+        _serviceFactory = serviceFactory;
+        _connection = connection;
+        _validator = validator;
     }
 
-    public BackuperFactory(PathsBuilder pathsBuilder) {
-        this.pathsBuilder = pathsBuilder;
-    }
+    public async Task<Option<IBackuper, CreateBackuperFailureCode>> CreateBackuper(BackuperInfo info)
+    {
 
-    private readonly PathsBuilder pathsBuilder;
+        var isValid = _validator.IsValid(info);
+        if (isValid != BackuperValid.Valid)
+        {
 
-    public IBackuper CreateBackuper(BackuperInfo info) {
-
-        if(info == null) {
-            throw new ArgumentNullException(nameof(info));
+            return isValid switch
+            {
+                BackuperValid.NameIsEmpty => CreateBackuperFailureCode.NameIsEmpty,
+                BackuperValid.NameHasIllegalCharacters => CreateBackuperFailureCode.NameHasIllegalCharacters,
+                BackuperValid.SourceIsEmpty => CreateBackuperFailureCode.SourceIsEmpty,
+                BackuperValid.SourceDoesNotExist => CreateBackuperFailureCode.SourceDoesNotExist,
+                BackuperValid.ZeroOrNegativeMaxVersions => CreateBackuperFailureCode.ZeroOrNegativeMaxVersions,
+                _ => CreateBackuperFailureCode.Unknown,
+            };
         }
 
-        if(Directory.Exists(info.SourcePath)) {
-            return new DirectoryBackuper(info, pathsBuilder);
-        } 
-        
-        if(File.Exists(info.SourcePath)) {
-            throw new NotImplementedException("The file backuper has yet to be implemented.");
-        } 
-        
-        throw new InvalidDataException($"The source path doesn't exist or is invalid: {info.SourcePath}");
+        if (_connection.Exists(info.Name))
+        {
+            return CreateBackuperFailureCode.NameIsOccupied;
+        }
+
+        //create backuper in db
+        await _connection.SaveAsync(info);
+
+        var service = _serviceFactory.CreateBackuperService(info.SourcePath);
+        var versioning = _versioningFactory.CreateVersioning(info.Name);
+        Backuper backuper = new(info, service, _connection, versioning, _validator);
+        return backuper;
+
+    }
+
+    public IAsyncEnumerable<IBackuper> LoadBackupers()
+    {
+        return _connection
+            .GetAllBackupersAsync()
+            //todo - consider what to do when the source paths don't exist anymore
+            .Select(x => (info: x, versioning: _versioningFactory.CreateVersioning(x.Name), service: _serviceFactory.CreateBackuperService(x.SourcePath)))
+            .Select(x => new Backuper(x.info, x.service, _connection, x.versioning, _validator));
+    }
+
+    public enum CreateBackuperFailureCode
+    {
+        Unknown,
+        ZeroOrNegativeMaxVersions,
+        SourceDoesNotExist,
+        SourceIsEmpty,
+        NameHasIllegalCharacters,
+        NameIsEmpty,
+        NameIsOccupied
     }
 
 }

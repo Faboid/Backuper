@@ -1,4 +1,4 @@
-﻿using Backuper.Core.Rewrite;
+﻿using Backuper.Core;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Backuper.UI.WPF.ViewModels; 
+namespace Backuper.UI.WPF.ViewModels;
 
 public class BackuperViewModel : ViewModelBase {
 
