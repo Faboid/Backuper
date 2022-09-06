@@ -32,11 +32,12 @@ namespace BackuperUI.Windows {
 
         private void RefreshListBox(object sender, EventArgs e) {
             Dispatcher.Invoke(() => {
-                DataGridBackups.ItemsSource = null; ;
+                DataGridBackups.ItemsSource = null;
+                ;
                 DataGridBackups.ItemsSource = BackupersHolder.Backupers;
             });
         }
-        
+
         /// <summary>
         /// If the backuper is free, starts its backup.
         /// </summary>
@@ -56,12 +57,12 @@ namespace BackuperUI.Windows {
                         Thread.CurrentThread.IsBackground = false;
                         BackuperResultInfo status = backuper.MakeBackup();
                         DarkMessageBox.Show("Result", status.GetMessage(), Dispatcher);
-                    } catch(TaskCanceledException) { 
+                    } catch(TaskCanceledException) {
                         //do nothing
                     } catch(Exception ex) {
                         Log.WriteError(ex);
                         DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
-                        
+
                     } finally {
                         Thread.CurrentThread.IsBackground = true;
                     }
@@ -95,7 +96,7 @@ namespace BackuperUI.Windows {
             Backuper backuper;
             try {
                 backuper = (sender as Button).DataContext as Backuper;
-            } catch (Exception ex) {
+            } catch(Exception ex) {
                 Log.WriteError(ex);
                 DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
                 return;
@@ -116,7 +117,7 @@ namespace BackuperUI.Windows {
                         message = backuper.Erase(userAnswer == MessageBoxResult.Yes);
                         DarkMessageBox.Show("Operation Completed.", message, Dispatcher);
 
-                    } catch (Exception ex) {
+                    } catch(Exception ex) {
                         Log.WriteError(ex);
                         DarkMessageBox.Show(operationFailedCaption, ex.Message, Dispatcher);
                     }
@@ -158,7 +159,7 @@ namespace BackuperUI.Windows {
                     DarkMessageBox.Show(operationFailedCaption, backuperIsUsedElsewhereCaption, Dispatcher);
                 }
 
-            } catch (ArgumentException ex) {
+            } catch(ArgumentException ex) {
 
                 DarkMessageBox.Show(operationFailedCaption, ex.Message, Dispatcher);
             } catch(Exception ex) {
@@ -175,7 +176,7 @@ namespace BackuperUI.Windows {
             if(BackupersHolder.Backupers.All(x => x.CheckLock())) {
                 try {
                     EditorBackupPath.Start();
-                } catch (Exception ex) {
+                } catch(Exception ex) {
                     Log.WriteError(ex);
                     DarkMessageBox.Show(messageErrorCaption, ex.Message, Dispatcher);
                 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class AsyncRelayCommand : AsyncCommandBase {
 

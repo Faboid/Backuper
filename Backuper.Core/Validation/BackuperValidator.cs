@@ -1,6 +1,6 @@
 ﻿using Backuper.Abstractions;
 using Backuper.Core.Models;
-namespace Backuper.Core.Validation; 
+namespace Backuper.Core.Validation;
 
 public class BackuperValidator : IBackuperValidator {
 
@@ -13,7 +13,7 @@ public class BackuperValidator : IBackuperValidator {
     }
 
     public NameValid IsNameValid(string name) {
-        
+
         if(string.IsNullOrWhiteSpace(name)) {
             return NameValid.EmptyOrWhiteSpace;
         }
@@ -27,7 +27,7 @@ public class BackuperValidator : IBackuperValidator {
     }
 
     public SourcePathValid IsSourcePathValid(string sourcePath) {
-        
+
         if(string.IsNullOrWhiteSpace(sourcePath)) {
             return SourcePathValid.EmptyOrWhiteSpace;
         }
@@ -40,7 +40,7 @@ public class BackuperValidator : IBackuperValidator {
     }
 
     public MaxVersionsValid IsMaxVersionsValid(int maxVersions) {
-        
+
         if(maxVersions < 1) {
             return MaxVersionsValid.LessThanOne;
         }

@@ -1,6 +1,6 @@
 ﻿using Backuper.Abstractions;
 
-namespace Backuper.Core.Services; 
+namespace Backuper.Core.Services;
 
 public class BackuperServiceFactory : IBackuperServiceFactory {
 

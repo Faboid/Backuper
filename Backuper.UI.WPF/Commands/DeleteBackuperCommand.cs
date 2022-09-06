@@ -3,7 +3,7 @@ using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class DeleteBackuperCommand : AsyncCommandBase {
 

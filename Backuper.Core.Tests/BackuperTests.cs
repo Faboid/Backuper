@@ -8,16 +8,14 @@ using Moq;
 
 namespace Backuper.Core.Tests;
 
-public class BackuperTests
-{
+public class BackuperTests {
 
     //todo - this class tests the implementation of the interfaces through the Backuper class
     //it might be a good idea to implement tests for the results, not the implementation
     private static readonly string _existingDirectoryPath = Directory.GetCurrentDirectory();
 
     [Fact]
-    public async Task Backup_CallsBackupingMethod()
-    {
+    public async Task Backup_CallsBackupingMethod() {
 
         //arrange
         var now = DateTime.UtcNow;
@@ -44,8 +42,7 @@ public class BackuperTests
 
 
     [Fact]
-    public async Task Backup_IsAlreadyUpdated()
-    {
+    public async Task Backup_IsAlreadyUpdated() {
 
         //arrange
         var lastBackupTime = DateTime.Now;
@@ -68,8 +65,7 @@ public class BackuperTests
     }
 
     [Fact]
-    public async Task Edit_ChangesValuesCorrectly()
-    {
+    public async Task Edit_ChangesValuesCorrectly() {
         static bool Equal(BackuperInfo info, Backuper backuper) =>
             info.Name == backuper.Name
             && info.SourcePath == backuper.SourcePath
@@ -105,8 +101,7 @@ public class BackuperTests
     [Theory]
     [InlineData("SomeName", "SomeNewName")]
     [InlineData("SomeName", "SomeName")]
-    public async Task Edit_MigratesIfNameChanges(string oldName, string newName)
-    {
+    public async Task Edit_MigratesIfNameChanges(string oldName, string newName) {
 
         //arrange
         var info = GetGenericData();
@@ -124,12 +119,9 @@ public class BackuperTests
         Assert.Equal(EditBackuperResponseCode.Success, actual);
         connectionMock.Verify(x => x.OverwriteAsync(oldName, info));
 
-        if (oldName == newName)
-        {
+        if(oldName == newName) {
             versioningMock.Verify(x => x.MigrateTo(It.IsAny<string>()), Times.Never);
-        }
-        else
-        {
+        } else {
             versioningMock.Verify(x => x.MigrateTo(newName));
         }
 
@@ -140,8 +132,7 @@ public class BackuperTests
     [InlineData(BackuperValid.NameHasIllegalCharacters, EditBackuperResponseCode.NameContainsIllegalCharacters)]
     [InlineData(BackuperValid.NameIsEmpty, EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces)]
     [InlineData(BackuperValid.ZeroOrNegativeMaxVersions, EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative)]
-    public async Task Edit_ReturnsCorrectErrorCode(BackuperValid fromValidator, EditBackuperResponseCode expected)
-    {
+    public async Task Edit_ReturnsCorrectErrorCode(BackuperValid fromValidator, EditBackuperResponseCode expected) {
 
         //arrange
         var validatorMock = new Mock<IBackuperValidator>();
@@ -160,8 +151,7 @@ public class BackuperTests
     }
 
     [Fact]
-    public async Task Edit_ReturnsExistsAlreadyResult()
-    {
+    public async Task Edit_ReturnsExistsAlreadyResult() {
 
         //arrange
         var connectionMock = new Mock<IBackuperConnection>();
@@ -178,8 +168,7 @@ public class BackuperTests
     }
 
     [Fact]
-    public async Task Edit_PrioritizesMakingSureSourceIsUnchanged()
-    {
+    public async Task Edit_PrioritizesMakingSureSourceIsUnchanged() {
 
         //arrange
         var info = GetGenericData();
@@ -199,8 +188,7 @@ public class BackuperTests
     }
 
     [Fact]
-    public async Task Bin_CallsVersioningBinAndDeletesBackuperConnection()
-    {
+    public async Task Bin_CallsVersioningBinAndDeletesBackuperConnection() {
 
         //arrange
         var connectionMock = new Mock<IBackuperConnection>();
@@ -218,8 +206,7 @@ public class BackuperTests
 
     }
 
-    private static IEnumerable<object[]> IsUpdatedReturnsTheCorrectResultData()
-    {
+    private static IEnumerable<object[]> IsUpdatedReturnsTheCorrectResultData() {
         static object[] NewCase(DateTime sourceTime, DateTime lastBackupTime) => new object[] { sourceTime, lastBackupTime };
 
         var middle = DateTime.Now;
@@ -231,8 +218,7 @@ public class BackuperTests
 
     [Theory]
     [MemberData(nameof(IsUpdatedReturnsTheCorrectResultData))]
-    public void IsUpdatedReturnsTheCorrectResult(DateTime sourceTime, DateTime lastBackupTime)
-    {
+    public void IsUpdatedReturnsTheCorrectResult(DateTime sourceTime, DateTime lastBackupTime) {
 
         //arrange
         var expected = sourceTime <= lastBackupTime;
@@ -251,8 +237,7 @@ public class BackuperTests
 
     }
 
-    private static BackuperInfo GetGenericData(string name = "SomeName")
-    {
+    private static BackuperInfo GetGenericData(string name = "SomeName") {
         return new BackuperInfo(name, Directory.GetCurrentDirectory(), 3, false);
     }
 

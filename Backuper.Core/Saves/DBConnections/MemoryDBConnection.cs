@@ -2,7 +2,7 @@
     public class MemoryDBConnection : IDBConnection {
 
         readonly Dictionary<string, string[]> dict = new();
-        
+
         public void Delete(string path) {
             dict.Remove(path);
         }

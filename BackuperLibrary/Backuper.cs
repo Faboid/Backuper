@@ -36,7 +36,7 @@ namespace BackuperLibrary {
                 throw new DirectoryNotFoundException("The source directory has not been found.");
             }
             if(maxVersions < 1) {
-                throw new ArgumentOutOfRangeException(nameof(MaxVersions),"The maxVersions argument can't be less than one.");
+                throw new ArgumentOutOfRangeException(nameof(MaxVersions), "The maxVersions argument can't be less than one.");
             }
 
             Source = source;
@@ -128,7 +128,7 @@ namespace BackuperLibrary {
                     MaxVersions = (int)newMaxVersions;
                     CleanUpExtraVersions();
                 }
-                
+
                 if(updateAutomatically is not null) {
                     UpdateAutomatically = (bool)updateAutomatically;
                 }
@@ -161,7 +161,7 @@ namespace BackuperLibrary {
                         this.Delete();
                         return $"{Name} has been deleted, but the backups have been moved to backup folder [{binPath}].";
                     }
-                } catch (Exception ex) {
+                } catch(Exception ex) {
                     Log.WriteError(ex);
                     return $"There was an error: {Environment.NewLine} {ex.Message}";
                 }
@@ -188,10 +188,10 @@ namespace BackuperLibrary {
                     //this try-catch is to prevent odd exceptions if the user closes the app before a backup is completed
                     try {
                         BackupComplete?.Invoke(this, EventArgs.Empty);
-                    } catch (TaskCanceledException) { }
+                    } catch(TaskCanceledException) { }
 
                     return Factory.CreateBackupResult(Name, BackuperResult.Success);
-                } catch (Exception ex) {
+                } catch(Exception ex) {
                     Log.WriteError(ex);
                     return Factory.CreateBackupResult(Name, BackuperResult.Failure, ex);
                 }
@@ -306,7 +306,7 @@ namespace BackuperLibrary {
 
             //since windows doesn't update parents folders's last access time date when a subdirectory's files gets edited, it is necessary to check all child's dates
             IEnumerable<DateTime> dates = Backup.GetAllDirectories(new DirectoryInfo(Source.FullName)).Select(x => x.LastWriteTime);
-                
+
             return dates.All(x => x < lastBackup);
         }
         #endregion private

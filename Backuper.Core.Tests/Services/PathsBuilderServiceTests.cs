@@ -105,7 +105,7 @@ public class PathsBuilderServiceTests {
         Mock<IDateTimeProvider> mockDateTimeProvider = new();
         mockDateTimeProvider.Setup(x => x.Now).Returns(() => time);
         PathsBuilderService paths = new(mainDir, mockDateTimeProvider.Object, _directoryInfoProvider);
-        
+
         //act
         var version = paths.GenerateNewBackupVersionDirectory("SomeName");
         DateTime parsedTime = paths.VersionNameToDateTime(version);

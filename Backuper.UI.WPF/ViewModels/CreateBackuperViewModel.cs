@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
 
-namespace Backuper.UI.WPF.ViewModels; 
+namespace Backuper.UI.WPF.ViewModels;
 
 public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
 
@@ -59,7 +59,7 @@ public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
 
     private bool _updateOnBoot;
     public bool UpdateOnBoot {
-        get => _updateOnBoot; 
+        get => _updateOnBoot;
         set => SetAndRaise(nameof(UpdateOnBoot), ref _updateOnBoot, value);
     }
 

@@ -1,4 +1,4 @@
-﻿namespace Backuper.Extensions.Tests; 
+﻿namespace Backuper.Extensions.Tests;
 
 public class FileInfoExtensionsTests {
 

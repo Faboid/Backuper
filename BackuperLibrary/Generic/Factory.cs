@@ -34,7 +34,7 @@ namespace BackuperLibrary.Generic {
             if(Directory.Exists(sourcePath)) {
                 return new Backuper(name, new DirectoryInfo(sourcePath), maxVersions, updateAutomatically);
 
-            } else if (File.Exists(sourcePath)) {
+            } else if(File.Exists(sourcePath)) {
                 return new Backuper(name, new FileInfo(sourcePath), maxVersions, updateAutomatically);
 
             } else {

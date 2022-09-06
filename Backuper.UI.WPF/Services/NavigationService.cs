@@ -2,9 +2,9 @@
 using Backuper.UI.WPF.ViewModels;
 using System;
 
-namespace Backuper.UI.WPF.Services; 
+namespace Backuper.UI.WPF.Services;
 
-public class NavigationService<T> where T: ViewModelBase {
+public class NavigationService<T> where T : ViewModelBase {
 
     private readonly NavigationStore _navigationStore;
     private readonly Func<T> _navigationFunction;

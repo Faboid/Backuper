@@ -3,7 +3,7 @@ using Backuper.UI.WPF.ViewModels;
 
 namespace Backuper.UI.WPF.Commands;
 
-public class NavigateCommand<T> : CommandBase where T: ViewModelBase {
+public class NavigateCommand<T> : CommandBase where T : ViewModelBase {
 
     private readonly NavigationService<T> navigationService;
 

@@ -2,7 +2,7 @@
 using Backuper.UI.WPF.ViewModels;
 using System;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class SetValueAndReturnCommand : CommandBase {
 

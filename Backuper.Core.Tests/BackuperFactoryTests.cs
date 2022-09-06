@@ -13,11 +13,9 @@ using static Backuper.Core.BackuperFactory;
 
 namespace Backuper.Core.Tests;
 
-public class BackuperFactoryTests
-{
+public class BackuperFactoryTests {
 
-    public BackuperFactoryTests()
-    {
+    public BackuperFactoryTests() {
 
         _dateTimeProvider = new DateTimeProvider();
         _fileInfoProvider = new MockFileInfoProvider(_fileSystem);
@@ -47,8 +45,7 @@ public class BackuperFactoryTests
     [InlineData(BackuperValid.SourceDoesNotExist, CreateBackuperFailureCode.SourceDoesNotExist)]
     [InlineData(BackuperValid.ZeroOrNegativeMaxVersions, CreateBackuperFailureCode.ZeroOrNegativeMaxVersions)]
     [InlineData(BackuperValid.Unknown, CreateBackuperFailureCode.Unknown)]
-    public async Task ReturnsErrorWhenGivenInvalidValues(BackuperValid invalidResultErrorCode, CreateBackuperFailureCode expected)
-    {
+    public async Task ReturnsErrorWhenGivenInvalidValues(BackuperValid invalidResultErrorCode, CreateBackuperFailureCode expected) {
 
         //arrange
         var mockedValidator = new Mock<IBackuperValidator>();
@@ -64,8 +61,7 @@ public class BackuperFactoryTests
     }
 
     [Fact]
-    public async Task NameIsOccupiedResult()
-    {
+    public async Task NameIsOccupiedResult() {
 
         //arrange
         var mockedConnection = new Mock<IBackuperConnection>();
@@ -81,8 +77,7 @@ public class BackuperFactoryTests
     }
 
     [Fact]
-    public async Task SavesBackuperToConnection()
-    {
+    public async Task SavesBackuperToConnection() {
 
         //arrange
         var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());

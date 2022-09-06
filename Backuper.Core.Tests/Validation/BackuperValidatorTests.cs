@@ -2,7 +2,7 @@
 using Backuper.Core.Models;
 using Backuper.Core.Validation;
 
-namespace Backuper.Core.Tests.Validation; 
+namespace Backuper.Core.Tests.Validation;
 
 public class BackuperValidatorTests {
 
@@ -19,10 +19,10 @@ public class BackuperValidatorTests {
     private readonly IBackuperValidator _sut;
 
     private static BackuperInfo GetValidBase(string name = "SomeName") => new BackuperInfo(name, _existingPath, 3, false);
-    
+
     private static IEnumerable<object[]> GenericIsValidData() {
         static object[] NewCase(BackuperInfo info, BackuperValid expected) => new object[] { info, expected };
-        
+
         yield return NewCase(GetValidBase(), BackuperValid.Valid);
         yield return NewCase(null!, BackuperValid.IsNull);
     }

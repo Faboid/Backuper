@@ -28,9 +28,9 @@ namespace BackuperUI.Windows {
         /// <returns></returns>
         public static MessageBoxResult Show(string title, string content, System.Windows.Threading.Dispatcher dispatcher, MessageBoxButton buttons = MessageBoxButton.OK) {
 
-            return dispatcher.Invoke(() => { 
+            return dispatcher.Invoke(() => {
                 var window = new DarkMessageBox(title, content, buttons);
-                window.ShowDialog(); 
+                window.ShowDialog();
                 return window.Result;
             });
         }

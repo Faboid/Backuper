@@ -18,7 +18,7 @@ namespace BackuperLibrary.Generic {
             //iterates through all directories(versions) and get the most recent one
 
             var versions = path.GetDirectories();
-            
+
             if(versions.Length == 0) { return null; }
 
             return versions.OrderBy(x => x.CreationTime).First().ToString();

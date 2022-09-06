@@ -10,7 +10,7 @@ public class FileBackuperServiceTests {
     public async Task CallsCopyToWithCorrectArguments() {
 
         //arrange
-        
+
         string sourceName = "SomeFile.rar";
         var versionPath = Path.Combine(Directory.GetCurrentDirectory(), "VersionDirectory");
         var fileMock = new Mock<IFileInfo>();

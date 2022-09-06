@@ -4,7 +4,7 @@ using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class EditBackuperCommand : AsyncCommandBase {
 
@@ -22,8 +22,8 @@ public class EditBackuperCommand : AsyncCommandBase {
 
         var result = await _backuperStore.UpdateBackuperAsync(
             _editBackuperViewModel.PreviousName,
-            _editBackuperViewModel.BackuperName, 
-            _editBackuperViewModel.MaxVersions, 
+            _editBackuperViewModel.BackuperName,
+            _editBackuperViewModel.MaxVersions,
             _editBackuperViewModel.UpdateOnBoot
             );
 
@@ -39,7 +39,7 @@ public class EditBackuperCommand : AsyncCommandBase {
 
         MessageBox.Show(message, "Result");
 
-        if(result == UpdateBackuperResponse.Success) { 
+        if(result == UpdateBackuperResponse.Success) {
             _navigatorToBackuperListingViewModel.Navigate();
         }
 

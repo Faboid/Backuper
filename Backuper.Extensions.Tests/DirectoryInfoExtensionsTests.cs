@@ -1,4 +1,4 @@
-﻿namespace Backuper.Extensions.Tests; 
+﻿namespace Backuper.Extensions.Tests;
 
 public class DirectoryInfoExtensionsTests {
 
@@ -38,7 +38,7 @@ public class DirectoryInfoExtensionsTests {
             Directory.Delete(copyDir, true);
 
         }
-    
+
     }
 
 }

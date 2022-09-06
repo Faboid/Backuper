@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace BackuperUI {
     public static class WindowCommands {
-        
+
         public static void Minimize(this Window sender) {
             sender.WindowState = WindowState.Minimized;
         }

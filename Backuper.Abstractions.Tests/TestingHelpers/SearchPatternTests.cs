@@ -9,7 +9,7 @@ public class SearchPatternTests {
     [InlineData("FilmName.rar", "Fil?Name*.rar")]
     [InlineData("FilmName.rar", "???m???e*")]
     [InlineData("FileWasANameThatWasLovely.rar", "Fil*Name*Lovely*.rar")]
-    public void Matches(string path, string searchPattern) 
+    public void Matches(string path, string searchPattern)
         => Assert.True(SearchPattern.Match(path, searchPattern));
 
     [Theory]
@@ -17,7 +17,7 @@ public class SearchPatternTests {
     [InlineData("WasFile.exe", "???")]
     [InlineData("SomeLongName", "Long*")]
     [InlineData("SomeLongName", "*Long")]
-    public void DoesNotMatch(string path, string searchPattern) 
+    public void DoesNotMatch(string path, string searchPattern)
         => Assert.False(SearchPattern.Match(path, searchPattern));
 
 }

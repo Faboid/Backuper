@@ -6,12 +6,12 @@ namespace BackuperUI.UserControls {
     /// Interaction logic for TopBar.xaml
     /// </summary>
     public partial class TopBar : UserControl {
-        
+
         public TopBar() {
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty TitleProperty = 
+        public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(UserControl), new PropertyMetadata(string.Empty));
 
         public string Title {

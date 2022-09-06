@@ -22,7 +22,7 @@ namespace BackuperLibrary.ErrorHandling {
         /// </summary>
         /// <typeparam name="T">The generic parameter that excludes the error</typeparam>
         /// <param name="ex">The exception to write to the log file</param>
-        public static void WriteErrorIfNot<T>(Exception ex) where T: Exception {
+        public static void WriteErrorIfNot<T>(Exception ex) where T : Exception {
             if(ex.GetType() == typeof(T)) {
                 return;
             }
@@ -74,7 +74,7 @@ namespace BackuperLibrary.ErrorHandling {
                     message.AppendLine($" - [{de.Key}]: {de.Value}");
                 }
             }
-            
+
             //end of the error log
             AddSeparator(1, string.Empty);
             AddSeparator(2, separator);

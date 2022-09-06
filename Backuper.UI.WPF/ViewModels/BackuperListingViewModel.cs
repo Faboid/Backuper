@@ -36,8 +36,8 @@ public class BackuperListingViewModel : ViewModelBase {
 
     private ICommand LoadBackupersCommand { get; }
 
-    private BackuperListingViewModel(BackuperStore backuperStore, 
-                                    NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel, 
+    private BackuperListingViewModel(BackuperStore backuperStore,
+                                    NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                     Func<IBackuper, BackuperViewModel> createBackuperViewModel
                                     ) {
         _createBackuperViewModel = createBackuperViewModel;
@@ -51,8 +51,8 @@ public class BackuperListingViewModel : ViewModelBase {
         _backuperStore.BackupersChanged += RefreshBackupers;
     }
 
-    public static BackuperListingViewModel LoadViewModel(BackuperStore backuperStore, 
-                                                        NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel, 
+    public static BackuperListingViewModel LoadViewModel(BackuperStore backuperStore,
+                                                        NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                                         Func<IBackuper, BackuperViewModel> createBackuperViewModel) {
 
         BackuperListingViewModel vm = new(backuperStore, navigatorToCreateBackuperViewModel, createBackuperViewModel);

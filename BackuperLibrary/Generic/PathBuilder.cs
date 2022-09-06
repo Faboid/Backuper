@@ -45,8 +45,8 @@ namespace BackuperLibrary.Generic {
         /// <param name="backuperName">The name of the backuper.</param>
         /// <returns>A string path to the backuper's backups location.</returns>
         /// <exception cref="DirectoryNotFoundException"></exception>
-        public static string GetToPath(string backuperName) { 
-            string path = Path.Combine(To, backuperName); 
+        public static string GetToPath(string backuperName) {
+            string path = Path.Combine(To, backuperName);
             if(Directory.Exists(path)) {
                 return path;
             } else {

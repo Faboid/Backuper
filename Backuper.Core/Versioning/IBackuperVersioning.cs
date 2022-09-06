@@ -1,4 +1,4 @@
-﻿namespace Backuper.Core.Versioning; 
+﻿namespace Backuper.Core.Versioning;
 
 public interface IBackuperVersioning {
 

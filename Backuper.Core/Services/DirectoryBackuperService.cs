@@ -1,7 +1,7 @@
 ﻿using Backuper.Abstractions;
 using Backuper.Extensions;
 
-namespace Backuper.Core.Services; 
+namespace Backuper.Core.Services;
 
 public class DirectoryBackuperService : IBackuperService {
 
@@ -26,7 +26,7 @@ public class DirectoryBackuperService : IBackuperService {
             .DefaultIfEmpty()
             .Max();
 
-        return (latestChange > _source.LastWriteTimeUtc)? latestChange : _source.LastWriteTimeUtc;
+        return (latestChange > _source.LastWriteTimeUtc) ? latestChange : _source.LastWriteTimeUtc;
 
     }
 

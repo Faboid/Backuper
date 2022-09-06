@@ -54,7 +54,7 @@ public class CRUDDirectoryTests {
         string childrenDirectory = "D:\\Some\\Folder\\And\\Directory";
         string fileName = Path.Combine(childrenDirectory, "File.txt");
         string parentDirectory = new DirectoryInfo(childrenDirectory).Parent!.FullName;
-        
+
         fileSystem.CreateDirectory(childrenDirectory);
         fileSystem.CreateFile(fileName, Array.Empty<string>());
 

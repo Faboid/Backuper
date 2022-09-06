@@ -45,7 +45,7 @@ namespace BackuperLibrary.IO {
             }
 
             Settings.SetThreadForegroundHere(() => {
-                
+
                 if(from is FileInfo) {
                     FileInfo destination = new FileInfo($"{to.FullName}\\{from.Name}");
                     File.Copy(from.FullName, destination.FullName);

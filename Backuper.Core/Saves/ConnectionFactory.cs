@@ -1,5 +1,5 @@
 ﻿using Backuper.Core.Saves.DBConnections;
-namespace Backuper.Core.Saves; 
+namespace Backuper.Core.Saves;
 
 public class ConnectionFactory {
 

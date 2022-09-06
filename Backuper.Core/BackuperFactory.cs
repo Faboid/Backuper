@@ -8,31 +8,26 @@ using Backuper.Utils;
 
 namespace Backuper.Core;
 
-public class BackuperFactory : IBackuperFactory
-{
+public class BackuperFactory : IBackuperFactory {
 
     private readonly IBackuperVersioningFactory _versioningFactory;
     private readonly IBackuperServiceFactory _serviceFactory;
     private readonly IBackuperConnection _connection;
     private readonly IBackuperValidator _validator;
 
-    public BackuperFactory(IBackuperVersioningFactory versioningFactory, IBackuperServiceFactory serviceFactory, IBackuperConnection connection, IBackuperValidator validator)
-    {
+    public BackuperFactory(IBackuperVersioningFactory versioningFactory, IBackuperServiceFactory serviceFactory, IBackuperConnection connection, IBackuperValidator validator) {
         _versioningFactory = versioningFactory;
         _serviceFactory = serviceFactory;
         _connection = connection;
         _validator = validator;
     }
 
-    public async Task<Option<IBackuper, CreateBackuperFailureCode>> CreateBackuper(BackuperInfo info)
-    {
+    public async Task<Option<IBackuper, CreateBackuperFailureCode>> CreateBackuper(BackuperInfo info) {
 
         var isValid = _validator.IsValid(info);
-        if (isValid != BackuperValid.Valid)
-        {
+        if(isValid != BackuperValid.Valid) {
 
-            return isValid switch
-            {
+            return isValid switch {
                 BackuperValid.NameIsEmpty => CreateBackuperFailureCode.NameIsEmpty,
                 BackuperValid.NameHasIllegalCharacters => CreateBackuperFailureCode.NameHasIllegalCharacters,
                 BackuperValid.SourceIsEmpty => CreateBackuperFailureCode.SourceIsEmpty,
@@ -42,8 +37,7 @@ public class BackuperFactory : IBackuperFactory
             };
         }
 
-        if (_connection.Exists(info.Name))
-        {
+        if(_connection.Exists(info.Name)) {
             return CreateBackuperFailureCode.NameIsOccupied;
         }
 
@@ -57,8 +51,7 @@ public class BackuperFactory : IBackuperFactory
 
     }
 
-    public IAsyncEnumerable<IBackuper> LoadBackupers()
-    {
+    public IAsyncEnumerable<IBackuper> LoadBackupers() {
         return _connection
             .GetAllBackupersAsync()
             //todo - consider what to do when the source paths don't exist anymore
@@ -66,8 +59,7 @@ public class BackuperFactory : IBackuperFactory
             .Select(x => new Backuper(x.info, x.service, _connection, x.versioning, _validator));
     }
 
-    public enum CreateBackuperFailureCode
-    {
+    public enum CreateBackuperFailureCode {
         Unknown,
         ZeroOrNegativeMaxVersions,
         SourceDoesNotExist,

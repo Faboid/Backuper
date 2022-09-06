@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public abstract class AsyncCommandBase : CommandBase {
 
@@ -23,7 +23,7 @@ public abstract class AsyncCommandBase : CommandBase {
         IsBusy = true;
 
         try {
-            
+
             await ExecuteAsync(parameter);
         } finally {
 

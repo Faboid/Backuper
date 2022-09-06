@@ -7,10 +7,10 @@ using Backuper.Core;
 namespace Backuper.UI.WPF.Stores;
 
 public class BackuperStore {
-    
+
     private readonly Dictionary<string, IBackuper> _backupers;
     private readonly IBackuperFactory _backuperFactory;
-    
+
     private Lazy<Task> _initializationTask;
 
     public event Action? BackupersChanged;
@@ -86,7 +86,7 @@ public class BackuperStore {
     }
 
     public async Task<UpdateBackuperResponse> UpdateBackuperAsync(string name, string? newName = null, int? newMaxVersions = null, bool? newUpdateOnBoot = null) {
-        
+
         if(string.IsNullOrWhiteSpace(name)) {
             return UpdateBackuperResponse.NameIsNullOrWhiteSpace;
         }
@@ -99,7 +99,7 @@ public class BackuperStore {
         var infoSource = backuper.SourcePath;
         var infoVersions = newMaxVersions ?? backuper.MaxVersions;
         var infoUpdateOnBoot = newUpdateOnBoot ?? backuper.UpdateOnBoot;
-        
+
         var info = new BackuperInfo(infoName, infoSource, infoVersions, infoUpdateOnBoot);
         return await UpdateBackuperAsync(backuper, info);
 

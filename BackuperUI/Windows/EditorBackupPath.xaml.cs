@@ -82,7 +82,7 @@ namespace BackuperUI.Windows {
                 } else {
                     DarkMessageBox.Show("Failure", "Something went wrong.", Dispatcher);
                 }
-            } catch (IOException ex) {
+            } catch(IOException ex) {
 
                 DarkMessageBox.Show("There has been an error:", ex.Message, Dispatcher);
             } finally {

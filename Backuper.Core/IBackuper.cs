@@ -1,11 +1,10 @@
 ﻿using Backuper.Core.Models;
 using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("Backuper.Core.Tests")]
+[assembly: InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Core;
 
-public interface IBackuper
-{
+public interface IBackuper {
 
     public string Name { get; }
     public string SourcePath { get; }

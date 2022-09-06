@@ -1,6 +1,6 @@
 ﻿using Backuper.Core.Models;
 
-namespace Backuper.Core.Validation; 
+namespace Backuper.Core.Validation;
 
 public interface IBackuperValidator {
 

@@ -1,7 +1,7 @@
 ﻿using Backuper.UI.WPF.ViewModels;
 using System.IO;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class MoveToParentFolderCommand : CommandBase {
 
@@ -12,7 +12,7 @@ public class MoveToParentFolderCommand : CommandBase {
     }
 
     public override void Execute(object? parameter) {
-        
+
         _openPathDialogViewModel.CurrentPath = Directory.GetParent(_openPathDialogViewModel.CurrentPath)?.FullName ?? _openPathDialogViewModel.CurrentPath;
     }
 }

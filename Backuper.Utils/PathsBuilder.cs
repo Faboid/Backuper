@@ -23,7 +23,7 @@ namespace Backuper.Utils {
         }
 
         private string BackupsMainDirectory { get; }
-        
+
         public Paths Build(string backuperName) {
             return new(BackupsMainDirectory, backuperName);
         }
@@ -73,7 +73,7 @@ namespace Backuper.Utils {
 
             if(!Directory.Exists(BackupsDirectory)) {
                 return 0;
-            } 
+            }
 
             return Directory
                 .EnumerateDirectories(BackupsDirectory)

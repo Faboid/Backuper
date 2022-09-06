@@ -1,4 +1,4 @@
-﻿namespace Backuper.Core.Saves.DBConnections; 
+﻿namespace Backuper.Core.Saves.DBConnections;
 
 public class FileDBConnection : IDBConnection {
 

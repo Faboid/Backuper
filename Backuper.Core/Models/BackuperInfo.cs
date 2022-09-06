@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Backuper.Core.Models; 
+namespace Backuper.Core.Models;
 
 public class BackuperInfo {
 

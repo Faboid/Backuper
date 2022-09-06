@@ -19,11 +19,11 @@ public class EnumerateDirectoriesTests {
     private readonly string[] _directoriesFullPath;
     private readonly IMockFileSystem _sut;
 
-    private readonly string[] _directories = new string[] { 
-        "Dir", "Dir\\SomeNesting", "Dir\\SomeNesting\\Here", 
-        "Another", "Another\\Sup", 
-        "DirectChild", 
-        "AnotherChild" 
+    private readonly string[] _directories = new string[] {
+        "Dir", "Dir\\SomeNesting", "Dir\\SomeNesting\\Here",
+        "Another", "Another\\Sup",
+        "DirectChild",
+        "AnotherChild"
     };
 
 

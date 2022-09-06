@@ -1,4 +1,4 @@
-﻿namespace Backuper.Utils.Tests; 
+﻿namespace Backuper.Utils.Tests;
 
 public class ThreadsHandlerTests {
 

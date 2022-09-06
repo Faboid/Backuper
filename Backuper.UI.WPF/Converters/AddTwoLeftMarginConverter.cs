@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Backuper.UI.WPF.Converters; 
+namespace Backuper.UI.WPF.Converters;
 public class AddTwoLeftMarginConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
         var thickness = (Thickness)value;

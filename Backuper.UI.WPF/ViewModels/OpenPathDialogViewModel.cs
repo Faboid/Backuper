@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Backuper.UI.WPF.ViewModels; 
+namespace Backuper.UI.WPF.ViewModels;
 public class OpenPathDialogViewModel : ViewModelBase {
 
     private readonly static string _defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -28,7 +28,7 @@ public class OpenPathDialogViewModel : ViewModelBase {
     private string _currentPath = _defaultPath;
     public string CurrentPath {
         get { return _currentPath; }
-        set { 
+        set {
             _currentPath = value;
             OnPropertyChanged(nameof(CurrentPath));
             Load();
@@ -48,7 +48,7 @@ public class OpenPathDialogViewModel : ViewModelBase {
     private FileSystemInfo _selectedPath = new DirectoryInfo(_defaultPath);
     public FileSystemInfo SelectedPath {
         get { return _selectedPath; }
-        set { 
+        set {
             if(value == null) {
                 return;
             }

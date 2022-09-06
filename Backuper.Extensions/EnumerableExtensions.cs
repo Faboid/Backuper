@@ -1,4 +1,4 @@
-﻿namespace Backuper.Extensions; 
+﻿namespace Backuper.Extensions;
 
 public static class EnumerableExtensions {
 

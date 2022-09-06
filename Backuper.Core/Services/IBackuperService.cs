@@ -1,4 +1,4 @@
-﻿namespace Backuper.Core.Services; 
+﻿namespace Backuper.Core.Services;
 
 /// <summary>
 /// Handles backuping the source.

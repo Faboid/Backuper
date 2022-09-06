@@ -14,7 +14,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
     private readonly IBackuper _original;
     private readonly BackuperStore _backuperStore;
     private readonly ErrorsViewModel _errorsViewModel = new();
-    
+
     public string PreviousName => _original.Name;
 
     private string _backuperName = "";

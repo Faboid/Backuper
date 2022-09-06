@@ -3,13 +3,13 @@ using Backuper.UI.WPF.Stores;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Backuper.UI.WPF.ViewModels; 
+namespace Backuper.UI.WPF.ViewModels;
 
 public class MainViewModel : ViewModelBase {
 
     private readonly NavigationStore _navigationStore;
     public ViewModelBase? CurrentViewModel => _navigationStore.CurrentViewModel;
-    
+
     public ICommand? MinimizeCommand { get; }
     public ICommand? ResizeCommand { get; }
     public ICommand? CloseCommand { get; }

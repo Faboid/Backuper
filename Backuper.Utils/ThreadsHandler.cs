@@ -1,4 +1,4 @@
-﻿namespace Backuper.Utils; 
+﻿namespace Backuper.Utils;
 
 /// <summary>
 /// Provides methods to interact with <see cref="Thread.CurrentThread"/> more easily.
@@ -21,7 +21,7 @@ public static class ThreadsHandler {
     /// </summary>
     public struct ThreadHandler : IDisposable {
 
-        internal ThreadHandler(Thread thread) { 
+        internal ThreadHandler(Thread thread) {
             wasBackground = thread.IsBackground;
             thread.IsBackground = false;
             this.thread = thread;
@@ -30,7 +30,7 @@ public static class ThreadsHandler {
         private readonly Thread thread;
         private readonly bool wasBackground;
         private bool isDisposed = false;
-        
+
         public void Dispose() {
             if(!isDisposed) {
                 thread.IsBackground = wasBackground;

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BackuperLibrary.UISpeaker {
-    
+
     public class BackuperResultInfo {
 
         public BackuperResultInfo(string nameBackup, BackuperResult result, Exception ex = null) {

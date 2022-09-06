@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace Backuper.UI.WPF.Components; 
+namespace Backuper.UI.WPF.Components;
 
 public class TextBoxWithButton : TextBoxWithPreview {
 

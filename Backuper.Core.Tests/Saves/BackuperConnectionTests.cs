@@ -5,11 +5,9 @@ using Backuper.Extensions;
 
 namespace Backuper.Core.Tests.Saves;
 
-public class BackuperConnectionTests
-{
+public class BackuperConnectionTests {
 
-    public BackuperConnectionTests()
-    {
+    public BackuperConnectionTests() {
         _dbConnection = new MemoryDBConnection();
         _sut = new BackuperConnection(_dbConnection);
     }
@@ -18,8 +16,7 @@ public class BackuperConnectionTests
     private readonly IBackuperConnection _sut;
 
     [Fact]
-    public async Task CreateBackuper()
-    {
+    public async Task CreateBackuper() {
 
         //arrange
         Reset();
@@ -36,8 +33,7 @@ public class BackuperConnectionTests
     }
 
     [Fact]
-    public async Task OverWriteBackuper()
-    {
+    public async Task OverWriteBackuper() {
 
         //arrange
         Reset();
@@ -57,8 +53,7 @@ public class BackuperConnectionTests
     }
 
     [Fact]
-    public async Task DeleteBackuper()
-    {
+    public async Task DeleteBackuper() {
 
         //arrange
         Reset();
@@ -74,8 +69,7 @@ public class BackuperConnectionTests
 
     }
 
-    private static IEnumerable<object[]> GetAllBackupersData()
-    {
+    private static IEnumerable<object[]> GetAllBackupersData() {
         static object[] NewTestCase(params BackuperInfo[] backupers) => new object[] { backupers };
 
         yield return NewTestCase();
@@ -85,8 +79,7 @@ public class BackuperConnectionTests
 
     [Theory]
     [MemberData(nameof(GetAllBackupersData))]
-    public async Task GetAllBackupers(params BackuperInfo[] backupers)
-    {
+    public async Task GetAllBackupers(params BackuperInfo[] backupers) {
 
         //arrange
         Reset();
@@ -103,16 +96,14 @@ public class BackuperConnectionTests
             .ForEach(x => AssertEqualInfo(backupers[x], actual[x]));
     }
 
-    private static void AssertEqualInfo(BackuperInfo expected, BackuperInfo actual)
-    {
+    private static void AssertEqualInfo(BackuperInfo expected, BackuperInfo actual) {
         Assert.Equal(expected.Name, actual.Name);
         Assert.Equal(expected.SourcePath, actual.SourcePath);
         Assert.Equal(expected.MaxVersions, actual.MaxVersions);
         Assert.Equal(expected.UpdateOnBoot, actual.UpdateOnBoot);
     }
 
-    private void Reset()
-    {
+    private void Reset() {
         _dbConnection
             .EnumerateNames()
             .ToList()

@@ -36,7 +36,7 @@ namespace BackuperUI.Windows {
             //the backuping functionality on top of the currently initializing programs
             Thread.Sleep(10000);
 
-            new Thread(async() => {
+            new Thread(async () => {
                 Thread.CurrentThread.IsBackground = false;
                 IEnumerable<BackuperResultInfo> results;
 

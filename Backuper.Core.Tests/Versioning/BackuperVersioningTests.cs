@@ -5,7 +5,7 @@ using Backuper.Core.Versioning;
 using Backuper.Extensions;
 using Moq;
 
-namespace Backuper.Core.Tests.Versioning; 
+namespace Backuper.Core.Tests.Versioning;
 
 public class BackuperVersioningTests {
 
@@ -115,7 +115,7 @@ public class BackuperVersioningTests {
     [InlineData(5)]
     [InlineData(12)]
     public void DeleteExtraVersions_DeletesExtra(int maxVersions) {
-        int GetCurrentVersions(string name) 
+        int GetCurrentVersions(string name)
             => _directoryInfoProvider
                 .FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(name))
                 .EnumerateDirectories()

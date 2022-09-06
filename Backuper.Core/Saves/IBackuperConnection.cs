@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Backuper.Core.Saves
-{
-    public interface IBackuperConnection
-    {
+namespace Backuper.Core.Saves {
+    public interface IBackuperConnection {
 
         bool Exists(string name);
         Task SaveAsync(BackuperInfo info);

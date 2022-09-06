@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace Backuper.UI.WPF.Commands; 
+namespace Backuper.UI.WPF.Commands;
 
 public class MoveToDirectoryCommand : CommandBase {
 

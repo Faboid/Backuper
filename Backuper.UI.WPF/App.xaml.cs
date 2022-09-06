@@ -17,7 +17,7 @@ public partial class App : Application {
 
     //temporary path
     private readonly string _mainBackuperDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackupersData");
-    
+
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
 
