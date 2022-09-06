@@ -38,10 +38,10 @@ public class BackuperViewModel : ViewModelBase {
         OnPropertyChanged(nameof(Updated));
 
         var message = response switch {
-            Core.BackupResponseCode.Unknown => throw new NotImplementedException(),
-            Core.BackupResponseCode.Success => $"{Name} has been backed up successfully.",
-            Core.BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
-            Core.BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
+            BackupResponseCode.Unknown => throw new NotImplementedException(),
+            BackupResponseCode.Success => $"{Name} has been backed up successfully.",
+            BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
+            BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
             _ => $"{Name}'s backup has failed for an unknown reason.",
         };
 

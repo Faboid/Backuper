@@ -110,10 +110,10 @@ public class BackuperStore {
 
         var result = await backuper.EditAsync(info);
         return result switch {
-            Core.EditBackuperResponseCode.Success => UpdateBackuperResponse.Success,
-            Core.EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative => UpdateBackuperResponse.NewMaxVersionsIsZeroOrNegative,
-            Core.EditBackuperResponseCode.NewNameIsOccupied => UpdateBackuperResponse.NewNameIsOccupied,
-            Core.EditBackuperResponseCode.NameContainsIllegalCharacters => UpdateBackuperResponse.NewNameContainsIllegalCharacters,
+            EditBackuperResponseCode.Success => UpdateBackuperResponse.Success,
+            EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative => UpdateBackuperResponse.NewMaxVersionsIsZeroOrNegative,
+            EditBackuperResponseCode.NewNameIsOccupied => UpdateBackuperResponse.NewNameIsOccupied,
+            EditBackuperResponseCode.NameContainsIllegalCharacters => UpdateBackuperResponse.NewNameContainsIllegalCharacters,
             _ => UpdateBackuperResponse.UnknownError,
         };
 
