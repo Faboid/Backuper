@@ -1,35 +1,26 @@
-﻿using System.Threading.Tasks;
+﻿using Backuper.UI.WPF.Services;
+using System.Threading.Tasks;
 
 namespace Backuper.UI.WPF.Commands;
 
 public abstract class AsyncCommandBase : CommandBase {
 
-    private bool _isBusy = false;
+    public AsyncCommandBase() : this(new()) { }
 
-    public bool IsBusy {
-        get { return _isBusy; }
-        set {
-            _isBusy = value;
-            OnCanExecuteChanged();
-        }
+    public AsyncCommandBase(BusyService busyService) {
+        _busyService = busyService;
+        _busyService.BusyChanged += OnCanExecuteChanged;
     }
 
+    private readonly BusyService _busyService;
+
     public override bool CanExecute(object? parameter) {
-        return !IsBusy && base.CanExecute(parameter);
+        return _busyService.IsFree && base.CanExecute(parameter);
     }
 
     public override async void Execute(object? parameter) {
-
-        IsBusy = true;
-
-        try {
-
-            await ExecuteAsync(parameter);
-        } finally {
-
-            IsBusy = false;
-        }
-
+        using var busy = _busyService.GetBusy();
+        await ExecuteAsync(parameter);
     }
 
     protected abstract Task ExecuteAsync(object? parameter);
