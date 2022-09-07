@@ -1,5 +1,6 @@
 using Backuper.Core;
 using Backuper.Extensions;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using System;
 using System.Linq;
@@ -13,7 +14,7 @@ public class BackupAllCommand : AsyncCommandBase {
 
     private readonly BackuperStore _backuperStore;
 
-    public BackupAllCommand(BackuperStore backuperStore) {
+    public BackupAllCommand(BackuperStore backuperStore, BusyService busyService) : base(busyService) {
         _backuperStore = backuperStore;
     }
 

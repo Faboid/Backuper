@@ -13,6 +13,7 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class BackuperListingViewModel : ViewModelBase {
 
+    private readonly BusyService _busyService;
     private readonly BackuperStore _backuperStore;
     private readonly ICollectionView _backupersCollectionView;
     private readonly Func<IBackuper, BackuperViewModel> _createBackuperViewModel;
@@ -29,6 +30,9 @@ public class BackuperListingViewModel : ViewModelBase {
         }
     }
 
+    public bool IsNotBackuping => !_busyService.IsBusy;
+
+    public ICommand? SettingsCommand { get; }
     public ICommand? ChangeBackupPathCommand { get; }
     public ICommand? ToggleAutomaticBackupsCommand { get; }
     public ICommand CreateBackuperCommand { get; }
@@ -40,10 +44,12 @@ public class BackuperListingViewModel : ViewModelBase {
                                     NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                     Func<IBackuper, BackuperViewModel> createBackuperViewModel
                                     ) {
+        _busyService = new BusyService();
+        _busyService.BusyChanged += () => OnPropertyChanged(nameof(IsNotBackuping));
         _createBackuperViewModel = createBackuperViewModel;
         LoadBackupersCommand = new LoadBackupersCommand(backuperStore, UpdateBackupers);
         CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
-        BackupAllCommand = new BackupAllCommand(backuperStore);
+        BackupAllCommand = new BackupAllCommand(backuperStore, _busyService);
         _backupers = new();
         _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
         _backupersCollectionView.Filter = BackupersFilter;
