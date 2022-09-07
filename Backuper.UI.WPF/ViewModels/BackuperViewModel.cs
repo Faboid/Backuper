@@ -19,8 +19,8 @@ public class BackuperViewModel : ViewModelBase {
     public string Name => _backuper.Name;
     public string SourcePath => _backuper.SourcePath;
 
-    public ICommand? BackupCommand { get; }
-    public ICommand? EditCommand { get; }
+    public ICommand BackupCommand { get; }
+    public ICommand EditCommand { get; }
     public ICommand DeleteCommand { get; }
 
     public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper, NavigationService<EditBackuperViewModel> navigatorToEditBackuperViewModel) {
