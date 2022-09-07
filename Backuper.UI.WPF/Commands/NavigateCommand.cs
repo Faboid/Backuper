@@ -3,7 +3,7 @@ using Backuper.UI.WPF.ViewModels;
 
 namespace Backuper.UI.WPF.Commands;
 
-public class NavigateCommand<T> : CommandBase where T : ViewModelBase {
+public class NavigateCommand<T> : LinkableCommandBase where T : ViewModelBase {
 
     private readonly NavigationService<T> navigationService;
 
@@ -11,7 +11,11 @@ public class NavigateCommand<T> : CommandBase where T : ViewModelBase {
         this.navigationService = navigationService;
     }
 
-    public override void Execute(object? parameter) {
+    public NavigateCommand(NavigationService<T> navigationService, BusyService busyService) : base(busyService) {
+        this.navigationService = navigationService;
+    }
+
+    public override void ExecuteLinked(object? parameter) {
         navigationService.Navigate();
     }
 }

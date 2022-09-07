@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Backuper.UI.WPF.Services;
+using System;
 using System.Threading.Tasks;
 
 namespace Backuper.UI.WPF.Commands;
@@ -11,6 +12,10 @@ public class AsyncRelayCommand : AsyncCommandBase {
         _callback = callback;
     }
 
+    public AsyncRelayCommand(Func<Task> callback, BusyService busyService) : base(busyService) {
+        _callback = callback;
+    }
+
     protected override Task ExecuteAsync(object? parameter) => _callback.Invoke();
 
 }
@@ -20,6 +25,10 @@ public class AsyncRelayCommand<T> : AsyncCommandBase {
     private readonly Func<T, Task> _callback;
 
     public AsyncRelayCommand(Func<T, Task> callback) {
+        _callback = callback;
+    }
+
+    public AsyncRelayCommand(Func<T, Task> callback, BusyService busyService) : base(busyService) {
         _callback = callback;
     }
 

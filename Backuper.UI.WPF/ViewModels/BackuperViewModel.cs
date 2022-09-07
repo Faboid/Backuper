@@ -26,9 +26,10 @@ public class BackuperViewModel : ViewModelBase {
     public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper, NavigationService<EditBackuperViewModel> navigatorToEditBackuperViewModel) {
         _backuper = backuper;
         _backuperStore = backuperStore;
-        BackupCommand = new AsyncRelayCommand(Backup);
-        EditCommand = new NavigateCommand<EditBackuperViewModel>(navigatorToEditBackuperViewModel);
-        DeleteCommand = new AsyncRelayCommand(Delete);
+        var busyService = new BusyService();
+        BackupCommand = new AsyncRelayCommand(Backup, busyService);
+        EditCommand = new NavigateCommand<EditBackuperViewModel>(navigatorToEditBackuperViewModel, busyService);
+        DeleteCommand = new AsyncRelayCommand(Delete, busyService);
     }
 
     private async Task Backup() {
