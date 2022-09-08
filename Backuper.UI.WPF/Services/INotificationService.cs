@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Backuper.UI.WPF.Services;
-internal interface INotificationService {
+public interface INotificationService {
 
     void Send(string message);
     void Send(string message, string title);
