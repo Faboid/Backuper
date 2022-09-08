@@ -84,7 +84,7 @@ public class Backuper : IBackuper {
             };
         }
 
-        if(_connection.Exists(newInfo.Name)) {
+        if(newInfo.Name != Name && _connection.Exists(newInfo.Name)) {
             return EditBackuperResponseCode.NewNameIsOccupied;
         }
 

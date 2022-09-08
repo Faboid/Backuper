@@ -108,6 +108,7 @@ public class BackuperTests {
         info.Name = oldName;
         var connectionMock = new Mock<IBackuperConnection>();
         connectionMock.Setup(x => x.Exists(It.IsAny<string>())).Returns(false);
+        connectionMock.Setup(x => x.Exists(oldName)).Returns(true);
         var versioningMock = new Mock<IBackuperVersioning>();
         var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, versioningMock.Object, ValidatorMocks.GetAlwaysValid());
         info.Name = newName;
