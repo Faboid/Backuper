@@ -2,20 +2,21 @@
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Backuper.UI.WPF.Commands;
 
 public class EditBackuperCommand : AsyncCommandBase {
 
+    private readonly INotificationService _notificationService;
     private readonly EditBackuperViewModel _editBackuperViewModel;
     private readonly BackuperStore _backuperStore;
     private readonly NavigationService<BackuperListingViewModel> _navigatorToBackuperListingViewModel;
 
-    public EditBackuperCommand(EditBackuperViewModel editBackuperViewModel, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
+    public EditBackuperCommand(EditBackuperViewModel editBackuperViewModel, BackuperStore backuperStore, INotificationService notificationService, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         _editBackuperViewModel = editBackuperViewModel;
         _backuperStore = backuperStore;
         _navigatorToBackuperListingViewModel = navigatorToBackuperListingViewModel;
+        _notificationService = notificationService;
     }
 
     protected override async Task ExecuteAsync(object? parameter) {
@@ -37,7 +38,7 @@ public class EditBackuperCommand : AsyncCommandBase {
             _ => "An error has occurred when trying to edit the backuper.",
         };
 
-        MessageBox.Show(message, "Result");
+        _notificationService.Send(message, "Result");
 
         if(result == UpdateBackuperResponse.Success) {
             _navigatorToBackuperListingViewModel.Navigate();

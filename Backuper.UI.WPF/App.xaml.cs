@@ -4,6 +4,7 @@ using Backuper.Core.Saves;
 using Backuper.Core.Services;
 using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
+using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using System.IO;
@@ -18,6 +19,7 @@ public partial class App : Application {
     //temporary path
     private readonly string _mainBackuperDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackupersData");
 
+    private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
 
@@ -25,6 +27,7 @@ public partial class App : Application {
         _navigationStore = new();
 
         //todo - use a DI container
+        _notificationService = new MessageBoxNotificationService();
         var fileInfoProvider = new FileInfoProvider();
         var directoryInfoProvider = new DirectoryInfoProvider();
         var dateTimeProvider = new DateTimeProvider();
@@ -49,19 +52,19 @@ public partial class App : Application {
     }
 
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {
-        return new(_backuperStore, backuper, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
+        return new(_backuperStore, backuper, _notificationService, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
     }
 
     private BackuperListingViewModel CreateBackuperListingViewModel() {
-        return BackuperListingViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateCreateBackuperViewModel), CreateBackuperViewModel);
+        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateCreateBackuperViewModel), CreateBackuperViewModel);
     }
 
     private CreateBackuperViewModel CreateCreateBackuperViewModel() {
-        return new(_backuperStore, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+        return new(_backuperStore, _navigationStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
     private EditBackuperViewModel CreateEditBackuperViewModel(IBackuper backuper) {
-        return new(backuper, _backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
+        return new(backuper, _backuperStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
 }

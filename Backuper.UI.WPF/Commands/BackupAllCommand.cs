@@ -12,10 +12,12 @@ namespace Backuper.UI.WPF.Commands;
 
 public class BackupAllCommand : AsyncCommandBase {
 
+    private readonly INotificationService _notificationService;
     private readonly BackuperStore _backuperStore;
 
-    public BackupAllCommand(BackuperStore backuperStore, BusyService busyService) : base(busyService) {
+    public BackupAllCommand(BackuperStore backuperStore, BusyService busyService, INotificationService notificationService) : base(busyService) {
         _backuperStore = backuperStore;
+        _notificationService = notificationService;
     }
 
     protected async override Task ExecuteAsync(object? parameter) {
@@ -33,7 +35,7 @@ public class BackupAllCommand : AsyncCommandBase {
         sb.AppendLine($"{alreadyUpdated} were already updated.");
         sb.AppendLine($"{failures} have failed.");
 
-        MessageBox.Show(sb.ToString(), "Backups Result");
+        _notificationService.Send(sb.ToString(), "Backup Result");
 
     }
 

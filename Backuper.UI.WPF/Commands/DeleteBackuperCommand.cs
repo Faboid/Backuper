@@ -1,18 +1,20 @@
-﻿using Backuper.UI.WPF.Stores;
+﻿using Backuper.UI.WPF.Services;
+using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Backuper.UI.WPF.Commands;
 
 public class DeleteBackuperCommand : AsyncCommandBase {
 
+    private readonly INotificationService _notificationService;
     private readonly BackuperStore _backuperStore;
     private readonly BackuperViewModel _backuperVM;
 
-    public DeleteBackuperCommand(BackuperViewModel backuperVM, BackuperStore backuperStore) {
+    public DeleteBackuperCommand(BackuperViewModel backuperVM, BackuperStore backuperStore, INotificationService notificationService) {
         _backuperStore = backuperStore;
         _backuperVM = backuperVM;
+        _notificationService = notificationService;
     }
 
     protected override async Task ExecuteAsync(object? parameter) {
@@ -27,7 +29,7 @@ public class DeleteBackuperCommand : AsyncCommandBase {
             _ => "There has been an unknown error.",
         };
 
-        MessageBox.Show(message);
+        _notificationService.Send(message);
 
     }
 }

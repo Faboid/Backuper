@@ -57,7 +57,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
     public ICommand SubmitCommand { get; }
     public ICommand CancelCommand { get; }
 
-    public EditBackuperViewModel(IBackuper backuper, BackuperStore backuperStore, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
+    public EditBackuperViewModel(IBackuper backuper, BackuperStore backuperStore, INotificationService notificationService, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         _backuperStore = backuperStore;
         _original = backuper;
 
@@ -65,7 +65,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         MaxVersions = backuper.MaxVersions;
         UpdateOnBoot = backuper.UpdateOnBoot;
 
-        SubmitCommand = new EditBackuperCommand(this, backuperStore, navigatorToBackuperListingViewModel);
+        SubmitCommand = new EditBackuperCommand(this, backuperStore, notificationService, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
         _errorsViewModel.ErrorsChanged += OnErrorsChanged;
     }

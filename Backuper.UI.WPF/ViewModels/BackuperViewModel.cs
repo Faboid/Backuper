@@ -10,6 +10,7 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class BackuperViewModel : ViewModelBase {
 
+    private readonly INotificationService _notificationService;
     private readonly IBackuper _backuper;
     private readonly BackuperStore _backuperStore;
 
@@ -23,9 +24,10 @@ public class BackuperViewModel : ViewModelBase {
     public ICommand EditCommand { get; }
     public ICommand DeleteCommand { get; }
 
-    public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper, NavigationService<EditBackuperViewModel> navigatorToEditBackuperViewModel) {
+    public BackuperViewModel(BackuperStore backuperStore, IBackuper backuper, INotificationService notificationService, NavigationService<EditBackuperViewModel> navigatorToEditBackuperViewModel) {
         _backuper = backuper;
         _backuperStore = backuperStore;
+        _notificationService = notificationService;
         var busyService = new BusyService();
         BackupCommand = new AsyncRelayCommand(Backup, busyService);
         EditCommand = new NavigateCommand<EditBackuperViewModel>(navigatorToEditBackuperViewModel, busyService);
@@ -44,7 +46,7 @@ public class BackuperViewModel : ViewModelBase {
             _ => $"{Name}'s backup has failed for an unknown reason.",
         };
 
-        MessageBox.Show(message);
+        _notificationService.Send(message);
 
     }
 
@@ -60,7 +62,7 @@ public class BackuperViewModel : ViewModelBase {
             _ => "There has been an unknown error.",
         };
 
-        MessageBox.Show(message);
+        _notificationService.Send(message);
 
     }
 
