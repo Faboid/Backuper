@@ -4,9 +4,57 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Backuper.UI.WPF.Views"
+             xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
+             xmlns:components="clr-namespace:Backuper.UI.WPF.Components"
+             d:DataContext="{d:DesignInstance Type=viewmodels:BackupingResultsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <Grid>
-            
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" MaxWidth="20"/>
+            <ColumnDefinition Width="2*" MinWidth="80"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="3*" MinWidth="100"/>
+            <ColumnDefinition Width="0.5*" MaxWidth="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*" MaxHeight="20"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="0.5*" MaxHeight="20"/>
+        </Grid.RowDefinitions>
+
+        <Button
+            Grid.Column="1"
+            Grid.Row="1"
+            Content="Home"
+            Command="{Binding HomeCommand}"
+            />
+
+        <components:TextBoxWithButton
+            Grid.Column="3"
+            Grid.Row="1"
+            Padding="2"
+            FontSize="14"
+            PreviewText="Search Backuper..."
+            ButtonText="🔍"
+            Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
+            />
+
+        <DataGrid
+            IsReadOnly="True"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            Grid.Row="2"
+            ItemsSource="{Binding Backupers}"
+            >
+            <DataGridTextColumn Header="Status" Width="60" Binding="{Binding Status}"/>
+            <DataGridTextColumn Header="Name" Width="60" Binding="{Binding Name}"/>
+            <DataGridTextColumn Header="MaxVersions" Width="30" Binding="{Binding MaxVersions}"/>
+            <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source}"/>
+        </DataGrid>
+        
     </Grid>
 </UserControl>
