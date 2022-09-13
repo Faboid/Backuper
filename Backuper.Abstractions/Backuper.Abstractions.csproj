@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Backuper.Extensions\Backuper.Extensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Interop.IWshRuntimeLibrary">
+      <HintPath>..\BackuperLibrary\obj\Debug\net6.0\Interop.IWshRuntimeLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
