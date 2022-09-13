@@ -7,7 +7,10 @@ using Backuper.Core.Versioning;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Backuper.UI.WPF;
@@ -55,8 +58,12 @@ public partial class App : Application {
         return new(_backuperStore, backuper, _notificationService, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
     }
 
+    private BackupingResultsViewModel CreateBackupingResultsViewModel() {
+        return BackupingResultsViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
+    }
+
     private BackuperListingViewModel CreateBackuperListingViewModel() {
-        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateCreateBackuperViewModel), CreateBackuperViewModel);
+        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateCreateBackuperViewModel), new(_navigationStore, CreateBackupingResultsViewModel), CreateBackuperViewModel);
     }
 
     private CreateBackuperViewModel CreateCreateBackuperViewModel() {
