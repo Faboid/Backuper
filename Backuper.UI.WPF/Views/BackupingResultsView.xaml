@@ -50,10 +50,12 @@
             Grid.Row="2"
             ItemsSource="{Binding Backupers}"
             >
-            <DataGridTextColumn Header="Status" Width="60" Binding="{Binding Status}"/>
-            <DataGridTextColumn Header="Name" Width="60" Binding="{Binding Name}"/>
-            <DataGridTextColumn Header="MaxVersions" Width="30" Binding="{Binding MaxVersions}"/>
-            <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source}"/>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Status" Width="100" Binding="{Binding Status, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Name" Width="150" Binding="{Binding Name, Mode=OneWay}"/>
+                <DataGridTextColumn Header="MaxVersions" Width="80" Binding="{Binding MaxVersions, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}"/>
+            </DataGrid.Columns>
         </DataGrid>
         
     </Grid>
