@@ -1,10 +1,13 @@
 using Backuper.Abstractions;
 
-namespace Backuper.Core;
+namespace Backuper.Core.Services;
 
-public class AutoBoot {
+/// <summary>
+/// Handles setting up everything needed to boot the application automatically.
+/// </summary>
+public class AutoBootService {
 
-    public AutoBoot(IShortcutProvider shortcutProvider) {
+    public AutoBootService(IShortcutProvider shortcutProvider) {
         _shortcut = shortcutProvider.FromShortcutPaths(_shortcutPath, _pathToExe)
             .SetArguments(StartupArguments)
             .SetDescription("Boots Backuper.exe to execute a full automatic backup.");
