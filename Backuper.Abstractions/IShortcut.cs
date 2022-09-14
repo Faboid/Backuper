@@ -4,6 +4,6 @@ public interface IShortcut {
     bool Exists();
     void Create();
     void Delete();
-    Shortcut SetArguments(string arguments);
-    Shortcut SetDescription(string description);
+    IShortcut SetArguments(string arguments);
+    IShortcut SetDescription(string description);
 }

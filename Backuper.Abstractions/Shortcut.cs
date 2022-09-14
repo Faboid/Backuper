@@ -18,12 +18,12 @@ public class Shortcut : IShortcut {
 
     private readonly IWshShortcut _shortcut;
 
-    public Shortcut SetArguments(string arguments) {
+    public IShortcut SetArguments(string arguments) {
         _shortcut.Arguments = arguments;
         return this;
     }
 
-    public Shortcut SetDescription(string description) {
+    public IShortcut SetDescription(string description) {
         _shortcut.Description = description;
         return this;
     }
