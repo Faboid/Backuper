@@ -28,7 +28,8 @@ public class Shortcut : IShortcut {
         return this;
     }
 
-    public void Save() => _shortcut.Save();
+    public void Create() => _shortcut.Save();
+    public void Delete() => System.IO.File.Delete(_shortcut.FullName);
     public bool Exists() => System.IO.File.Exists(_shortcut.FullName);
 
 }

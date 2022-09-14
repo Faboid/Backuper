@@ -2,7 +2,8 @@
 
 public interface IShortcut {
     bool Exists();
-    void Save();
+    void Create();
+    void Delete();
     Shortcut SetArguments(string arguments);
     Shortcut SetDescription(string description);
 }
