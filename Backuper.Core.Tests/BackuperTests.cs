@@ -157,8 +157,9 @@ public class BackuperTests {
         //arrange
         var connectionMock = new Mock<IBackuperConnection>();
         var info = GetGenericData();
-        connectionMock.Setup(x => x.Exists(info.Name)).Returns(true);
         var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, Mock.Of<IBackuperVersioning>(), ValidatorMocks.GetAlwaysValid());
+        info.Name = "SomeOtherName";
+        connectionMock.Setup(x => x.Exists(info.Name)).Returns(true);
 
         //act
         var actual = await sut.EditAsync(info);
