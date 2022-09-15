@@ -32,7 +32,14 @@ public class MockFileSystem : IMockFileSystem {
     public void CreateFile(string path, string[] lines) => CreateFile(path, lines, DateTime.Now);
 
     public void CreateFile(string path, string[] lines, DateTime customTime) {
-        _files.Add(path, new(path, lines, customTime));
+        var file = new File(path, lines, customTime);
+
+        if(!_files.ContainsKey(path)) {
+            _files.Add(path, file);
+            return;
+        }
+
+        _files[path] = file;
     }
 
     public string[] ReadFile(string path) {
