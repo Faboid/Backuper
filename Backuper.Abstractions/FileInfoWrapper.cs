@@ -20,6 +20,7 @@ public class FileInfoWrapper : IFileInfo {
     public DateTime LastWriteTimeUtc => _info.LastWriteTimeUtc;
     public bool Exists => _info.Exists;
 
+    public void Create() => _info.Create().Dispose();
     public void WriteAllLines(IEnumerable<string> lines) => File.WriteAllLines(_info.FullName, lines);
     public IEnumerable<string> ReadLines() => File.ReadLines(_info.FullName);
 

@@ -31,5 +31,6 @@ public class MockFileInfo : IFileInfo {
 
     public IEnumerable<string> ReadLines() => ReadAllLines();
     public void WriteAllLines(IEnumerable<string> lines) => _mockFileSystem.CreateFile(FullName, lines.ToArray());
+    public void Create() => _mockFileSystem.CreateFile(FullName, Array.Empty<string>());
 }
 
