@@ -57,9 +57,8 @@ public class BackupingResultsViewModel : ViewModelBase {
     }
 
     private async Task ExecuteBackups(CancellationToken cancellationToken = default) {
-        await _backuperResults
-            .AsParallel()
-            .ForEachAsync(x => x.Backup(cancellationToken));
+        var tasks = _backuperResults.Select(x => x.Backup(cancellationToken));
+        await Task.WhenAll(tasks);
     }
 
     private bool SearchFilter(object obj) {
