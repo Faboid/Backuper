@@ -8,6 +8,7 @@ public class Settings {
 
     public Settings(IFileInfo settingsFile) {
         _settingsFile = settingsFile;
+        _settingsFile.Create();
     }
 
     private const string _separator = ":";

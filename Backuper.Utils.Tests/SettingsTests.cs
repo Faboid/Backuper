@@ -11,7 +11,6 @@ public class SettingsTests {
 
         IMockFileSystem mockFileSystem = new MockFileSystem();
         IFileInfoProvider fileInfoProvider= new MockFileInfoProvider(mockFileSystem);
-        mockFileSystem.CreateFile(somePath, Array.Empty<string>());
         settings = new Settings(fileInfoProvider.FromFilePath(somePath));
     }
 
