@@ -16,7 +16,8 @@ public class SettingsViewModel : ViewModelBase {
 
     private const string autoBootKey = "AutoBoot";
 
-    public string CurrentBackupsFolder { get; private set; }
+    private string _currentBackupsFolder;
+    public string CurrentBackupsFolder { get => _currentBackupsFolder; private set => SetAndRaise(nameof(CurrentBackupsFolder), ref _currentBackupsFolder, value); }
 
     private string _backupsFolder = "";
     public string BackupsFolder {
@@ -31,39 +32,53 @@ public class SettingsViewModel : ViewModelBase {
         get => _autoBoot;
         set {
             SetAndRaise(nameof(_autoBoot), ref _autoBoot, value);
-            _settings.Set(autoBootKey, value.ToString());
         }
     }
 
-    public ICommand ChangeBackupsFolder { get; init; }
+    public ICommand ResetBackupersDirectoryCommand { get; }
+    public ICommand ApplyChangesCommand { get; }
     public ICommand OpenPathDialogCommand { get; }
-    public ICommand HomeButton { get; }
+    public ICommand HomeButtonCommand { get; }
 
     public SettingsViewModel(Settings settings, PathsHandler pathsHandler, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
         _settings = settings;
         _pathsHandler = pathsHandler;
         _notificationService = notificationService;
-        CurrentBackupsFolder = _pathsHandler.GetBackupersDirectory();
+        _currentBackupsFolder = _pathsHandler.GetBackupersDirectory();
         _autoBoot = bool.Parse(settings.Get(autoBootKey).Or("True")!);
-        ChangeBackupsFolder = new AsyncRelayCommand(ChangeFolder);
+        ResetBackupersDirectoryCommand = new AsyncRelayCommand(ResetBackupersDirectory);
+        ApplyChangesCommand = new AsyncRelayCommand(ApplyChanges);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
         OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(new(navigationStore, () => new(navigateToSelf, (s) => BackupsFolder = s)));
-        HomeButton = new NavigateCommand<BackuperListingViewModel>(navigateToBackuperListingViewModel);
+        HomeButtonCommand = new NavigateCommand<BackuperListingViewModel>(navigateToBackuperListingViewModel);
     }
 
-    private async Task ChangeFolder() {
+    private async Task ResetBackupersDirectory() {
+
+        var result = await _pathsHandler.ResetBackupersDirectory();
+        var message = ConvertResultToMessage(result);
+        _notificationService.Send(message);
+        CurrentBackupsFolder = _pathsHandler.GetBackupersDirectory();
+
+    }
+
+    private async Task ApplyChanges() {
 
         var result = await _pathsHandler.SetBackupersDirectoryAsync(BackupsFolder);
-        var message = result switch {
+        var message = ConvertResultToMessage(result);
+        _notificationService.Send(message);
+
+        //todo - use the AutoBoot class
+        _settings.Set(autoBootKey, AutoBoot.ToString());
+
+    }
+
+    private static string ConvertResultToMessage(PathsHandler.BackupersMigrationResult result) => result switch {
             PathsHandler.BackupersMigrationResult.Failure => "There has been an error.",
             PathsHandler.BackupersMigrationResult.Success => "The backups have been transferred successfully.",
             PathsHandler.BackupersMigrationResult.InvalidPath => "The given path is invalid.",
             PathsHandler.BackupersMigrationResult.TargetDirectoryIsNotEmpty => "The given path must point to an empty folder.",
             _ => "There has been an unknown error.",
         };
-
-        _notificationService.Send(message);
-
-    }
 
 }
