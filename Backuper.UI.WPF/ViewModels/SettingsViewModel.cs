@@ -1,9 +1,8 @@
+using Backuper.Core;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.Utils;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -11,10 +10,10 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class SettingsViewModel : ViewModelBase {
 
+    private readonly PathsHandler _pathsHandler;
     private readonly Settings _settings;
     private readonly INotificationService _notificationService;
 
-    private const string backupsFolderKey = "MainBackupsFolder";
     private const string autoBootKey = "AutoBoot";
 
     public string CurrentBackupsFolder { get; private set; }
@@ -40,10 +39,11 @@ public class SettingsViewModel : ViewModelBase {
     public ICommand OpenPathDialogCommand { get; }
     public ICommand HomeButton { get; }
 
-    public SettingsViewModel(Settings settings, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
+    public SettingsViewModel(Settings settings, PathsHandler pathsHandler, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
         _settings = settings;
+        _pathsHandler = pathsHandler;
         _notificationService = notificationService;
-        CurrentBackupsFolder = settings.Get(backupsFolderKey).Or("Unknown")!;
+        CurrentBackupsFolder = _pathsHandler.GetBackupersDirectory();
         _autoBoot = bool.Parse(settings.Get(autoBootKey).Or("True")!);
         ChangeBackupsFolder = new AsyncRelayCommand(ChangeFolder);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
@@ -51,22 +51,19 @@ public class SettingsViewModel : ViewModelBase {
         HomeButton = new NavigateCommand<BackuperListingViewModel>(navigateToBackuperListingViewModel);
     }
 
-    private Task ChangeFolder() {
+    private async Task ChangeFolder() {
 
-        if(!Directory.Exists(BackupsFolder)) {
-            _notificationService.Send("The new backups folder cannot be inexistent.", "Error");
-            return Task.CompletedTask;
-        }
+        var result = await _pathsHandler.SetBackupersDirectoryAsync(BackupsFolder);
+        var message = result switch {
+            PathsHandler.BackupersMigrationResult.Failure => "There has been an error.",
+            PathsHandler.BackupersMigrationResult.Success => "The backups have been transferred successfully.",
+            PathsHandler.BackupersMigrationResult.InvalidPath => "The given path is invalid.",
+            PathsHandler.BackupersMigrationResult.TargetDirectoryIsNotEmpty => "The given path must point to an empty folder.",
+            _ => "There has been an unknown error.",
+        };
 
-        if(Directory.EnumerateFileSystemEntries(BackupsFolder).Any()) {
-            _notificationService.Send("The new backups folder must be an existing, empty folder.");
-            return Task.CompletedTask;
-        }
+        _notificationService.Send(message);
 
-        _settings.Set(backupsFolderKey, BackupsFolder);
-        _notificationService.Send("The backups have been migrated successfully.");
-        //todo - migrate the backups
-        return Task.CompletedTask;
     }
 
 }

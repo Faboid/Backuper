@@ -8,10 +8,6 @@ using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using Backuper.Utils;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Backuper.UI.WPF;
@@ -20,13 +16,10 @@ namespace Backuper.UI.WPF;
 /// </summary>
 public partial class App : Application {
 
-    //temporary path
-    private readonly string _mainBackuperDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackupersData");
-    private readonly string _settingsPath = Path.Combine(Directory.GetCurrentDirectory(), "Settings.txt");
-
     private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
+    private readonly PathsHandler _pathsHandler;
     private readonly Settings _settings;
 
     public App() {
@@ -36,15 +29,16 @@ public partial class App : Application {
         _notificationService = new MessageBoxNotificationService();
         var fileInfoProvider = new FileInfoProvider();
         var directoryInfoProvider = new DirectoryInfoProvider();
+        _pathsHandler = new(directoryInfoProvider, fileInfoProvider);
         var dateTimeProvider = new DateTimeProvider();
-        var pathsBuilderService = new PathsBuilderService(_mainBackuperDirectory, dateTimeProvider, directoryInfoProvider);
+        var pathsBuilderService = new PathsBuilderService(_pathsHandler.GetBackupersDirectory(), dateTimeProvider, directoryInfoProvider);
         var versioningFactory = new BackuperVersioningFactory(pathsBuilderService, directoryInfoProvider);
         var serviceFactory = new BackuperServiceFactory(directoryInfoProvider, fileInfoProvider);
-        var backuperConnection = new BackuperConnection();
+        var backuperConnection = new BackuperConnection(_pathsHandler);
         var backuperValidator = new BackuperValidator(directoryInfoProvider, fileInfoProvider);
         var backuperFactory = new BackuperFactory(versioningFactory, serviceFactory, backuperConnection, backuperValidator);
         _backuperStore = new(backuperFactory);
-        _settings = new(fileInfoProvider.FromFilePath(_settingsPath));
+        _settings = new(fileInfoProvider.FromFilePath(_pathsHandler.GetSettingsFile()));
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -59,7 +53,7 @@ public partial class App : Application {
     }
 
     private SettingsViewModel CreateSettingsViewModel() {
-        return new SettingsViewModel(_settings, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+        return new SettingsViewModel(_settings, _pathsHandler, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {

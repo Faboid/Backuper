@@ -6,7 +6,7 @@ namespace Backuper.Core.Saves;
 
 public class BackuperConnection : IBackuperConnection {
 
-    public BackuperConnection() : this(new FileDBConnection()) { }
+    public BackuperConnection(PathsHandler pathsHandler) : this(new FileDBConnection(pathsHandler)) { }
     internal BackuperConnection(IDBConnection dbConnection) {
         this.dbConnection = dbConnection;
     }

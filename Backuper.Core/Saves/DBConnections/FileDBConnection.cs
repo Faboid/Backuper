@@ -2,7 +2,7 @@
 
 public class FileDBConnection : IDBConnection {
 
-    public FileDBConnection() : this(Path.Combine(Directory.GetCurrentDirectory(), "Backupers")) { }
+    public FileDBConnection(PathsHandler pathsHandler) : this(pathsHandler.GetBackupsDirectory()) { }
     internal FileDBConnection(string customPath) {
         directoryPath = new(customPath);
         directoryPath.Create();
