@@ -11,6 +11,8 @@ public class PathsHandler {
     private const string backupersDirectoryKey = "BackupersDirectory";
     private const string backupsDirectoryKey = "BackupsDirectory";
 
+    public event Action? BackupersPathChanged;
+
     public PathsHandler(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider) {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
@@ -43,6 +45,7 @@ public class PathsHandler {
             return BackupersMigrationResult.Failure;
         }
 
+        OnBackupersPathChanged();
         return BackupersMigrationResult.Success;
 
     }
@@ -56,6 +59,8 @@ public class PathsHandler {
             && !Path.GetInvalidPathChars().Any(x => newPath.Contains(x));
 
     }
+
+    private void OnBackupersPathChanged() => BackupersPathChanged?.Invoke();
 
     public enum BackupersMigrationResult {
         Unknown,

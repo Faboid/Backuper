@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace Backuper.Core.Services {
     public interface IPathsBuilderService {
 
+        event Action? BackupersPathChanged;
+
         DateTime VersionNameToDateTime(string versionPath);
         string GenerateNewBackupVersionDirectory(string backuperName);
         string GetBackuperDirectory(string name);
