@@ -35,7 +35,7 @@ public interface IFileInfo {
     Task CopyToAsync(string path);
 
     /// <summary>
-    /// Creates an empty file if it doesn't exist.
+    /// Creates an empty file. Overwrites it if it exists already.
     /// </summary>
     void Create();
 
