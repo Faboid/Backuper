@@ -31,15 +31,15 @@ public class PathsHandler {
             return BackupersMigrationResult.TargetDirectoryIsNotEmpty;
         }
 
-        //try {
-        var currentPath = GetBackupersDirectory();
-        var currDir = _directoryInfoProvider.FromDirectoryPath(currentPath);
-        await currDir.CopyToAsync(newPath);
-        _settings.Set(backupersDirectoryKey, newPath);
-        currDir.Delete(true);
-        //} catch(Exception) {
-        //    return BackupersMigrationResult.Failure;
-        //}
+        try {
+            var currentPath = GetBackupersDirectory();
+            var currDir = _directoryInfoProvider.FromDirectoryPath(currentPath);
+            await currDir.CopyToAsync(newPath);
+            _settings.Set(backupersDirectoryKey, newPath);
+            currDir.Delete(true);
+        } catch(Exception) {
+            return BackupersMigrationResult.Failure;
+        }
 
         return BackupersMigrationResult.Success;
 
@@ -47,13 +47,11 @@ public class PathsHandler {
 
     private static bool IsPathValid(string newPath) {
 
-        bool[] conditions = new bool[] {
-            !string.IsNullOrWhiteSpace(newPath),
-            Path.IsPathRooted(newPath),
-            !Path.GetInvalidPathChars().Any(x => newPath.Contains(x))
-        };
-
-        return conditions.All(x => x == true);
+        return 
+            !string.IsNullOrWhiteSpace(newPath) 
+            && Path.IsPathRooted(newPath) 
+            && newPath.Where(x => x == ':').Count() == 1
+            && !Path.GetInvalidPathChars().Any(x => newPath.Contains(x));
 
     }
 
