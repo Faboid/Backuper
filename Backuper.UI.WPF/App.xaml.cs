@@ -7,6 +7,7 @@ using Backuper.Core.Versioning;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
+using Backuper.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -21,10 +22,12 @@ public partial class App : Application {
 
     //temporary path
     private readonly string _mainBackuperDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackupersData");
+    private readonly string _settingsPath = Path.Combine(Directory.GetCurrentDirectory(), "Settings.txt");
 
     private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
+    private readonly Settings _settings;
 
     public App() {
         _navigationStore = new();
@@ -41,6 +44,7 @@ public partial class App : Application {
         var backuperValidator = new BackuperValidator(directoryInfoProvider, fileInfoProvider);
         var backuperFactory = new BackuperFactory(versioningFactory, serviceFactory, backuperConnection, backuperValidator);
         _backuperStore = new(backuperFactory);
+        _settings = new(fileInfoProvider.FromFilePath(_settingsPath));
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -54,6 +58,10 @@ public partial class App : Application {
         base.OnStartup(e);
     }
 
+    private SettingsViewModel CreateSettingsViewModel() {
+        return new SettingsViewModel(_settings, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+    }
+
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {
         return new(_backuperStore, backuper, _notificationService, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
     }
@@ -63,7 +71,11 @@ public partial class App : Application {
     }
 
     private BackuperListingViewModel CreateBackuperListingViewModel() {
-        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateCreateBackuperViewModel), new(_navigationStore, CreateBackupingResultsViewModel), CreateBackuperViewModel);
+        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, 
+            new(_navigationStore, CreateCreateBackuperViewModel), 
+            new(_navigationStore, CreateBackupingResultsViewModel), 
+            new(_navigationStore, CreateSettingsViewModel), 
+            CreateBackuperViewModel);
     }
 
     private CreateBackuperViewModel CreateCreateBackuperViewModel() {

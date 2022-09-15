@@ -106,6 +106,9 @@
                 <DataTemplate DataType="{x:Type vms:BackupingResultsViewModel}">
                     <views:BackupingResultsView/>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:SettingsViewModel}">
+                    <views:SettingsView/>
+                </DataTemplate>
             </DockPanel.Resources>
 
             <ContentControl 

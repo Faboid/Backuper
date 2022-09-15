@@ -32,9 +32,7 @@ public class BackuperListingViewModel : ViewModelBase {
 
     public bool IsNotBackuping => !_busyService.IsBusy;
 
-    public ICommand? SettingsCommand { get; }
-    public ICommand? ChangeBackupPathCommand { get; }
-    public ICommand? ToggleAutomaticBackupsCommand { get; }
+    public ICommand SettingsCommand { get; }
     public ICommand CreateBackuperCommand { get; }
     public ICommand BackupAllCommand { get; }
 
@@ -43,6 +41,7 @@ public class BackuperListingViewModel : ViewModelBase {
     private BackuperListingViewModel(BackuperStore backuperStore, INotificationService notificationService,
                                     NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                     NavigationService<BackupingResultsViewModel> navigatorToBackupingResultsViewModel,
+                                    NavigationService<SettingsViewModel> navigatorToSettingsViewModel,
                                     Func<IBackuper, BackuperViewModel> createBackuperViewModel
                                     ) {
         _busyService = new BusyService();
@@ -51,7 +50,7 @@ public class BackuperListingViewModel : ViewModelBase {
         LoadBackupersCommand = new LoadBackupersCommand(backuperStore, notificationService, UpdateBackupers);
         CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
         BackupAllCommand = new NavigateCommand<BackupingResultsViewModel>(navigatorToBackupingResultsViewModel);
-        //BackupAllCommand = new BackupAllCommand(backuperStore, _busyService, notificationService);
+        SettingsCommand = new NavigateCommand<SettingsViewModel>(navigatorToSettingsViewModel);
         _backupers = new();
         _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
         _backupersCollectionView.Filter = BackupersFilter;
@@ -63,9 +62,14 @@ public class BackuperListingViewModel : ViewModelBase {
     public static BackuperListingViewModel LoadViewModel(BackuperStore backuperStore, INotificationService notificationService,
                                                         NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                                         NavigationService<BackupingResultsViewModel> navigatorToBackupingResultsViewModel,
+                                                        NavigationService<SettingsViewModel> navigatorToSettingsViewModel,
                                                         Func<IBackuper, BackuperViewModel> createBackuperViewModel) {
 
-        BackuperListingViewModel vm = new(backuperStore, notificationService, navigatorToCreateBackuperViewModel, navigatorToBackupingResultsViewModel, createBackuperViewModel);
+        BackuperListingViewModel vm = new(backuperStore, notificationService, 
+                navigatorToCreateBackuperViewModel, 
+                navigatorToBackupingResultsViewModel, 
+                navigatorToSettingsViewModel, 
+                createBackuperViewModel);
         vm.LoadBackupersCommand.Execute(null);
         return vm;
     }
