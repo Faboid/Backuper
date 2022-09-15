@@ -34,4 +34,15 @@ public interface IFileInfo {
     /// <returns></returns>
     Task CopyToAsync(string path);
 
+    /// <summary>
+    /// Reads the lines of a file.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerable<string> ReadLines();
+
+    /// <summary>
+    /// Creates a new file, writes a collection of strings to the file, and then closes the file.
+    /// </summary>
+    /// <param name="lines"></param>
+    void WriteAllLines(IEnumerable<string> lines);
 }

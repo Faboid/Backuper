@@ -28,5 +28,8 @@ public class MockFileInfo : IFileInfo {
         _mockFileSystem.CreateFile(path, ReadAllLines());
         return Task.CompletedTask;
     }
+
+    public IEnumerable<string> ReadLines() => ReadAllLines();
+    public void WriteAllLines(IEnumerable<string> lines) => _mockFileSystem.CreateFile(FullName, lines.ToArray());
 }
 
