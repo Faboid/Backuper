@@ -20,14 +20,13 @@ public class BackuperFactoryTests {
         _dateTimeProvider = new DateTimeProvider();
         _fileInfoProvider = new MockFileInfoProvider(_fileSystem);
         _directoryInfoProvider = new MockDirectoryInfoProvider(_fileSystem);
-        _pathsBuilderService = new PathsBuilderService(_mainBackupersDirectory, _dateTimeProvider, _directoryInfoProvider);
+        _pathsBuilderService = new PathsBuilderService(new(_directoryInfoProvider, _fileInfoProvider), _dateTimeProvider, _directoryInfoProvider);
         _backuperServiceFactory = new BackuperServiceFactory(_directoryInfoProvider, _fileInfoProvider);
         _backuperVersioningFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider);
         _fileSystem.CreateDirectory(_existingDirectoryPath);
     }
 
     private readonly string _existingDirectoryPath = Directory.GetCurrentDirectory();
-    private readonly string _mainBackupersDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Backupers");
 
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IMockFileSystem _fileSystem = new MockFileSystem();

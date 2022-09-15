@@ -5,8 +5,8 @@ namespace Backuper.Core.Services;
 
 public class PathsBuilderService : IPathsBuilderService {
 
-    public PathsBuilderService(string mainBackupersDirectory, IDateTimeProvider dateTimeProvider, IDirectoryInfoProvider directoryInfoProvider) {
-        _mainBackupersDirectory = mainBackupersDirectory;
+    public PathsBuilderService(PathsHandler pathsHandler, IDateTimeProvider dateTimeProvider, IDirectoryInfoProvider directoryInfoProvider) {
+        _pathsHandler = pathsHandler;
         _dateTimeProvider = dateTimeProvider;
         _directoryInfoProvider = directoryInfoProvider;
     }
@@ -15,11 +15,11 @@ public class PathsBuilderService : IPathsBuilderService {
 
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly string _mainBackupersDirectory;
+    private readonly PathsHandler _pathsHandler;
     private const string _backuper = "Backuper";
 
-    public string GetBackuperDirectory(string name) => Path.Combine(_mainBackupersDirectory, _backuper, "Backups", name);
-    public string GetBinDirectory(string name) => Path.Combine(_mainBackupersDirectory, _backuper, "Bin", name);
+    public string GetBackuperDirectory(string name) => Path.Combine(_pathsHandler.GetBackupersDirectory(), _backuper, "Backups", name);
+    public string GetBinDirectory(string name) => Path.Combine(_pathsHandler.GetBackupersDirectory(), _backuper, "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
         var name = _directoryInfoProvider.FromDirectoryPath(versionPath).Name.Replace('—', ':');

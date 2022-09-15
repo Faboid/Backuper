@@ -14,7 +14,7 @@ public class DirectoryBackuperServiceTests {
         _directoryProvider = new MockDirectoryInfoProvider(_fileSystem);
         _fileProvider = new MockFileInfoProvider(_fileSystem);
         _sutFactory = new BackuperServiceFactory(_directoryProvider, _fileProvider);
-        _pathsBuilderService = new PathsBuilderService(_mainBackupersDirectory, _dateTimeProvider, _directoryProvider);
+        _pathsBuilderService = new PathsBuilderService(new(_directoryProvider, _fileProvider), _dateTimeProvider, _directoryProvider);
 
         _sourceDirectoriesFullPath = _directories.Select(x => new MockDirectory(BuildPathFromSource(x.Path), x.LastWriteTime)).ToArray();
         _sourceFilesFullPath = _files.Select(x => new MockFile(BuildPathFromSource(x.Path), x.Text, x.LastWriteTime)).ToArray();
@@ -32,8 +32,6 @@ public class DirectoryBackuperServiceTests {
 
     private readonly string _mainSourceDirectory = Path.Combine(Directory.GetCurrentDirectory(), "SomeSourceDirectory");
     private readonly DateTime _mainSourceDirectoryLastWriteTimeUTC = _baseTime.Subtract(TimeSpan.FromDays(10));
-
-    private readonly string _mainBackupersDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackupersDirectory");
 
     private readonly MockDirectory[] _sourceDirectoriesFullPath;
     private readonly MockDirectory[] _directories = new MockDirectory[] {

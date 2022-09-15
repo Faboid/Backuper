@@ -13,11 +13,12 @@ public class BackuperVersioningTests {
         _fileSystem = new MockFileSystem();
         _dateTimeProvider = new DateTimeProvider();
         _directoryInfoProvider = new MockDirectoryInfoProvider(_fileSystem);
-        _pathsBuilderService = new PathsBuilderService(_mainDirectory, _dateTimeProvider, _directoryInfoProvider);
+        _pathsHandler = new PathsHandler(_directoryInfoProvider, new MockFileInfoProvider(_fileSystem));
+        _pathsBuilderService = new PathsBuilderService(_pathsHandler, _dateTimeProvider, _directoryInfoProvider);
         _sutFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider);
     }
 
-    private readonly string _mainDirectory = Path.Combine(Directory.GetCurrentDirectory(), "BackuperVersioningTestsMainDirectory");
+    private readonly PathsHandler _pathsHandler;
     private readonly IBackuperVersioningFactory _sutFactory;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IPathsBuilderService _pathsBuilderService;
@@ -161,7 +162,9 @@ public class BackuperVersioningTests {
     }
 
     private void ResetFileSystem() {
+        var settingsFile = _pathsHandler.GetSettingsFile();
         _fileSystem.Reset();
-        _fileSystem.CreateDirectory(_mainDirectory);
+        _fileSystem.CreateFile(settingsFile, Array.Empty<string>());
+        _fileSystem.CreateDirectory(_pathsHandler.GetBackupsDirectory());
     }
 }

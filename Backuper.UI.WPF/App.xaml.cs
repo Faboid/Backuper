@@ -31,7 +31,7 @@ public partial class App : Application {
         var directoryInfoProvider = new DirectoryInfoProvider();
         _pathsHandler = new(directoryInfoProvider, fileInfoProvider);
         var dateTimeProvider = new DateTimeProvider();
-        var pathsBuilderService = new PathsBuilderService(_pathsHandler.GetBackupersDirectory(), dateTimeProvider, directoryInfoProvider);
+        var pathsBuilderService = new PathsBuilderService(_pathsHandler, dateTimeProvider, directoryInfoProvider);
         var versioningFactory = new BackuperVersioningFactory(pathsBuilderService, directoryInfoProvider);
         var serviceFactory = new BackuperServiceFactory(directoryInfoProvider, fileInfoProvider);
         var backuperConnection = new BackuperConnection(_pathsHandler);
