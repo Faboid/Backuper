@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Backuper.Abstractions\Backuper.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>
