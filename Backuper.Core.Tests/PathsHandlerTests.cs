@@ -40,10 +40,14 @@ public class PathsHandlerTests {
 
 		//act
 		var result = await sut.SetBackupersDirectoryAsync(newPath);
+		var actualNewPath = sut.GetBackupersDirectory();
+		var resetResult = await sut.ResetBackupersDirectory();
 
         //assert
         Assert.Equal(PathsHandler.BackupersMigrationResult.Success, result);
-        Assert.Equal(newPath, sut.GetBackupersDirectory());
+        Assert.Equal(PathsHandler.BackupersMigrationResult.Success, resetResult);
+        Assert.Equal(newPath, actualNewPath);
+        Assert.Equal(DefaultPaths.BackupersDirectory, sut.GetBackupersDirectory());
 
 	}
 
