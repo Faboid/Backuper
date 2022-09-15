@@ -8,10 +8,12 @@ public class Settings {
 
     public Settings(IFileInfo settingsFile) {
         _settingsFile = settingsFile;
-        _settingsFile.Create();
+        if(!_settingsFile.Exists) {
+            _settingsFile.Create();
+        }
     }
 
-    private const string _separator = ":";
+    private const string _separator = "%&$$!(%!";
 
     public void Set(string key, string value) {
         var pairs = _settingsFile
