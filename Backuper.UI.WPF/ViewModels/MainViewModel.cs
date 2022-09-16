@@ -26,4 +26,9 @@ public class MainViewModel : ViewModelBase {
     private void OnCurrentViewChanged() {
         OnPropertyChanged(nameof(CurrentViewModel));
     }
+
+    protected override void Dispose(bool disposed) {
+        _navigationStore.CurrentViewModelChanged -= OnCurrentViewChanged;
+        base.Dispose(disposed);
+    }
 }
