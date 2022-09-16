@@ -14,7 +14,10 @@ public class NavigationService<T> where T : ViewModelBase {
         _navigationFunction = navigationFunction;
     }
 
-    public void Navigate() {
+    public void Navigate(bool disposeCurrent) {
+        if(disposeCurrent) {
+            _navigationStore.CurrentViewModel?.Dispose();
+        }
         _navigationStore.CurrentViewModel = _navigationFunction.Invoke();
     }
 

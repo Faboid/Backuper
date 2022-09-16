@@ -41,7 +41,7 @@ public class EditBackuperCommand : AsyncCommandBase {
         _notificationService.Send(message, "Result");
 
         if(result == UpdateBackuperResponse.Success) {
-            _navigatorToBackuperListingViewModel.Navigate();
+            _navigatorToBackuperListingViewModel.Navigate(true);
         }
 
     }

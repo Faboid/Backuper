@@ -75,7 +75,7 @@ public class OpenPathDialogViewModel : ViewModelBase {
         _directoriesCollectionView.Filter = SearchFilter;
         _filesCollectionView.Filter = SearchFilter;
 
-        CancelCommand = new NavigateCommand<ViewModelBase>(navigateToSender);
+        CancelCommand = new NavigateCommand<ViewModelBase>(true, navigateToSender);
         SubmitCommand = new SetValueAndReturnCommand(this, navigateToSender, setter);
         ParentFolderCommand = new MoveToParentFolderCommand(this);
 

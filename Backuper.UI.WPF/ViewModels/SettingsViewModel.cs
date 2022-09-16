@@ -48,8 +48,8 @@ public class SettingsViewModel : ViewModelBase {
         ChangeBackupersPathCommand = new AsyncRelayCommand(ChangePath);
         ResetToDefaultCommand = new AsyncRelayCommand(ResetToDefault);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
-        OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(new(navigationStore, () => new(navigateToSelf, (s) => BackupsFolder = s)));
-        HomeButtonCommand = new NavigateCommand<BackuperListingViewModel>(navigateToBackuperListingViewModel);
+        OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(false, new(navigationStore, () => new(navigateToSelf, (s) => BackupsFolder = s)));
+        HomeButtonCommand = new NavigateCommand<BackuperListingViewModel>(true, navigateToBackuperListingViewModel);
     }
 
     private async Task ResetToDefault() {

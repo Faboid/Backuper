@@ -30,7 +30,7 @@ public class BackuperViewModel : ViewModelBase {
         _notificationService = notificationService;
         var busyService = new BusyService();
         BackupCommand = new AsyncRelayCommand(Backup, busyService);
-        EditCommand = new NavigateCommand<EditBackuperViewModel>(navigatorToEditBackuperViewModel, busyService);
+        EditCommand = new NavigateCommand<EditBackuperViewModel>(true, navigatorToEditBackuperViewModel, busyService);
         DeleteCommand = new AsyncRelayCommand(Delete, busyService);
     }
 

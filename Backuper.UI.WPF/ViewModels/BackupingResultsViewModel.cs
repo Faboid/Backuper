@@ -42,7 +42,7 @@ public class BackupingResultsViewModel : ViewModelBase {
         _backuperResults = new();
         _cts = new();
         _backuperStore = backuperStore;
-        HomeCommand = new NavigateCommand<BackuperListingViewModel>(navigationServiceToListingViewModel);
+        HomeCommand = new NavigateCommand<BackuperListingViewModel>(true, navigationServiceToListingViewModel);
         LoadAndExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(_cts.Token));
         _collectionView = CollectionViewSource.GetDefaultView(_backuperResults);
         _collectionView.Filter = SearchFilter;

@@ -69,9 +69,9 @@ public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
 
     public CreateBackuperViewModel(BackuperStore backuperStore, NavigationStore navigationStore, INotificationService notificationService, NavigationService<BackuperListingViewModel> navigatorToBackuperListingViewModel) {
         SubmitCommand = new CreateBackuperCommand(this, backuperStore, notificationService, navigatorToBackuperListingViewModel);
-        CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
+        CancelCommand = new NavigateCommand<BackuperListingViewModel>(true, navigatorToBackuperListingViewModel);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
-        OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(new(navigationStore, () => new(navigateToSelf, (s) => SourcePath = s)));
+        OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(false, new(navigationStore, () => new(navigateToSelf, (s) => SourcePath = s)));
         _backuperStore = backuperStore;
         _errorsViewModel = new ErrorsViewModel();
         _errorsViewModel.ErrorsChanged += OnErrorsChanged;

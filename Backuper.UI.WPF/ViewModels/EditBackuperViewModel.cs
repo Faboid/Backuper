@@ -66,7 +66,7 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         UpdateOnBoot = backuper.UpdateOnBoot;
 
         SubmitCommand = new EditBackuperCommand(this, backuperStore, notificationService, navigatorToBackuperListingViewModel);
-        CancelCommand = new NavigateCommand<BackuperListingViewModel>(navigatorToBackuperListingViewModel);
+        CancelCommand = new NavigateCommand<BackuperListingViewModel>(true, navigatorToBackuperListingViewModel);
         _errorsViewModel.ErrorsChanged += OnErrorsChanged;
     }
 

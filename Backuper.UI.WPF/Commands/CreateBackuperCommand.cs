@@ -45,7 +45,7 @@ public class CreateBackuperCommand : AsyncCommandBase {
         _notificationService.Send(message);
 
         if(result == CreateBackuperResponse.Success) {
-            navigatorToBackuperListingViewModel.Navigate();
+            navigatorToBackuperListingViewModel.Navigate(true);
         }
 
     }

@@ -43,9 +43,9 @@ public class BackuperListingViewModel : ViewModelBase {
                                     ) {
         _createBackuperViewModel = createBackuperViewModel;
         LoadBackupersCommand = new LoadBackupersCommand(backuperStore, notificationService, UpdateBackupers);
-        CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);
-        BackupAllCommand = new NavigateCommand<BackupingResultsViewModel>(navigatorToBackupingResultsViewModel);
-        SettingsCommand = new NavigateCommand<SettingsViewModel>(navigatorToSettingsViewModel);
+        CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(true, navigatorToCreateBackuperViewModel);
+        BackupAllCommand = new NavigateCommand<BackupingResultsViewModel>(true, navigatorToBackupingResultsViewModel);
+        SettingsCommand = new NavigateCommand<SettingsViewModel>(true, navigatorToSettingsViewModel);
         _backupers = new();
         _backupersCollectionView = CollectionViewSource.GetDefaultView(_backupers);
         _backupersCollectionView.Filter = BackupersFilter;
