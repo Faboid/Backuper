@@ -26,13 +26,14 @@ public class BackuperResultViewModel : ViewModelBase {
     internal async Task Backup(CancellationToken cancellationToken = default) {
 
         try {
-            
+
             var task = _backuper.BackupAsync(cancellationToken);
             Status = BackupingStatus.Backuping;
             var result = await task;
             Status = result switch {
                 BackupResponseCode.Success => BackupingStatus.Success,
                 BackupResponseCode.AlreadyUpdated => BackupingStatus.AlreadyUpdated,
+                BackupResponseCode.Cancelled => BackupingStatus.Stopped,
                 _ => BackupingStatus.Failed,
             };
 
@@ -48,6 +49,7 @@ public class BackuperResultViewModel : ViewModelBase {
         AlreadyUpdated,
         Success,
         Failed,
+        Stopped,
     }
 
 }

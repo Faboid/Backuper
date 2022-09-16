@@ -20,6 +20,7 @@ public class BackupingResultsViewModel : ViewModelBase {
     private readonly BackuperStore _backuperStore;
     private readonly ICollectionView _collectionView;
     private readonly ObservableCollection<BackuperResultViewModel> _backuperResults;
+    private readonly CancellationTokenSource _cts;
     
     public IEnumerable<BackuperResultViewModel> Backupers => _backuperResults;
 
@@ -37,19 +38,18 @@ public class BackupingResultsViewModel : ViewModelBase {
     private ICommand LoadAndExecuteBackupsCommand { get; }
 
     private BackupingResultsViewModel(BackuperStore backuperStore,
-                                      NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
-                                      CancellationToken cancellationToken = default) {
+                                      NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel) {
         _backuperResults = new();
+        _cts = new();
         _backuperStore = backuperStore;
         HomeCommand = new NavigateCommand<BackuperListingViewModel>(navigationServiceToListingViewModel);
-        LoadAndExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(cancellationToken));
+        LoadAndExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(_cts.Token));
         _collectionView = CollectionViewSource.GetDefaultView(_backuperResults);
         _collectionView.Filter = SearchFilter;
     }
 
     public static BackupingResultsViewModel LoadViewModel(BackuperStore backuperStore, 
-                                                          NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
-                                                          CancellationToken cancellationToken = default) {
+                                                          NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel) {
         var vm = new BackupingResultsViewModel(backuperStore, navigationServiceToListingViewModel);
         vm.LoadAndExecuteBackupsCommand.Execute(null);
         return vm;
@@ -78,4 +78,9 @@ public class BackupingResultsViewModel : ViewModelBase {
         }
     }
 
+    protected override void Dispose(bool disposed) {
+        _cts.Cancel();
+        _cts.Dispose();
+        base.Dispose(disposed);
+    }
 }
