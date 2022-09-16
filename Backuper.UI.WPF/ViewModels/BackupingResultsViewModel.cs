@@ -37,7 +37,7 @@ public class BackupingResultsViewModel : ViewModelBase {
 
     private ICommand LoadAndExecuteBackupsCommand { get; }
 
-    private BackupingResultsViewModel(BackuperStore backuperStore,
+    public BackupingResultsViewModel(BackuperStore backuperStore,
                                       NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel) {
         _backuperResults = new();
         _cts = new();
@@ -46,13 +46,7 @@ public class BackupingResultsViewModel : ViewModelBase {
         LoadAndExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(_cts.Token));
         _collectionView = CollectionViewSource.GetDefaultView(_backuperResults);
         _collectionView.Filter = SearchFilter;
-    }
-
-    public static BackupingResultsViewModel LoadViewModel(BackuperStore backuperStore, 
-                                                          NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel) {
-        var vm = new BackupingResultsViewModel(backuperStore, navigationServiceToListingViewModel);
-        vm.LoadAndExecuteBackupsCommand.Execute(null);
-        return vm;
+        LoadAndExecuteBackupsCommand.Execute(null);
     }
 
     private async Task ExecuteBackups(CancellationToken cancellationToken = default) {
