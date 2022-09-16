@@ -19,12 +19,13 @@ public partial class App : Application {
     private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
+    private readonly AutoBootService _autoBootService;
     private readonly PathsHandler _pathsHandler;
     private readonly Settings _settings;
 
     public App() {
         _navigationStore = new();
-
+        _autoBootService = new(new ShortcutProvider());
         //todo - use a DI container
         _notificationService = new MessageBoxNotificationService();
         var fileInfoProvider = new FileInfoProvider();
@@ -53,7 +54,7 @@ public partial class App : Application {
     }
 
     private SettingsViewModel CreateSettingsViewModel() {
-        return new SettingsViewModel(_settings, _pathsHandler, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+        return new SettingsViewModel(_settings, _pathsHandler, _autoBootService, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {

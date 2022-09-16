@@ -1,4 +1,5 @@
 using Backuper.Core;
+using Backuper.Core.Services;
 using Backuper.UI.WPF.Commands;
 using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
@@ -11,6 +12,7 @@ namespace Backuper.UI.WPF.ViewModels;
 public class SettingsViewModel : ViewModelBase {
 
     private readonly PathsHandler _pathsHandler;
+    private readonly AutoBootService _autoBootService;
     private readonly Settings _settings;
     private readonly INotificationService _notificationService;
 
@@ -40,12 +42,13 @@ public class SettingsViewModel : ViewModelBase {
     public ICommand OpenPathDialogCommand { get; }
     public ICommand HomeButtonCommand { get; }
 
-    public SettingsViewModel(Settings settings, PathsHandler pathsHandler, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
+    public SettingsViewModel(Settings settings, PathsHandler pathsHandler, AutoBootService autoBootService, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
         _settings = settings;
         _pathsHandler = pathsHandler;
+        _autoBootService = autoBootService;
         _notificationService = notificationService;
         _currentBackupsFolder = _pathsHandler.GetBackupersDirectory();
-        _autoBoot = bool.Parse(settings.Get(autoBootKey).Or("True")!);
+        _autoBoot = autoBootService.Get();
         ResetBackupersDirectoryCommand = new AsyncRelayCommand(ResetBackupersDirectory);
         ApplyChangesCommand = new AsyncRelayCommand(ApplyChanges);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
@@ -68,8 +71,9 @@ public class SettingsViewModel : ViewModelBase {
         var message = ConvertResultToMessage(result);
         _notificationService.Send(message);
 
-        //todo - use the AutoBoot class
+        _autoBootService.Set(AutoBoot);
         _settings.Set(autoBootKey, AutoBoot.ToString());
+        _notificationService.Send($"The autoboot has been set to {AutoBoot}.");
 
     }
 
