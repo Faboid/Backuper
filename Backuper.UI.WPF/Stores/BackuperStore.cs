@@ -106,16 +106,23 @@ public class BackuperStore : IDisposable {
         var infoSource = backuper.SourcePath;
         var infoVersions = newMaxVersions ?? backuper.MaxVersions;
         var infoUpdateOnBoot = newUpdateOnBoot ?? backuper.UpdateOnBoot;
-        //todo - if the name changes, update the dictionary key as well
+
         var info = new BackuperInfo(infoName, infoSource, infoVersions, infoUpdateOnBoot);
         return await UpdateBackuperAsync(backuper, info);
 
     }
 
 
-    private static async Task<UpdateBackuperResponse> UpdateBackuperAsync(IBackuper backuper, BackuperInfo info) {
+    private async Task<UpdateBackuperResponse> UpdateBackuperAsync(IBackuper backuper, BackuperInfo info) {
 
+        var oldName = backuper.Name;
         var result = await backuper.EditAsync(info);
+
+        if(backuper.Name != oldName) {
+            _backupers.Remove(oldName);
+            _backupers.Add(backuper.Name, backuper);
+        }
+
         return result switch {
             EditBackuperResponseCode.Success => UpdateBackuperResponse.Success,
             EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative => UpdateBackuperResponse.NewMaxVersionsIsZeroOrNegative,
