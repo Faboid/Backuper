@@ -106,7 +106,7 @@ public class BackuperStore : IDisposable {
         var infoSource = backuper.SourcePath;
         var infoVersions = newMaxVersions ?? backuper.MaxVersions;
         var infoUpdateOnBoot = newUpdateOnBoot ?? backuper.UpdateOnBoot;
-
+        //todo - if the name changes, update the dictionary key as well
         var info = new BackuperInfo(infoName, infoSource, infoVersions, infoUpdateOnBoot);
         return await UpdateBackuperAsync(backuper, info);
 

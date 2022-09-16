@@ -8,6 +8,8 @@ using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using Backuper.Utils;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows;
 
@@ -17,83 +19,107 @@ namespace Backuper.UI.WPF;
 /// </summary>
 public partial class App : Application, IDisposable {
 
-    private readonly INotificationService _notificationService;
-    private readonly NavigationStore _navigationStore;
-    private readonly BackuperStore _backuperStore;
-    private readonly SettingsService _settingsService;
+    private readonly IHost _host;
 
     public App() {
-        _navigationStore = new();
-        //todo - use a DI container
-        _notificationService = new NotificationService();
-        var fileInfoProvider = new FileInfoProvider();
-        var directoryInfoProvider = new DirectoryInfoProvider();
-        var dateTimeProvider = new DateTimeProvider();
-        var pathsHandler = new PathsHandler(directoryInfoProvider, fileInfoProvider);
-        var pathsBuilderService = new PathsBuilderService(pathsHandler, dateTimeProvider, directoryInfoProvider);
-        var versioningFactory = new BackuperVersioningFactory(pathsBuilderService, directoryInfoProvider);
-        var serviceFactory = new BackuperServiceFactory(directoryInfoProvider, fileInfoProvider);
-        var backuperConnection = new BackuperConnection(pathsHandler);
-        var backuperValidator = new BackuperValidator(directoryInfoProvider, fileInfoProvider);
-        var backuperFactory = new BackuperFactory(versioningFactory, serviceFactory, backuperConnection, backuperValidator);
-        _backuperStore = new(backuperFactory);
-        var autoBootService = new AutoBootService(new ShortcutProvider());
-        var settings = new Settings(fileInfoProvider.FromFilePath(pathsHandler.GetSettingsFile()));
-        _settingsService = new(pathsHandler, autoBootService, settings);
+
+        _host = Host.CreateDefaultBuilder().ConfigureServices(services => {
+            services.AddSingleton<NavigationStore>();
+            services.AddSingleton<INotificationService, NotificationService>();
+            
+            services.AddSingleton<IFileInfoProvider, FileInfoProvider>();
+            services.AddSingleton<IDirectoryInfoProvider, DirectoryInfoProvider>();
+            services.AddSingleton<IShortcutProvider, ShortcutProvider>();
+
+            services.AddSingleton<AutoBootService>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<PathsHandler>();
+
+            services.AddSingleton<IPathsBuilderService, PathsBuilderService>();
+            services.AddSingleton<IBackuperVersioningFactory, BackuperVersioningFactory>();
+            services.AddSingleton<IBackuperServiceFactory, BackuperServiceFactory>();
+            services.AddSingleton<IBackuperConnection, BackuperConnection>();
+            services.AddSingleton<IBackuperValidator, BackuperValidator>();
+
+            services.AddSingleton<IBackuperFactory, BackuperFactory>();
+            services.AddSingleton<BackuperStore>();
+
+            services.AddSingleton((s) => new Settings(s.GetRequiredService<IFileInfoProvider>().FromFilePath(s.GetRequiredService<PathsHandler>().GetSettingsFile())));
+            services.AddSingleton<SettingsService>();
+
+            services.AddSingleton<Func<SettingsViewModel>>((s) => () => s.GetRequiredService<SettingsViewModel>());
+            services.AddSingleton<Func<BackupingResultsViewModel>>((s) => () => s.GetRequiredService<BackupingResultsViewModel>());
+            services.AddSingleton<Func<CreateBackuperViewModel>>((s) => () => s.GetRequiredService<CreateBackuperViewModel>());
+            services.AddSingleton<Func<BackuperListingViewModel>>((s) => () => s.GetRequiredService<BackuperListingViewModel>());
+            services.AddSingleton(CreateEditBackuperViewModel);
+            services.AddSingleton(CreateBackuperViewModel);
+
+            services.AddSingleton<NavigationService<SettingsViewModel>>();
+            services.AddSingleton<NavigationService<BackupingResultsViewModel>>();
+            services.AddSingleton<NavigationService<CreateBackuperViewModel>>();
+            services.AddSingleton<NavigationService<BackuperListingViewModel>>();
+            services.AddSingleton<NavigationService<EditBackuperViewModel>>();
+
+            services.AddTransient<SettingsViewModel>();
+            services.AddTransient<BackuperResultViewModel>();
+            services.AddTransient<CreateBackuperViewModel>();
+            services.AddTransient<BackuperListingViewModel>();
+            services.AddTransient<BackupingResultsViewModel>();
+            
+            services.AddTransient<Func<Window, MainViewModel>>((s) => (win) => new MainViewModel(s.GetRequiredService<NavigationStore>(), win, s.GetRequiredService<INotificationService>()));
+
+            services.AddSingleton((s) => {
+                var window = new MainWindow();
+                window.DataContext = s.GetRequiredService<Func<Window, MainViewModel>>().Invoke(window);
+                return window;
+            });
+
+        }).Build();
+
     }
 
     protected override void OnStartup(StartupEventArgs e) {
 
+        _host.Start();
         ViewModelBase startingVM;
 
         if(e.Args.Length == 1 && e.Args[0] == SettingsService.StartupArguments) {
-            startingVM = CreateBackupingResultsViewModel();
+            startingVM = _host.Services.GetRequiredService<BackupingResultsViewModel>();
         } else {
-            startingVM = CreateBackuperListingViewModel();
+            startingVM = _host.Services.GetRequiredService<BackuperListingViewModel>();
         }
 
-        _navigationStore.CurrentViewModel = startingVM;
+        _host.Services.GetRequiredService<NavigationStore>().CurrentViewModel = startingVM;
 
-        MainWindow = new MainWindow();
-        MainWindow.DataContext = new MainViewModel(_navigationStore, MainWindow, _notificationService);
+        MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();
 
         base.OnStartup(e);
     }
 
-    private SettingsViewModel CreateSettingsViewModel() {
-        return new SettingsViewModel(_settingsService, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
-    }
-
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {
-        return new(_backuperStore, backuper, _notificationService, new(_navigationStore, () => CreateEditBackuperViewModel(backuper)));
-    }
-
-    private BackupingResultsViewModel CreateBackupingResultsViewModel() {
-        return BackupingResultsViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
-    }
-
-    private BackuperListingViewModel CreateBackuperListingViewModel() {
-        return BackuperListingViewModel.LoadViewModel(_backuperStore, _notificationService, 
-            new(_navigationStore, CreateCreateBackuperViewModel), 
-            new(_navigationStore, CreateBackupingResultsViewModel), 
-            new(_navigationStore, CreateSettingsViewModel), 
-            CreateBackuperViewModel);
-    }
-
-    private CreateBackuperViewModel CreateCreateBackuperViewModel() {
-        return new(_backuperStore, _navigationStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
+        var s = _host.Services;
+        return new(
+            s.GetRequiredService<BackuperStore>(), 
+            backuper, 
+            s.GetRequiredService<INotificationService>(), 
+            new(s.GetRequiredService<NavigationStore>(), () => CreateEditBackuperViewModel(backuper)));
     }
 
     private EditBackuperViewModel CreateEditBackuperViewModel(IBackuper backuper) {
-        return new(backuper, _backuperStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
+        var s = _host.Services;
+        return new (
+            backuper, 
+            s.GetRequiredService<BackuperStore>(), 
+            s.GetRequiredService<INotificationService>(), 
+            s.GetRequiredService<NavigationService<BackuperListingViewModel>>()
+        );
     }
 
     private bool _isDisposed = false;
     public void Dispose() {
         if(!_isDisposed) {
-            _navigationStore.CurrentViewModel?.Dispose();
-            _backuperStore.Dispose();
+            _host.Dispose();
             GC.SuppressFinalize(this);
         }
         _isDisposed = true;
