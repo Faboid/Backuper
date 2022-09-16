@@ -90,4 +90,8 @@ public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         return _errorsViewModel.GetErrors(propertyName);
     }
 
+    protected override void Dispose(bool disposed) {
+        _errorsViewModel.ErrorsChanged -= OnErrorsChanged;
+        base.Dispose(disposed);
+    }
 }

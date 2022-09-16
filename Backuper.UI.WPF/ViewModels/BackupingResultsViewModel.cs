@@ -36,7 +36,7 @@ public class BackupingResultsViewModel : ViewModelBase {
 
     private ICommand LoadAndExecuteBackupsCommand { get; }
 
-    private BackupingResultsViewModel(BackuperStore backuperStore, INotificationService notificationService, 
+    private BackupingResultsViewModel(BackuperStore backuperStore, INotificationService notificationService, //todo - remove or use notification service
                                       NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
                                       CancellationToken cancellationToken = default) {
         _backuperResults = new();

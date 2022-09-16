@@ -81,4 +81,10 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
     public IEnumerable GetErrors(string? propertyName) {
         return _errorsViewModel.GetErrors(propertyName);
     }
+
+    protected override void Dispose(bool disposed) {
+        _errorsViewModel.ErrorsChanged -= OnErrorsChanged;
+        base.Dispose(disposed);
+    }
+
 }
