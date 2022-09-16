@@ -11,12 +11,8 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class SettingsViewModel : ViewModelBase {
 
-    private readonly PathsHandler _pathsHandler;
-    private readonly AutoBootService _autoBootService;
-    private readonly Settings _settings;
+    private readonly SettingsService _settingsService;
     private readonly INotificationService _notificationService;
-
-    private const string autoBootKey = "AutoBoot";
 
     private string _currentBackupsFolder;
     public string CurrentBackupsFolder { get => _currentBackupsFolder; private set => SetAndRaise(nameof(CurrentBackupsFolder), ref _currentBackupsFolder, value); }
@@ -30,8 +26,7 @@ public class SettingsViewModel : ViewModelBase {
         set {
             SetAndRaise(nameof(_autoBoot), ref _autoBoot, value);
 
-            _autoBootService.Set(AutoBoot);
-            _settings.Set(autoBootKey, AutoBoot.ToString());
+            _settingsService.SetAutoBoot(AutoBoot);
             var message = value switch {
                 true => "The autoboot has been turned on.",
                 false => "The autoboot has been deactivated. Warning: keeping it off means the app must be manually opened to execute backups."
@@ -45,13 +40,11 @@ public class SettingsViewModel : ViewModelBase {
     public ICommand OpenPathDialogCommand { get; }
     public ICommand HomeButtonCommand { get; }
 
-    public SettingsViewModel(Settings settings, PathsHandler pathsHandler, AutoBootService autoBootService, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
-        _settings = settings;
-        _pathsHandler = pathsHandler;
-        _autoBootService = autoBootService;
+    public SettingsViewModel(SettingsService settingsService, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
+        _settingsService = settingsService;
         _notificationService = notificationService;
-        _currentBackupsFolder = _pathsHandler.GetBackupersDirectory();
-        _autoBoot = autoBootService.Get();
+        _currentBackupsFolder = _settingsService.GetBackupersDirectory();
+        _autoBoot = _settingsService.GetAutoBoot();
         ChangeBackupersPathCommand = new AsyncRelayCommand(ChangePath);
         ResetToDefaultCommand = new AsyncRelayCommand(ResetToDefault);
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
@@ -61,16 +54,15 @@ public class SettingsViewModel : ViewModelBase {
 
     private async Task ResetToDefault() {
 
-        var result = await _pathsHandler.ResetBackupersDirectory();
+        var result = await _settingsService.ResetBackupersDirectory();
         if(result is not PathsHandler.BackupersMigrationResult.AlreadyThere and not PathsHandler.BackupersMigrationResult.Success) {
             var message = ConvertResultToMessage(result);
             _notificationService.Send(message);
         }
         BackupsFolder = "";
-        CurrentBackupsFolder = _pathsHandler.GetBackupersDirectory();
+        CurrentBackupsFolder = _settingsService.GetBackupersDirectory();
 
-        _autoBootService.Set(true);
-        _settings.Set(autoBootKey, true.ToString());
+        _settingsService.SetAutoBoot(true);
         _autoBoot = true;
         OnPropertyChanged(nameof(AutoBoot));
 
@@ -78,7 +70,7 @@ public class SettingsViewModel : ViewModelBase {
 
     private async Task ChangePath() {
 
-        var result = await _pathsHandler.SetBackupersDirectoryAsync(BackupsFolder);
+        var result = await _settingsService.SetBackupersDirectoryAsync(BackupsFolder);
         var message = ConvertResultToMessage(result);
         _notificationService.Send(message);
 

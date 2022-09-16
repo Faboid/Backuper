@@ -19,27 +19,26 @@ public partial class App : Application {
     private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
     private readonly BackuperStore _backuperStore;
-    private readonly AutoBootService _autoBootService;
-    private readonly PathsHandler _pathsHandler;
-    private readonly Settings _settings;
+    private readonly SettingsService _settingsService;
 
     public App() {
         _navigationStore = new();
-        _autoBootService = new(new ShortcutProvider());
         //todo - use a DI container
         _notificationService = new MessageBoxNotificationService();
         var fileInfoProvider = new FileInfoProvider();
         var directoryInfoProvider = new DirectoryInfoProvider();
-        _pathsHandler = new(directoryInfoProvider, fileInfoProvider);
         var dateTimeProvider = new DateTimeProvider();
-        var pathsBuilderService = new PathsBuilderService(_pathsHandler, dateTimeProvider, directoryInfoProvider);
+        var pathsHandler = new PathsHandler(directoryInfoProvider, fileInfoProvider);
+        var pathsBuilderService = new PathsBuilderService(pathsHandler, dateTimeProvider, directoryInfoProvider);
         var versioningFactory = new BackuperVersioningFactory(pathsBuilderService, directoryInfoProvider);
         var serviceFactory = new BackuperServiceFactory(directoryInfoProvider, fileInfoProvider);
-        var backuperConnection = new BackuperConnection(_pathsHandler);
+        var backuperConnection = new BackuperConnection(pathsHandler);
         var backuperValidator = new BackuperValidator(directoryInfoProvider, fileInfoProvider);
         var backuperFactory = new BackuperFactory(versioningFactory, serviceFactory, backuperConnection, backuperValidator);
         _backuperStore = new(backuperFactory);
-        _settings = new(fileInfoProvider.FromFilePath(_pathsHandler.GetSettingsFile()));
+        var autoBootService = new AutoBootService(new ShortcutProvider());
+        var settings = new Settings(fileInfoProvider.FromFilePath(pathsHandler.GetSettingsFile()));
+        _settingsService = new(pathsHandler, autoBootService, settings);
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -54,7 +53,7 @@ public partial class App : Application {
     }
 
     private SettingsViewModel CreateSettingsViewModel() {
-        return new SettingsViewModel(_settings, _pathsHandler, _autoBootService, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
+        return new SettingsViewModel(_settingsService, _notificationService, _navigationStore, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
     private BackuperViewModel CreateBackuperViewModel(IBackuper backuper) {
