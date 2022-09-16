@@ -58,9 +58,9 @@
 
             <!--Apply Changes Button-->
             <Button
-                Content="Apply Changes"
+                Content="Reset To Default"
                 Grid.Column="2"
-                Command="{Binding ApplyChangesCommand}"
+                Command="{Binding ResetToDefaultCommand}"
                 />
 
         </Grid>
@@ -81,11 +81,8 @@
                 SelectedIndex="{Binding AutoBoot, Converter={StaticResource BoolToYesOrNoSelectedIndexConverter}}"
                 >
                 <ComboBoxItem Content="No"/>
-                <ComboBoxItem Content="Yes" 
-                          IsSelected="{Binding AutoBoot, Mode=OneWayToSource}"
-                          />
+                <ComboBoxItem Content="Yes"/>
             </ComboBox>
-
 
         </StackPanel>    
 
@@ -111,10 +108,10 @@
                 />
 
             <Button
-                Content="Reset To Default"
+                Content="Apply Change"
                 Grid.Row="0"
                 Grid.Column="1"
-                Command="{Binding ResetBackupersDirectoryCommand}"
+                Command="{Binding ChangeBackupersPathCommand}"
                 />
 
             <components:TextBoxWithButton
