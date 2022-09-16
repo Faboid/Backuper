@@ -20,8 +20,8 @@ public class PathsHandler {
     }
 
     public string GetSettingsFile() => DefaultPaths.SettingsFile;
-    public string GetBackupsDirectory() => _settings.Get(backupsDirectoryKey).Or(null) ?? DefaultPaths.BackupsDirectory;
-    public string GetBackupersDirectory() => _settings.Get(backupersDirectoryKey).Or(null) ?? DefaultPaths.BackupersDirectory;
+    public string GetBackupsDirectory() => _settings.Get(backupsDirectoryKey).Or(DefaultPaths.BackupsDirectory)!;
+    public string GetBackupersDirectory() => _settings.Get(backupersDirectoryKey).Or(DefaultPaths.BackupersDirectory)!;
     public Task<BackupersMigrationResult> ResetBackupersDirectory() => SetBackupersDirectoryAsync(DefaultPaths.BackupersDirectory);
 
     public async Task<BackupersMigrationResult> SetBackupersDirectoryAsync(string newPath) {
