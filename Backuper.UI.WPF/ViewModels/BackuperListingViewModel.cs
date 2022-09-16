@@ -13,7 +13,6 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class BackuperListingViewModel : ViewModelBase {
 
-    private readonly BusyService _busyService;
     private readonly BackuperStore _backuperStore;
     private readonly ICollectionView _backupersCollectionView;
     private readonly Func<IBackuper, BackuperViewModel> _createBackuperViewModel;
@@ -30,22 +29,18 @@ public class BackuperListingViewModel : ViewModelBase {
         }
     }
 
-    public bool IsNotBackuping => !_busyService.IsBusy;
-
     public ICommand SettingsCommand { get; }
     public ICommand CreateBackuperCommand { get; }
     public ICommand BackupAllCommand { get; }
 
     private ICommand LoadBackupersCommand { get; }
-    //todo - remove busy service as it's unused.
+    
     private BackuperListingViewModel(BackuperStore backuperStore, INotificationService notificationService,
                                     NavigationService<CreateBackuperViewModel> navigatorToCreateBackuperViewModel,
                                     NavigationService<BackupingResultsViewModel> navigatorToBackupingResultsViewModel,
                                     NavigationService<SettingsViewModel> navigatorToSettingsViewModel,
                                     Func<IBackuper, BackuperViewModel> createBackuperViewModel
                                     ) {
-        _busyService = new BusyService();
-        _busyService.BusyChanged += () => OnPropertyChanged(nameof(IsNotBackuping));
         _createBackuperViewModel = createBackuperViewModel;
         LoadBackupersCommand = new LoadBackupersCommand(backuperStore, notificationService, UpdateBackupers);
         CreateBackuperCommand = new NavigateCommand<CreateBackuperViewModel>(navigatorToCreateBackuperViewModel);

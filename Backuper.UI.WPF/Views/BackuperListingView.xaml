@@ -79,8 +79,6 @@
                             <Button
                                 Content="Backup"
                                 Command="{Binding BackupCommand}"
-                                IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                    AncestorType={x:Type UserControl}}, Path= DataContext.IsNotBackuping}"
                                 />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -91,8 +89,6 @@
                             <Button 
                                 Content="Modify"
                                 Command="{Binding EditCommand}"
-                                IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                    AncestorType={x:Type UserControl}}, Path= DataContext.IsNotBackuping}"
                                 />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -103,8 +99,6 @@
                             <Button
                                 Content="Delete"
                                 Command="{Binding DeleteCommand}"
-                                IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                    AncestorType={x:Type UserControl}}, Path= DataContext.IsNotBackuping}"
                                 />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
