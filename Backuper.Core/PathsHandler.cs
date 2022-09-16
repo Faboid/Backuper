@@ -79,7 +79,7 @@ public class PathsHandler {
 
 public static class DefaultPaths {
 
-    public static readonly string WorkingDirectory = Directory.GetCurrentDirectory();
+    public static readonly string WorkingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
     public static readonly string BackupsDirectory = Path.Combine(WorkingDirectory, "Backups");
     public static readonly string BackupersDirectory = Path.Combine(WorkingDirectory, "Backupers");
     public static readonly string SettingsFile = Path.Combine(WorkingDirectory, "Settings.txt");
