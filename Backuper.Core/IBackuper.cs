@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Backuper.Core.Tests")]
 namespace Backuper.Core;
 
-public interface IBackuper {
+public interface IBackuper : IDisposable {
 
     public string Name { get; }
     public string SourcePath { get; }

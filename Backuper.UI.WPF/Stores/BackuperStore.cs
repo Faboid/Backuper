@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Backuper.Core;
+using Backuper.Extensions;
 
 namespace Backuper.UI.WPF.Stores;
 
-public class BackuperStore {
+public class BackuperStore : IDisposable {
 
     private readonly Dictionary<string, IBackuper> _backupers;
     private readonly IBackuperFactory _backuperFactory;
 
-    private Lazy<Task> _initializationTask;
+    private readonly Lazy<Task> _initializationTask;
 
     public event Action? BackupersChanged;
     public event Action<IBackuper>? BackuperCreated;
@@ -24,8 +25,12 @@ public class BackuperStore {
         _initializationTask = new(Initialize);
         _backuperFactory = factory;
 
-        BackuperCreated += (a) => BackupersChanged?.Invoke();
-        BackuperDeleted += (a) => BackupersChanged?.Invoke();
+        BackuperCreated += OnBackupersChanged;
+        BackuperDeleted += OnBackupersChanged;
+    }
+
+    private void OnBackupersChanged(IBackuper backuper) {
+        BackupersChanged?.Invoke();
     }
 
     public async Task Load() {
@@ -35,6 +40,7 @@ public class BackuperStore {
     private async Task Initialize() {
         var backupers = _backuperFactory.LoadBackupers();
 
+        _backupers.Values.ForEach(x => x.Dispose());
         _backupers.Clear();
         await foreach(var backuper in backupers) {
             _backupers.Add(backuper.Name, backuper);
@@ -81,6 +87,7 @@ public class BackuperStore {
         await backuper.BinAsync();
         _backupers.Remove(name);
         BackuperDeleted?.Invoke(backuper);
+        backuper.Dispose();
 
         return DeleteBackuperResponse.Success;
     }
@@ -119,6 +126,15 @@ public class BackuperStore {
 
     }
 
+    private bool _isDisposed = false;
+    public void Dispose() {
+        if(!_isDisposed) {
+            BackuperCreated -= OnBackupersChanged;
+            BackuperDeleted -= OnBackupersChanged;
+            GC.SuppressFinalize(this);
+        }
+        _isDisposed = true;
+    }
 }
 
 //UI Responses

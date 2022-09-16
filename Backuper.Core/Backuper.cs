@@ -110,6 +110,14 @@ public class Backuper : IBackuper {
         return _versioning.GetLastBackupTimeUTC() >= _backuperService.GetSourceLastWriteTimeUTC();
     }
 
+    private bool _isDisposed = false;
+    public void Dispose() {
+        if(!_isDisposed) {
+            _locker.Dispose();
+            GC.SuppressFinalize(this);
+        }
+        _isDisposed = true;
+    }
 }
 
 public enum BackupResponseCode {

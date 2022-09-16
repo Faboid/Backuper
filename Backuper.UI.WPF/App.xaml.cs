@@ -8,13 +8,14 @@ using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
 using Backuper.Utils;
+using System;
 using System.Windows;
 
 namespace Backuper.UI.WPF;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application {
+public partial class App : Application, IDisposable {
 
     private readonly INotificationService _notificationService;
     private readonly NavigationStore _navigationStore;
@@ -88,4 +89,13 @@ public partial class App : Application {
         return new(backuper, _backuperStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
+    private bool _isDisposed = false;
+    public void Dispose() {
+        if(!_isDisposed) {
+            _navigationStore.CurrentViewModel?.Dispose();
+            _backuperStore.Dispose();
+            GC.SuppressFinalize(this);
+        }
+        _isDisposed = true;
+    }
 }
