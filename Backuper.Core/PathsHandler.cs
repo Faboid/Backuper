@@ -26,6 +26,10 @@ public class PathsHandler {
 
     public async Task<BackupersMigrationResult> SetBackupersDirectoryAsync(string newPath) {
 
+        if(newPath == GetBackupersDirectory()) {
+            return BackupersMigrationResult.AlreadyThere;
+        }
+
         if(!IsPathValid(newPath)) {
             return BackupersMigrationResult.InvalidPath;
         }
@@ -68,6 +72,7 @@ public class PathsHandler {
         Success,
         InvalidPath,
         TargetDirectoryIsNotEmpty,
+        AlreadyThere,
     }
 
 }
