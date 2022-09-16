@@ -89,4 +89,10 @@ public class BackuperListingViewModel : ViewModelBase {
             _backupers.Add(backuperViewModel);
         }
     }
+
+    protected override void Dispose(bool disposed) {
+        _backuperStore.BackupersChanged -= RefreshBackupers;
+        base.Dispose(disposed);
+    }
+
 }
