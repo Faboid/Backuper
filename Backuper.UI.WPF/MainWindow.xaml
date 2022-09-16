@@ -14,6 +14,8 @@
         MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
         Height="450" 
         Width="800"
+        MinHeight="300"
+        MinWidth="300"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         >
