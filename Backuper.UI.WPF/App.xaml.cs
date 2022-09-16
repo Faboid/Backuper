@@ -43,7 +43,15 @@ public partial class App : Application {
 
     protected override void OnStartup(StartupEventArgs e) {
 
-        _navigationStore.CurrentViewModel = CreateBackuperListingViewModel();
+        ViewModelBase startingVM;
+
+        if(e.Args.Length == 1 && e.Args[0] == SettingsService.StartupArguments) {
+            startingVM = CreateBackupingResultsViewModel();
+        } else {
+            startingVM = CreateBackuperListingViewModel();
+        }
+
+        _navigationStore.CurrentViewModel = startingVM;
 
         MainWindow = new MainWindow();
         MainWindow.DataContext = new MainViewModel(_navigationStore, MainWindow);

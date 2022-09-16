@@ -9,6 +9,8 @@ public class SettingsService {
     private readonly AutoBootService _autoBootService;
     private readonly Settings _settings;
 
+    public const string StartupArguments = AutoBootService.StartupArguments;
+
     private const string autoBootKey = "AutoBoot";
     private const string defaultAutoBoot = "True";
 
