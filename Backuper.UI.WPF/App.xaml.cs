@@ -69,7 +69,7 @@ public partial class App : Application {
     }
 
     private BackupingResultsViewModel CreateBackupingResultsViewModel() {
-        return BackupingResultsViewModel.LoadViewModel(_backuperStore, _notificationService, new(_navigationStore, CreateBackuperListingViewModel));
+        return BackupingResultsViewModel.LoadViewModel(_backuperStore, new(_navigationStore, CreateBackuperListingViewModel));
     }
 
     private BackuperListingViewModel CreateBackuperListingViewModel() {

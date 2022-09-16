@@ -36,7 +36,7 @@ public class BackupingResultsViewModel : ViewModelBase {
 
     private ICommand LoadAndExecuteBackupsCommand { get; }
 
-    private BackupingResultsViewModel(BackuperStore backuperStore, INotificationService notificationService, //todo - remove or use notification service
+    private BackupingResultsViewModel(BackuperStore backuperStore,
                                       NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
                                       CancellationToken cancellationToken = default) {
         _backuperResults = new();
@@ -47,10 +47,10 @@ public class BackupingResultsViewModel : ViewModelBase {
         _collectionView.Filter = SearchFilter;
     }
 
-    public static BackupingResultsViewModel LoadViewModel(BackuperStore backuperStore, INotificationService notificationService, 
+    public static BackupingResultsViewModel LoadViewModel(BackuperStore backuperStore, 
                                                           NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
                                                           CancellationToken cancellationToken = default) {
-        var vm = new BackupingResultsViewModel(backuperStore, notificationService, navigationServiceToListingViewModel);
+        var vm = new BackupingResultsViewModel(backuperStore, navigationServiceToListingViewModel);
         vm.LoadAndExecuteBackupsCommand.Execute(null);
         return vm;
     }
