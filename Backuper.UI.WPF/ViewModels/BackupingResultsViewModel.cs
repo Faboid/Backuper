@@ -17,6 +17,7 @@ namespace Backuper.UI.WPF.ViewModels;
 
 public class BackupingResultsViewModel : ViewModelBase {
 
+    private readonly BackuperStore _backuperStore;
     private readonly ICollectionView _collectionView;
     private readonly ObservableCollection<BackuperResultViewModel> _backuperResults;
     
@@ -33,16 +34,15 @@ public class BackupingResultsViewModel : ViewModelBase {
 
     public ICommand HomeCommand { get; }
 
-    private ICommand LoadBackupersCommand { get; }
-    private ICommand ExecuteBackupsCommand { get; }
+    private ICommand LoadAndExecuteBackupsCommand { get; }
 
     private BackupingResultsViewModel(BackuperStore backuperStore, INotificationService notificationService, 
                                       NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
                                       CancellationToken cancellationToken = default) {
         _backuperResults = new();
+        _backuperStore = backuperStore;
         HomeCommand = new NavigateCommand<BackuperListingViewModel>(navigationServiceToListingViewModel);
-        LoadBackupersCommand = new LoadBackupersCommand(backuperStore, notificationService, Load);
-        ExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(cancellationToken));
+        LoadAndExecuteBackupsCommand = new AsyncRelayCommand(() => ExecuteBackups(cancellationToken));
         _collectionView = CollectionViewSource.GetDefaultView(_backuperResults);
         _collectionView.Filter = SearchFilter;
     }
@@ -51,12 +51,13 @@ public class BackupingResultsViewModel : ViewModelBase {
                                                           NavigationService<BackuperListingViewModel> navigationServiceToListingViewModel, 
                                                           CancellationToken cancellationToken = default) {
         var vm = new BackupingResultsViewModel(backuperStore, notificationService, navigationServiceToListingViewModel);
-        vm.LoadBackupersCommand.Execute(null);
-        vm.ExecuteBackupsCommand.Execute(null);
+        vm.LoadAndExecuteBackupsCommand.Execute(null);
         return vm;
     }
 
     private async Task ExecuteBackups(CancellationToken cancellationToken = default) {
+        await _backuperStore.Load();
+        Load(_backuperStore.Backupers);
         var tasks = _backuperResults.Select(x => x.Backup(cancellationToken));
         await Task.WhenAll(tasks);
     }
