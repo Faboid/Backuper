@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Backuper.UI.WPF" 
         xmlns:views="clr-namespace:Backuper.UI.WPF.Views"
-        xmlns:vms="clr-namespace:Backuper.UI.WPF.ViewModels"
+        xmlns:vms="clr-namespace:Backuper.UI.WPF.ViewModels"             
+        xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" 
         MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
@@ -23,6 +25,10 @@
             />
     </WindowChrome.WindowChrome>
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    
     <Grid 
         Background="Black">
 
@@ -116,6 +122,58 @@
                 Content="{Binding CurrentViewModel}"/>
             
         </DockPanel>
-        
+
+        <Rectangle
+            Grid.Row="2"
+            Grid.Column="1"
+            Fill="Black"
+            Opacity="0.4"
+            Visibility="{Binding MessageBoxVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+            />
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1"
+            Background="#FF272121"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="{Binding MessageBoxVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding Message}"
+                Foreground="White"
+                Opacity="0.80"
+                Margin="5"
+                TextWrapping="Wrap"
+                />
+
+            <Button
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Content="Ok"
+                Width="70"
+                Height="20"
+                Margin="5"
+                Command="{Binding CloseMessageCommand}"
+                />
+
+        </Grid>
+
     </Grid>
 </Window>

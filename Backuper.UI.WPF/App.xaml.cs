@@ -25,7 +25,7 @@ public partial class App : Application, IDisposable {
     public App() {
         _navigationStore = new();
         //todo - use a DI container
-        _notificationService = new MessageBoxNotificationService();
+        _notificationService = new NotificationService();
         var fileInfoProvider = new FileInfoProvider();
         var directoryInfoProvider = new DirectoryInfoProvider();
         var dateTimeProvider = new DateTimeProvider();
@@ -55,7 +55,7 @@ public partial class App : Application, IDisposable {
         _navigationStore.CurrentViewModel = startingVM;
 
         MainWindow = new MainWindow();
-        MainWindow.DataContext = new MainViewModel(_navigationStore, MainWindow);
+        MainWindow.DataContext = new MainViewModel(_navigationStore, MainWindow, _notificationService);
         MainWindow.Show();
 
         base.OnStartup(e);
