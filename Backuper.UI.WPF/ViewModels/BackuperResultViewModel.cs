@@ -1,4 +1,5 @@
 ﻿using Backuper.Core;
+using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace Backuper.UI.WPF.ViewModels;
 public class BackuperResultViewModel : ViewModelBase {
 
     private readonly IBackuper _backuper;
+    private readonly ILogger _logger = Log.Logger;
 
     public string Name => _backuper.Name;
     public string Source => _backuper.SourcePath;
@@ -37,9 +39,9 @@ public class BackuperResultViewModel : ViewModelBase {
                 _ => BackupingStatus.Failed,
             };
 
-        } catch (Exception) {
+        } catch (Exception ex) {
             Status = BackupingStatus.Failed;
-            //todo - log
+            _logger.Warning(ex, "An error has occurred while backuping {Name}.", Name);
         }
     }
 
