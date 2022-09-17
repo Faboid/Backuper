@@ -1,18 +1,13 @@
-﻿using Backuper.Abstractions;
-using Backuper.Core;
-using Backuper.Core.Saves;
-using Backuper.Core.Services;
-using Backuper.Core.Validation;
-using Backuper.Core.Versioning;
+﻿using Backuper.Core.Services;
 using Backuper.UI.WPF.HostBuilders;
-using Backuper.UI.WPF.Services;
 using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
-using Backuper.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows;
+using Serilog;
+using System.IO;
 
 namespace Backuper.UI.WPF;
 /// <summary>
@@ -24,6 +19,11 @@ public partial class App : Application, IDisposable {
 
     public App() {
         _host = Host.CreateDefaultBuilder()
+            .UseSerilog((host, loggerConfiguration) => {
+                loggerConfiguration
+                    .WriteTo.Debug()
+                    .WriteTo.File(Path.Combine("Logs", "Log.txt"), rollingInterval: RollingInterval.Day);
+            })
             .AddIOAbstractions()
             .AddConfigObjects()
             .AddUIComponents()
@@ -37,11 +37,14 @@ public partial class App : Application, IDisposable {
     protected override void OnStartup(StartupEventArgs e) {
 
         _host.Start();
+        var logger = _host.Services.GetRequiredService<ILogger>();
         ViewModelBase startingVM;
 
         if(e.Args.Length == 1 && e.Args[0] == SettingsService.StartupArguments) {
+            logger.Information("Application started from boot.");
             startingVM = _host.Services.GetRequiredService<BackupingResultsViewModel>();
         } else {
+            logger.Information("Application started manually.");
             startingVM = _host.Services.GetRequiredService<BackuperListingViewModel>();
         }
 
@@ -56,6 +59,9 @@ public partial class App : Application, IDisposable {
     private bool _isDisposed = false;
     public void Dispose() {
         if(!_isDisposed) {
+            var logger = _host.Services.GetRequiredService<ILogger>();
+            logger.Information("Closing the application.");
+
             _host.Dispose();
             GC.SuppressFinalize(this);
         }
