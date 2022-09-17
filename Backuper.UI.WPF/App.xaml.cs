@@ -8,6 +8,7 @@ using System;
 using System.Windows;
 using Serilog;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Backuper.UI.WPF;
 /// <summary>
@@ -37,14 +38,14 @@ public partial class App : Application, IDisposable {
     protected override void OnStartup(StartupEventArgs e) {
 
         _host.Start();
-        var logger = _host.Services.GetRequiredService<ILogger>();
+        var logger = _host.Services.GetRequiredService<ILogger<App>>();
         ViewModelBase startingVM;
 
         if(e.Args.Length == 1 && e.Args[0] == SettingsService.StartupArguments) {
-            logger.Information("Application started from boot.");
+            logger.LogInformation("Application started from boot.");
             startingVM = _host.Services.GetRequiredService<BackupingResultsViewModel>();
         } else {
-            logger.Information("Application started manually.");
+            logger.LogInformation("Application started manually.");
             startingVM = _host.Services.GetRequiredService<BackuperListingViewModel>();
         }
 
@@ -59,8 +60,8 @@ public partial class App : Application, IDisposable {
     private bool _isDisposed = false;
     public void Dispose() {
         if(!_isDisposed) {
-            var logger = _host.Services.GetRequiredService<ILogger>();
-            logger.Information("Closing the application.");
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogInformation("Closing the application.");
 
             _host.Dispose();
             GC.SuppressFinalize(this);
