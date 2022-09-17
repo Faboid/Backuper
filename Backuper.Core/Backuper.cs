@@ -40,6 +40,7 @@ public class Backuper : IBackuper {
 
         var valid = _validator.IsValid(info);
         if(valid != BackuperValid.Valid) {
+            _logger?.LogWarning("Tried to initialize a Backuper with non-valid values.");
             throw new ArgumentException($"The given backuper info contains a non-valid value. Error code: {valid}.", nameof(info));
         }
     }
