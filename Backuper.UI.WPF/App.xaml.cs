@@ -37,6 +37,13 @@ public partial class App : Application, IDisposable {
             .Build();
 
         Log.Logger = _host.Services.GetRequiredService<Serilog.ILogger>();
+        AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+    }
+
+    private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
+        Exception exception = (Exception)e.ExceptionObject;
+        var logger = _host.Services.GetRequiredService<ILogger<App>>();
+        logger.LogCritical(exception, "There has been an unhandled exception.");
     }
 
     protected override void OnStartup(StartupEventArgs e) {
