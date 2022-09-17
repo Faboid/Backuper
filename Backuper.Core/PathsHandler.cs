@@ -6,7 +6,7 @@ namespace Backuper.Core;
 
 public class PathsHandler {
 
-    private readonly ILogger<PathsHandler> _logger;
+    private readonly ILogger<PathsHandler>? _logger;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IFileInfoProvider _fileInfoProvider;
     private readonly Settings _settings;
@@ -15,7 +15,7 @@ public class PathsHandler {
 
     public event Action? BackupersPathChanged;
 
-    public PathsHandler(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<PathsHandler> logger) {
+    public PathsHandler(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<PathsHandler>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
         _logger = logger;
@@ -45,24 +45,24 @@ public class PathsHandler {
         var currentPath = GetBackupersDirectory();
 
         try {
-            _logger.LogInformation("Beginning to set new main backups directory.");
+            _logger?.LogInformation("Beginning to set new main backups directory.");
             var currDir = _directoryInfoProvider.FromDirectoryPath(currentPath);
-            _logger.LogInformation("Migrating backups from {OldPath} to {NewPath}", currentPath, newPath);
+            _logger?.LogInformation("Migrating backups from {OldPath} to {NewPath}", currentPath, newPath);
             await currDir.CopyToAsync(newPath);
-            _logger.LogInformation("Migrated successfully from {OldPath} to {NewPath}", currentPath, newPath);
-            _logger.LogInformation("Saving new path to settings.");
+            _logger?.LogInformation("Migrated successfully from {OldPath} to {NewPath}", currentPath, newPath);
+            _logger?.LogInformation("Saving new path to settings.");
             _settings.Set(backupersDirectoryKey, newPath);
-            _logger.LogInformation("Saved new backupers path successfully.");
-            _logger.LogInformation("Deleting old backups...");
+            _logger?.LogInformation("Saved new backupers path successfully.");
+            _logger?.LogInformation("Deleting old backups...");
             currDir.Delete(true);
-            _logger.LogInformation("Deleted old backups successfully.");
+            _logger?.LogInformation("Deleted old backups successfully.");
         } catch(Exception ex) {
 
-            _logger.LogError(ex, "An error has occurred while changing the main backups directory from {OldPath} to {NewPath}.", currentPath, newPath);
+            _logger?.LogError(ex, "An error has occurred while changing the main backups directory from {OldPath} to {NewPath}.", currentPath, newPath);
             return BackupersMigrationResult.Failure;
         }
 
-        _logger.LogInformation("The main backups directory has been migrated successfully.");
+        _logger?.LogInformation("The main backups directory has been migrated successfully.");
         OnBackupersPathChanged();
         return BackupersMigrationResult.Success;
 

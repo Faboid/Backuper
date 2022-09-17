@@ -8,14 +8,14 @@ namespace Backuper.Core.Versioning;
 
 internal class BackuperVersioning : IBackuperVersioning {
 
-    private readonly ILogger<IBackuperVersioning> _logger;
+    private readonly ILogger<IBackuperVersioning>? _logger;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IPathsBuilderService _pathsBuilderService;
     private IDirectoryInfo _backupsDirectory;
     private IDirectoryInfo _binDirectory;
     private string _backuperName;
 
-    public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider, ILogger<IBackuperVersioning> logger) {
+    public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider, ILogger<IBackuperVersioning>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
         _pathsBuilderService = pathsBuilderService;
         _pathsBuilderService.BackupersPathChanged += SetDirectories;
@@ -41,10 +41,10 @@ internal class BackuperVersioning : IBackuperVersioning {
     public async Task MigrateTo(string newName) {
         IDirectoryInfo newDir = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(newName));
 
-        _logger.LogInformation("Migrating backuper {Name}, to {NewName}", _backuperName, newName);
+        _logger?.LogInformation("Migrating backuper {Name}, to {NewName}", _backuperName, newName);
         await _backupsDirectory.CopyToAsync(newDir.FullName);
         _backupsDirectory.Delete(true);
-        _logger.LogInformation("{Name} has been migrated successfully to {NewName}", _backuperName, newName);
+        _logger?.LogInformation("{Name} has been migrated successfully to {NewName}", _backuperName, newName);
         
         _backuperName = newName;
         SetDirectories();
@@ -69,6 +69,6 @@ internal class BackuperVersioning : IBackuperVersioning {
             .Skip(maxVersions)
             .ForEach(x => x.Delete(true))
             .Count();
-        _logger.LogInformation("Deleted {Count} extra versions from {Name}.", count, _backuperName);
+        _logger?.LogInformation("Deleted {Count} extra versions from {Name}.", count, _backuperName);
     }
 }

@@ -5,11 +5,11 @@ namespace Backuper.Core.Services;
 
 public class BackuperServiceFactory : IBackuperServiceFactory {
 
-    private readonly ILogger<IBackuperServiceFactory> _logger;
+    private readonly ILogger<IBackuperServiceFactory>? _logger;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IFileInfoProvider _fileInfoProvider;
 
-    public BackuperServiceFactory(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<IBackuperServiceFactory> logger) {
+    public BackuperServiceFactory(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<IBackuperServiceFactory>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
         _logger = logger;
@@ -31,7 +31,7 @@ public class BackuperServiceFactory : IBackuperServiceFactory {
             return new FileBackuperService(fileInfo);
         }
 
-        _logger.LogWarning("Tried to instance a backuper service with a non-existing path: {Path}", sourcePath);
+        _logger?.LogWarning("Tried to instance a backuper service with a non-existing path: {Path}", sourcePath);
         throw new InvalidDataException($"The source path doesn't exist or is invalid: {sourcePath}");
 
     }

@@ -6,11 +6,11 @@ namespace Backuper.Core.Versioning;
 
 public class BackuperVersioningFactory : IBackuperVersioningFactory {
 
-    private readonly ILogger<IBackuperVersioning> _logger;
+    private readonly ILogger<IBackuperVersioning>? _logger;
     private readonly IPathsBuilderService _pathsBuilderService;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
 
-    public BackuperVersioningFactory(IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider, ILogger<IBackuperVersioning> logger) {
+    public BackuperVersioningFactory(IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider, ILogger<IBackuperVersioning>? logger = null) {
         _pathsBuilderService = pathsBuilderService;
         _directoryInfoProvider = directoryInfoProvider;
         _logger = logger;

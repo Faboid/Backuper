@@ -10,7 +10,7 @@ namespace Backuper.Core;
 
 public class Backuper : IBackuper {
 
-    private readonly ILogger<IBackuper> _logger;
+    private readonly ILogger<IBackuper>? _logger;
     private readonly IBackuperService _backuperService;
     private readonly IBackuperConnection _connection;
     private readonly IBackuperVersioning _versioning;
@@ -29,7 +29,7 @@ public class Backuper : IBackuper {
                 IBackuperConnection connection,
                 IBackuperVersioning versioning,
                 IBackuperValidator validator,
-                ILogger<IBackuper> logger) {
+                ILogger<IBackuper>? logger = null) {
 
         _info = new BackuperInfo(info.Name, info.SourcePath, info.MaxVersions, info.UpdateOnBoot);
         _backuperService = backuperService;
@@ -54,7 +54,7 @@ public class Backuper : IBackuper {
             return BackupResponseCode.Cancelled;
         }
 
-        _logger.LogInformation("Beginning backup of {Name}", Name);
+        _logger?.LogInformation("Beginning backup of {Name}", Name);
 
         try {
             using var threadHandler = ThreadsHandler.SetScopedForeground();
@@ -63,12 +63,12 @@ public class Backuper : IBackuper {
             _versioning.DeleteExtraVersions(MaxVersions);
         } catch(Exception ex) {
 
-            _logger.LogError(ex, "Failed to backup {Name}", Name);
+            _logger?.LogError(ex, "Failed to backup {Name}", Name);
             return BackupResponseCode.Failure;
 
         }
 
-        _logger.LogInformation("Backed up {Name} successfully.", Name);
+        _logger?.LogInformation("Backed up {Name} successfully.", Name);
         return BackupResponseCode.Success;
     }
 
@@ -108,7 +108,7 @@ public class Backuper : IBackuper {
         }
 
         await _connection.OverwriteAsync(Name, newInfo);
-        _logger.LogInformation(
+        _logger?.LogInformation(
             "{Name} has been modified. From {Name}, {MaxVersions}, {UpdateOnBoot}, it has been changed to {NewName}, {NewMaxVersions}, {NewUpdateOnBoot}.",
             Name, Name, MaxVersions, UpdateOnBoot, newInfo.Name, newInfo.MaxVersions, newInfo.UpdateOnBoot
         );
@@ -117,12 +117,12 @@ public class Backuper : IBackuper {
     }
 
     public async Task BinAsync() {
-        _logger.LogInformation("Beginning binning {Name}.", Name);
+        _logger?.LogInformation("Beginning binning {Name}.", Name);
         using var lockd = await _locker.GetLockAsync();
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         await _versioning.Bin();
         _connection.Delete(Name);
-        _logger.LogInformation("{Name} has been binned.", Name);
+        _logger?.LogInformation("{Name} has been binned.", Name);
     }
 
     public bool IsUpdated() {
