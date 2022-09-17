@@ -1,11 +1,13 @@
 ﻿using Backuper.UI.WPF.Stores;
 using Backuper.UI.WPF.ViewModels;
+using Serilog;
 using System;
 
 namespace Backuper.UI.WPF.Services;
 
 public class NavigationService<T> where T : ViewModelBase {
 
+    private readonly ILogger _logger = Log.Logger;
     private readonly NavigationStore _navigationStore;
     private readonly Func<T> _navigationFunction;
 
@@ -18,7 +20,9 @@ public class NavigationService<T> where T : ViewModelBase {
         if(disposeCurrent) {
             _navigationStore.CurrentViewModel?.Dispose();
         }
-        _navigationStore.CurrentViewModel = _navigationFunction.Invoke();
+        var newVM = _navigationFunction.Invoke();
+        _logger.Debug("Navigating from {Current}, to {New}", _navigationStore.CurrentViewModel?.GetType().Name, newVM.GetType().Name);
+        _navigationStore.CurrentViewModel = newVM;
     }
 
 }

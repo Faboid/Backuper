@@ -24,6 +24,8 @@ public partial class App : Application, IDisposable {
                 loggerConfiguration
                     .WriteTo.Debug()
                     .WriteTo.File(Path.Combine("Logs", "Log.txt"), rollingInterval: RollingInterval.Day);
+
+                loggerConfiguration.MinimumLevel.Debug();
             })
             .AddIOAbstractions()
             .AddConfigObjects()
@@ -33,10 +35,12 @@ public partial class App : Application, IDisposable {
             .AddBackuper()
             .AddStores()
             .Build();
+
+        Log.Logger = _host.Services.GetRequiredService<Serilog.ILogger>();
     }
 
     protected override void OnStartup(StartupEventArgs e) {
-
+        
         _host.Start();
         var logger = _host.Services.GetRequiredService<ILogger<App>>();
         ViewModelBase startingVM;
