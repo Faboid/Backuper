@@ -65,7 +65,6 @@ public class BackuperFactory : IBackuperFactory {
     public IAsyncEnumerable<IBackuper> LoadBackupers() {
         return _connection
             .GetAllBackupersAsync()
-            //todo - consider what to do when the source paths don't exist anymore
             .Select(x => (info: x, versioning: _versioningFactory.CreateVersioning(x.Name), service: _serviceFactory.CreateBackuperService(x.SourcePath)))
             .Select(x => new Backuper(x.info, x.service, _connection, x.versioning, _validator, _backuperLogger));
     }
