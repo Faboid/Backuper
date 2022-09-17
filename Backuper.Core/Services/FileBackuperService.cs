@@ -1,4 +1,5 @@
 ﻿using Backuper.Abstractions;
+using Backuper.Utils;
 
 namespace Backuper.Core.Services;
 
@@ -10,12 +11,13 @@ public class FileBackuperService : IBackuperService {
         _source = source;
     }
 
-    public async Task BackupAsync(string newVersionPath, CancellationToken token = default) {
+    public async Task<BackupResult> BackupAsync(string newVersionPath, CancellationToken token = default) {
         var filePath = Path.Combine(newVersionPath, _source.Name);
         await _source.CopyToAsync(filePath);
+        return BackupResult.Success;
     }
 
-    public DateTime GetSourceLastWriteTimeUTC() {
+    public Option<DateTime> GetSourceLastWriteTimeUTC() {
         return _source.LastWriteTimeUtc;
     }
 }

@@ -26,6 +26,7 @@ public class BackuperTests {
         versioningMock.Setup(x => x.GenerateNewBackupVersionDirectory()).Returns(newVersionPath);
         versioningMock.Setup(x => x.GetLastBackupTimeUTC()).Returns(now.Subtract(TimeSpan.FromDays(1)));
         serviceMock.Setup(x => x.GetSourceLastWriteTimeUTC()).Returns(now);
+        serviceMock.Setup(x => x.BackupAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(BackupResult.Success));
 
         var sut = new Backuper(info, serviceMock.Object, Mock.Of<IBackuperConnection>(), versioningMock.Object, ValidatorMocks.GetAlwaysValid());
 

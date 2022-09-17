@@ -60,7 +60,16 @@ public class Backuper : IBackuper {
         try {
             using var threadHandler = ThreadsHandler.SetScopedForeground();
             var newVersionPath = _versioning.GenerateNewBackupVersionDirectory();
-            await _backuperService.BackupAsync(newVersionPath, token);
+            
+            var result = await _backuperService.BackupAsync(newVersionPath, token);
+            if(result != BackupResult.Success) {
+                _logger?.LogInformation("Failed to backup {Name}. Reason: {Reason}", Name, result.ToString());
+                return result switch {
+                    BackupResult.Hibernating => BackupResponseCode.Hibernating,
+                    _ => BackupResponseCode.Failure,
+                };
+            }
+            
             _versioning.DeleteExtraVersions(MaxVersions);
         } catch(Exception ex) {
 
@@ -127,7 +136,14 @@ public class Backuper : IBackuper {
     }
 
     public bool IsUpdated() {
-        return _versioning.GetLastBackupTimeUTC() >= _backuperService.GetSourceLastWriteTimeUTC();
+        var sourceTime = _backuperService.GetSourceLastWriteTimeUTC().Or(default);
+        if(sourceTime == default) {
+            //this happens only if the source is missing.
+            //to get attention from the user, it will be defaulted to false
+            return false;
+        }
+
+        return _versioning.GetLastBackupTimeUTC() >= sourceTime;
     }
 
     private bool _isDisposed = false;
@@ -145,7 +161,8 @@ public enum BackupResponseCode {
     Success,
     AlreadyUpdated,
     Cancelled,
-    Failure
+    Failure,
+    Hibernating
 }
 
 public enum EditBackuperResponseCode {

@@ -1,5 +1,6 @@
 ﻿using Backuper.Abstractions;
 using Backuper.Extensions;
+using Backuper.Utils;
 
 namespace Backuper.Core.Services;
 
@@ -11,11 +12,12 @@ public class DirectoryBackuperService : IBackuperService {
         _source = source;
     }
 
-    public async Task BackupAsync(string newVersionPath, CancellationToken token = default) {
+    public async Task<BackupResult> BackupAsync(string newVersionPath, CancellationToken token = default) {
         await _source.CopyToAsync(newVersionPath).ConfigureAwait(false);
+        return BackupResult.Success;
     }
 
-    public DateTime GetSourceLastWriteTimeUTC() {
+    public Option<DateTime> GetSourceLastWriteTimeUTC() {
 
         //windows doesn't update the parents' folders' last write time
         //therefore, it's needed to go through all children directories

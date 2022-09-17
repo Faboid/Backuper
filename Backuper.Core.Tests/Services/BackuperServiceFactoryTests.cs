@@ -20,10 +20,32 @@ public class BackuperServiceFactoryTests {
 
     [Theory]
     [InlineData("vrwelge")]
-    [InlineData("c:\\Hello\\Sup\\rgjrtebt\\text.yep")]
-    [InlineData("d:\\Directory\\Does\\Not\\Exist")]
+    [InlineData("D:\\Sup\\Not:::ValidHere")]
+
     public void NonExistentSource_ThrowInvalidDataException(string path) {
         Assert.Throws<InvalidDataException>(() => _sut.CreateBackuperService(path));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("     ")]
+    [InlineData(null)]
+    public void EmptyOrNull_ThrowArgumentNullException(string path) {
+        Assert.Throws<ArgumentNullException>(() => _sut.CreateBackuperService(path));
+    }
+
+    [Theory]
+    [InlineData("c:\\Hello\\Sup\\rgjrtebt\\text.yep")]
+    [InlineData("d:\\Directory\\Does\\Not\\Exist")]
+    public void CreateHibernatingBackuper(string path) {
+
+        //act
+        var info = _sut.CreateBackuperService(path);
+
+        //assert
+        Assert.NotNull(info);
+        Assert.IsType<HibernatingBackuperService>(info);
+
     }
 
     [Theory]
@@ -43,7 +65,7 @@ public class BackuperServiceFactoryTests {
     }
 
     [Theory]
-    [InlineData("somepath\\hello.txt")]
+    [InlineData("C:\\somepath\\hello.txt")]
     public void CreateFileInfo(string path) {
 
         //arrange

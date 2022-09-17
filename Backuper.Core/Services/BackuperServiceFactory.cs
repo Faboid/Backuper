@@ -5,20 +5,22 @@ namespace Backuper.Core.Services;
 
 public class BackuperServiceFactory : IBackuperServiceFactory {
 
-    private readonly ILogger<IBackuperServiceFactory>? _logger;
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IFileInfoProvider _fileInfoProvider;
 
-    public BackuperServiceFactory(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<IBackuperServiceFactory>? logger = null) {
+    public BackuperServiceFactory(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider) {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
-        _logger = logger;
     }
 
     public IBackuperService CreateBackuperService(string sourcePath) {
 
         if(string.IsNullOrWhiteSpace(sourcePath)) {
             throw new ArgumentNullException(nameof(sourcePath));
+        }
+
+        if(!IsPathValid(sourcePath)) {
+            throw new InvalidDataException("Must give a valid path.");
         }
 
         var dirInfo = _directoryInfoProvider.FromDirectoryPath(sourcePath);
@@ -31,8 +33,17 @@ public class BackuperServiceFactory : IBackuperServiceFactory {
             return new FileBackuperService(fileInfo);
         }
 
-        _logger?.LogWarning("Tried to instance a backuper service with a non-existing path: {Path}", sourcePath);
-        throw new InvalidDataException($"The source path doesn't exist or is invalid: {sourcePath}");
+        return new HibernatingBackuperService();
 
     }
+
+    private static bool IsPathValid(string newPath) {
+
+        return
+            !string.IsNullOrWhiteSpace(newPath)
+            && Path.IsPathRooted(newPath)
+            && newPath.Where(x => x == ':').Count() == 1
+            && !Path.GetInvalidPathChars().Any(x => newPath.Contains(x));
+    }
+
 }
