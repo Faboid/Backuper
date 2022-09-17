@@ -4,11 +4,13 @@ using Backuper.Core.Services;
 using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
 using Backuper.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace Backuper.Core;
 
 public class Backuper : IBackuper {
 
+    private readonly ILogger<IBackuper> _logger;
     private readonly IBackuperService _backuperService;
     private readonly IBackuperConnection _connection;
     private readonly IBackuperVersioning _versioning;
@@ -26,14 +28,15 @@ public class Backuper : IBackuper {
                 IBackuperService backuperService,
                 IBackuperConnection connection,
                 IBackuperVersioning versioning,
-                IBackuperValidator validator
-        ) {
+                IBackuperValidator validator,
+                ILogger<IBackuper> logger) {
 
         _info = new BackuperInfo(info.Name, info.SourcePath, info.MaxVersions, info.UpdateOnBoot);
         _backuperService = backuperService;
         _connection = connection;
         _versioning = versioning;
         _validator = validator;
+        _logger = logger;
 
         var valid = _validator.IsValid(info);
         if(valid != BackuperValid.Valid) {
@@ -51,11 +54,21 @@ public class Backuper : IBackuper {
             return BackupResponseCode.Cancelled;
         }
 
-        using var threadHandler = ThreadsHandler.SetScopedForeground();
-        var newVersionPath = _versioning.GenerateNewBackupVersionDirectory();
-        await _backuperService.BackupAsync(newVersionPath, token);
-        _versioning.DeleteExtraVersions(MaxVersions);
+        _logger.LogInformation("Beginning backup of {Name}", Name);
 
+        try {
+            using var threadHandler = ThreadsHandler.SetScopedForeground();
+            var newVersionPath = _versioning.GenerateNewBackupVersionDirectory();
+            await _backuperService.BackupAsync(newVersionPath, token);
+            _versioning.DeleteExtraVersions(MaxVersions);
+        } catch(Exception ex) {
+
+            _logger.LogError(ex, "Failed to backup {Name}", Name);
+            return BackupResponseCode.Failure;
+
+        }
+
+        _logger.LogInformation("Backed up {Name} successfully.", Name);
         return BackupResponseCode.Success;
     }
 
@@ -95,15 +108,21 @@ public class Backuper : IBackuper {
         }
 
         await _connection.OverwriteAsync(Name, newInfo);
+        _logger.LogInformation(
+            "{Name} has been modified. From {Name}, {MaxVersions}, {UpdateOnBoot}, it has been changed to {NewName}, {NewMaxVersions}, {NewUpdateOnBoot}.",
+            Name, Name, MaxVersions, UpdateOnBoot, newInfo.Name, newInfo.MaxVersions, newInfo.UpdateOnBoot
+        );
         _info = new BackuperInfo(newInfo.Name, newInfo.SourcePath, newInfo.MaxVersions, newInfo.UpdateOnBoot);
         return EditBackuperResponseCode.Success;
     }
 
     public async Task BinAsync() {
+        _logger.LogInformation("Beginning binning {Name}.", Name);
         using var lockd = await _locker.GetLockAsync();
         using var threadHandler = ThreadsHandler.SetScopedForeground();
         await _versioning.Bin();
         _connection.Delete(Name);
+        _logger.LogInformation("{Name} has been binned.", Name);
     }
 
     public bool IsUpdated() {

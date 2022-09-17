@@ -43,6 +43,7 @@ public class BackuperViewModel : ViewModelBase {
             BackupResponseCode.Success => $"{Name} has been backed up successfully.",
             BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
             BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
+            BackupResponseCode.Failure => $"{Name}'s backup has failed.",
             _ => $"{Name}'s backup has failed for an unknown reason.",
         };
 

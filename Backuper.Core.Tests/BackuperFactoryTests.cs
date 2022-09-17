@@ -22,7 +22,7 @@ public class BackuperFactoryTests {
         _directoryInfoProvider = new MockDirectoryInfoProvider(_fileSystem);
         _pathsBuilderService = new PathsBuilderService(new(_directoryInfoProvider, _fileInfoProvider), _dateTimeProvider, _directoryInfoProvider);
         _backuperServiceFactory = new BackuperServiceFactory(_directoryInfoProvider, _fileInfoProvider);
-        _backuperVersioningFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider);
+        _backuperVersioningFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider, LoggerMocks.Logger<IBackuperVersioning>());
         _fileSystem.CreateDirectory(_existingDirectoryPath);
     }
 
@@ -49,7 +49,7 @@ public class BackuperFactoryTests {
         //arrange
         var mockedValidator = new Mock<IBackuperValidator>();
         mockedValidator.Setup(x => x.IsValid(It.IsAny<BackuperInfo>())).Returns(invalidResultErrorCode);
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object);
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object, LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
 
         //act
         var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
@@ -65,7 +65,7 @@ public class BackuperFactoryTests {
         //arrange
         var mockedConnection = new Mock<IBackuperConnection>();
         mockedConnection.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid(), LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
 
         //act
         var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
@@ -79,7 +79,7 @@ public class BackuperFactoryTests {
     public async Task SavesBackuperToConnection() {
 
         //arrange
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid(), LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
         var info = new BackuperInfo("SomeName", _existingDirectoryPath, 3, false);
 
         //act
