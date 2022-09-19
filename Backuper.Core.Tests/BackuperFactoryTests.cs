@@ -7,6 +7,8 @@ using Backuper.Core.Services;
 using Backuper.Core.Tests.Mocks;
 using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
+using Backuper.Extensions;
+using Backuper.Utils;
 using Backuper.Utils.Options;
 using Moq;
 using static Backuper.Core.BackuperFactory;
@@ -22,7 +24,7 @@ public class BackuperFactoryTests {
         _directoryInfoProvider = new MockDirectoryInfoProvider(_fileSystem);
         _pathsBuilderService = new PathsBuilderService(new(_directoryInfoProvider, _fileInfoProvider), _dateTimeProvider, _directoryInfoProvider);
         _backuperServiceFactory = new BackuperServiceFactory(_directoryInfoProvider, _fileInfoProvider);
-        _backuperVersioningFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider, LoggerMocks.Logger<IBackuperVersioning>());
+        _backuperVersioningFactory = new BackuperVersioningFactory(_pathsBuilderService, _directoryInfoProvider);
         _fileSystem.CreateDirectory(_existingDirectoryPath);
     }
 
@@ -49,7 +51,7 @@ public class BackuperFactoryTests {
         //arrange
         var mockedValidator = new Mock<IBackuperValidator>();
         mockedValidator.Setup(x => x.IsValid(It.IsAny<BackuperInfo>())).Returns(invalidResultErrorCode);
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object, LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object);
 
         //act
         var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
@@ -65,7 +67,7 @@ public class BackuperFactoryTests {
         //arrange
         var mockedConnection = new Mock<IBackuperConnection>();
         mockedConnection.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid(), LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid());
 
         //act
         var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
@@ -79,7 +81,7 @@ public class BackuperFactoryTests {
     public async Task SavesBackuperToConnection() {
 
         //arrange
-        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid(), LoggerMocks.Logger<IBackuperFactory>(), LoggerMocks.Logger<IBackuper>());
+        var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());
         var info = new BackuperInfo("SomeName", _existingDirectoryPath, 3, false);
 
         //act
@@ -94,12 +96,71 @@ public class BackuperFactoryTests {
 
         Assert.Equal(OptionResult.Some, actual.Result());
 
-        var createdBackuper = actual.Or(default!);
+        var createdBackuper = actual.Or(default)!;
         Assert.NotNull(createdBackuper);
         Assert.Equal(info.Name, createdBackuper.Name);
         Assert.Equal(info.SourcePath, createdBackuper.SourcePath);
         Assert.Equal(info.MaxVersions, createdBackuper.MaxVersions);
         Assert.Equal(info.UpdateOnBoot, createdBackuper.UpdateOnBoot);
     }
+
+    [Fact]
+    public async Task CreatesNewVersionsAndServicesPerBackuper() {
+
+        var connectionMock = new Mock<IBackuperConnection>();
+        connectionMock.Setup(x => x.GetAllBackupersAsync()).Returns(GroupOptions());
+        var versioningFactoryMock = new Mock<IBackuperVersioningFactory>();
+        var serviceFactoryMock = new Mock<IBackuperServiceFactory>();
+        versioningFactoryMock.Setup(x => x.CreateVersioning(It.IsAny<string>())).Returns<string>(x => _backuperVersioningFactory.CreateVersioning(x));
+        serviceFactoryMock.Setup(x => x.CreateBackuperService(It.IsAny<string>())).Returns<string>(x => _backuperServiceFactory.CreateBackuperService(x));
+
+        BackuperFactory sut = new(versioningFactoryMock.Object, serviceFactoryMock.Object, connectionMock.Object, ValidatorMocks.GetAlwaysValid());
+
+        await foreach(var backuper in sut.LoadBackupers()) {
+
+            versioningFactoryMock.Verify(x => x.CreateVersioning(backuper.Name));
+            serviceFactoryMock.Verify(x => x.CreateBackuperService(backuper.Name));
+
+        }
+
+    }
+
+    [Fact]
+    public async Task CreatesCorruptedWhenGivenNames() {
+
+        var connectionMock = new Mock<IBackuperConnection>();
+        var name = "SomeNewUnusedName";
+        connectionMock.Setup(x => x.GetAllBackupersAsync()).Returns(GroupOptions(name));
+        var sut = InstanceWithMockedConnection(connectionMock.Object);
+
+        await foreach(var backuper in sut.LoadBackupers()) {
+
+            Assert.Equal(name, backuper.Name);
+            Assert.Equal("Unknown", backuper.SourcePath);
+            Assert.Equal(999, backuper.MaxVersions);
+
+            var result = await backuper.BackupAsync();
+            Assert.Equal(BackupResponseCode.Corrupted, result);
+
+        }
+
+    }
+
+    [Fact]
+    public async Task ThrowsWhenLoadingOptionNone() {
+
+        var connectionMock = new Mock<IBackuperConnection>();
+        connectionMock.Setup(x => x.GetAllBackupersAsync()).Returns(GroupOptions(Option.None<BackuperInfo, string>()));
+        var sut = InstanceWithMockedConnection(connectionMock.Object);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => sut.LoadBackupers().ToListAsync());
+
+    }
+
+    private static IAsyncEnumerable<Option<BackuperInfo, string>> GroupOptions(params Option<BackuperInfo, string>[] options) {
+        return options.ToAsyncEnumerable();
+    }
+
+    private BackuperFactory InstanceWithMockedConnection(IBackuperConnection connection) 
+        => new(_backuperVersioningFactory, _backuperServiceFactory, connection, ValidatorMocks.GetAlwaysValid());
 
 }
