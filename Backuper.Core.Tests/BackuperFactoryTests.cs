@@ -54,7 +54,7 @@ public class BackuperFactoryTests {
         var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, mockedValidator.Object);
 
         //act
-        var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
+        var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5));
 
         //assert
         Assert.Equal(expected, actual);
@@ -70,7 +70,7 @@ public class BackuperFactoryTests {
         var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, mockedConnection.Object, ValidatorMocks.GetAlwaysValid());
 
         //act
-        var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5, false));
+        var actual = await sut.CreateBackuper(new("SomeName", _existingDirectoryPath, 5));
 
         //assert
         Assert.Equal(CreateBackuperFailureCode.NameIsOccupied, actual);
@@ -82,7 +82,7 @@ public class BackuperFactoryTests {
 
         //arrange
         var sut = new BackuperFactory(_backuperVersioningFactory, _backuperServiceFactory, _connection, ValidatorMocks.GetAlwaysValid());
-        var info = new BackuperInfo("SomeName", _existingDirectoryPath, 3, false);
+        var info = new BackuperInfo("SomeName", _existingDirectoryPath, 3);
 
         //act
         var actual = await sut.CreateBackuper(info);
@@ -92,7 +92,6 @@ public class BackuperFactoryTests {
         Assert.Equal(info.Name, createdResult.Name);
         Assert.Equal(info.SourcePath, createdResult.SourcePath);
         Assert.Equal(info.MaxVersions, createdResult.MaxVersions);
-        Assert.Equal(info.UpdateOnBoot, createdResult.UpdateOnBoot);
 
         Assert.Equal(OptionResult.Some, actual.Result());
 
@@ -101,7 +100,6 @@ public class BackuperFactoryTests {
         Assert.Equal(info.Name, createdBackuper.Name);
         Assert.Equal(info.SourcePath, createdBackuper.SourcePath);
         Assert.Equal(info.MaxVersions, createdBackuper.MaxVersions);
-        Assert.Equal(info.UpdateOnBoot, createdBackuper.UpdateOnBoot);
     }
 
     [Fact]

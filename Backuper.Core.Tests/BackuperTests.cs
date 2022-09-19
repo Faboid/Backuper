@@ -70,8 +70,7 @@ public class BackuperTests {
         static bool Equal(BackuperInfo info, Backuper backuper) =>
             info.Name == backuper.Name
             && info.SourcePath == backuper.SourcePath
-            && info.MaxVersions == backuper.MaxVersions
-            && info.UpdateOnBoot == backuper.UpdateOnBoot;
+            && info.MaxVersions == backuper.MaxVersions;
 
         //arrange
         var info = GetGenericData();
@@ -83,7 +82,6 @@ public class BackuperTests {
         var startsEqual = Equal(info, sut);
         info.Name = "ANewLeaf";
         info.MaxVersions += 10;
-        info.UpdateOnBoot = !info.UpdateOnBoot;
         var isEqualAfterEditingTheInfoSource = Equal(info, sut);
 
         _ = await sut.EditAsync(info);
@@ -197,7 +195,7 @@ public class BackuperTests {
         var connectionMock = new Mock<IBackuperConnection>();
         var versioningMock = new Mock<IBackuperVersioning>();
 
-        var info = new BackuperInfo("SomeName", "SomePath", 4, false);
+        var info = new BackuperInfo("SomeName", "SomePath", 4);
         var sut = new Backuper(info, Mock.Of<IBackuperService>(), connectionMock.Object, versioningMock.Object, ValidatorMocks.GetAlwaysValid());
 
         //act
@@ -241,7 +239,7 @@ public class BackuperTests {
     }
 
     private static BackuperInfo GetGenericData(string name = "SomeName") {
-        return new BackuperInfo(name, Directory.GetCurrentDirectory(), 3, false);
+        return new BackuperInfo(name, Directory.GetCurrentDirectory(), 3);
     }
 
 }

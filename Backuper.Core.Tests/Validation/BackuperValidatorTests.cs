@@ -18,7 +18,7 @@ public class BackuperValidatorTests {
     private static readonly string _existingPath = Directory.GetCurrentDirectory();
     private readonly IBackuperValidator _sut;
 
-    private static BackuperInfo GetValidBase(string name = "SomeName") => new BackuperInfo(name, _existingPath, 3, false);
+    private static BackuperInfo GetValidBase(string name = "SomeName") => new BackuperInfo(name, _existingPath, 3);
 
     private static IEnumerable<object[]> GenericIsValidData() {
         static object[] NewCase(BackuperInfo info, BackuperValid expected) => new object[] { info, expected };

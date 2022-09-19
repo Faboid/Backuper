@@ -21,7 +21,7 @@ public class BackuperConnectionTests {
 
         //arrange
         Reset();
-        var expected = new BackuperInfo("SomeName", "SourcePathHere", 3, false);
+        var expected = new BackuperInfo("SomeName", "SourcePathHere", 3);
 
         //act
         await _sut.SaveAsync(expected);
@@ -39,8 +39,8 @@ public class BackuperConnectionTests {
         //arrange
         Reset();
         string oldName = "Name";
-        await _sut.SaveAsync(new(oldName, "Path", 2, false));
-        var expected = new BackuperInfo("NewName", "NewPath", 50, true);
+        await _sut.SaveAsync(new(oldName, "Path", 2));
+        var expected = new BackuperInfo("NewName", "NewPath", 50);
 
         //act
         await _sut.OverwriteAsync(oldName, expected);
@@ -59,7 +59,7 @@ public class BackuperConnectionTests {
         //arrange
         Reset();
         string name = "SomeValueUsedAsName";
-        var info = new BackuperInfo(name, "path", 2, false);
+        var info = new BackuperInfo(name, "path", 2);
         await _sut.SaveAsync(info);
 
         //act
@@ -74,8 +74,8 @@ public class BackuperConnectionTests {
         static object[] NewTestCase(params BackuperInfo[] backupers) => new object[] { backupers };
 
         yield return NewTestCase();
-        yield return NewTestCase(new("Somename", "pathhere", 2, true), new("AnotherName", "Secondpath", 1, false));
-        yield return NewTestCase(new BackuperInfo("Name", "Sourcepath", 50, false));
+        yield return NewTestCase(new("Somename", "pathhere", 2), new("AnotherName", "Secondpath", 1));
+        yield return NewTestCase(new BackuperInfo("Name", "Sourcepath", 50));
     }
 
     [Theory]
@@ -99,10 +99,9 @@ public class BackuperConnectionTests {
     }
 
     [Theory]
-    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5", "notValidBool")]
-    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5")]
-    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5", "true", "tooManyLines")]
-    [InlineData("SomeName", "SomeName", "D:\\SomePath", "five", "true")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5", "tooManyLines")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "five")]
     public async Task ReturnNameForCorruptedBackupers(string name, params string[] values) {
 
         //arrange
@@ -125,7 +124,6 @@ public class BackuperConnectionTests {
         Assert.Equal(expected.Name, actual.Name);
         Assert.Equal(expected.SourcePath, actual.SourcePath);
         Assert.Equal(expected.MaxVersions, actual.MaxVersions);
-        Assert.Equal(expected.UpdateOnBoot, actual.UpdateOnBoot);
     }
 
     private void Reset() {

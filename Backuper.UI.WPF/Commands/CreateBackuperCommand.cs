@@ -25,8 +25,7 @@ public class CreateBackuperCommand : AsyncCommandBase {
         BackuperInfo info = new(
                 createBackuperViewModel.BackuperName,
                 createBackuperViewModel.SourcePath,
-                createBackuperViewModel.MaxVersions,
-                createBackuperViewModel.UpdateOnBoot
+                createBackuperViewModel.MaxVersions
             );
 
         var result = await backuperStore.CreateBackuperAsync(info);

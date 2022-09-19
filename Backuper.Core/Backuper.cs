@@ -21,7 +21,7 @@ public class Backuper : IBackuper {
     public string Name => _info.Name;
     public string SourcePath => _info.SourcePath;
     public int MaxVersions => _info.MaxVersions;
-    public bool UpdateOnBoot => _info.UpdateOnBoot;
+    public bool UpdateOnBoot => true; //todo - remove. It's kept only to not break everything in the UI
 
     internal Backuper(
                 BackuperInfo info,
@@ -31,7 +31,7 @@ public class Backuper : IBackuper {
                 IBackuperValidator validator,
                 ILogger<IBackuper>? logger = null) {
 
-        _info = new BackuperInfo(info.Name, info.SourcePath, info.MaxVersions, info.UpdateOnBoot);
+        _info = new BackuperInfo(info.Name, info.SourcePath, info.MaxVersions);
         _backuperService = backuperService;
         _connection = connection;
         _versioning = versioning;
@@ -92,15 +92,15 @@ public class Backuper : IBackuper {
         var isValid = _validator.IsValid(newInfo);
         if(isValid != BackuperValid.Valid) {
 
-            return isValid switch {
+                return isValid switch {
                 BackuperValid.NameIsEmpty => EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces,
                 BackuperValid.NameHasIllegalCharacters => EditBackuperResponseCode.NameContainsIllegalCharacters,
                 //BackuperValid.SourceIsEmpty => EditBackuperResponseCode.SourceIsEmptyOrWhiteSpaces,
                 //BackuperValid.SourceDoesNotExist => EditBackuperResponseCode.NewSourceDoesNotExist,
                 BackuperValid.ZeroOrNegativeMaxVersions => EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative,
                 _ => EditBackuperResponseCode.Unknown
-            };
-        }
+                };
+            }
 
         if(newInfo.Name != Name && _connection.Exists(newInfo.Name)) {
             return EditBackuperResponseCode.NewNameIsOccupied;
@@ -114,10 +114,10 @@ public class Backuper : IBackuper {
 
         await _connection.OverwriteAsync(Name, newInfo);
         _logger?.LogInformation(
-            "{Name} has been modified. From {Name}, {MaxVersions}, {UpdateOnBoot}, it has been changed to {NewName}, {NewMaxVersions}, {NewUpdateOnBoot}.",
-            Name, Name, MaxVersions, UpdateOnBoot, newInfo.Name, newInfo.MaxVersions, newInfo.UpdateOnBoot
+            "{Name} has been modified. From {Name}, {MaxVersions}, it has been changed to {NewName}, {NewMaxVersions}.",
+            Name, Name, MaxVersions, newInfo.Name, newInfo.MaxVersions
         );
-        _info = new BackuperInfo(newInfo.Name, newInfo.SourcePath, newInfo.MaxVersions, newInfo.UpdateOnBoot);
+        _info = new BackuperInfo(newInfo.Name, newInfo.SourcePath, newInfo.MaxVersions);
         return EditBackuperResponseCode.Success;
     }
 

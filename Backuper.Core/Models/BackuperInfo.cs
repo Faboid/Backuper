@@ -5,7 +5,7 @@ namespace Backuper.Core.Models;
 
 public class BackuperInfo {
 
-    public BackuperInfo(string name, string sourcePath, int maxVersions, bool updateOnBoot) {
+    public BackuperInfo(string name, string sourcePath, int maxVersions) {
 
         if(maxVersions < 1) {
             throw new ArgumentOutOfRangeException(nameof(maxVersions), "The maximum versions cannot be less than one.");
@@ -14,7 +14,6 @@ public class BackuperInfo {
         Name = name;
         SourcePath = sourcePath;
         MaxVersions = maxVersions;
-        UpdateOnBoot = updateOnBoot;
     }
 
     /// <summary>
@@ -32,11 +31,6 @@ public class BackuperInfo {
     /// </summary>
     public int MaxVersions { get; set; }
 
-    /// <summary>
-    /// Whether this backuper gets backuped on computer boot.
-    /// </summary>
-    public bool UpdateOnBoot { get; set; }
-
     private const string separator = ",";
     public override string ToString() {
         var values = ToStrings();
@@ -46,7 +40,7 @@ public class BackuperInfo {
     }
 
     public string[] ToStrings() {
-        return new string[] { Name, SourcePath, MaxVersions.ToString(), UpdateOnBoot.ToString() };
+        return new string[] { Name, SourcePath, MaxVersions.ToString() };
     }
 
     public static BackuperInfo Parse(string s) {
@@ -55,12 +49,12 @@ public class BackuperInfo {
     }
 
     public static BackuperInfo Parse(string[] values) {
-        return new(values[0], values[1], int.Parse(values[2]), bool.Parse(values[3]));
+        return new(values[0], values[1], int.Parse(values[2]));
     }
 
     public static Option<BackuperInfo> TryParse(string[] values) {
 
-        if(values.Length != 4) {
+        if(values.Length != 3) {
             return Option.None<BackuperInfo>();
         }
 
@@ -71,11 +65,7 @@ public class BackuperInfo {
             return Option.None<BackuperInfo>();
         }
 
-        if(!bool.TryParse(values[3], out var updateOnBoot)) { 
-            return Option.None<BackuperInfo>();
-        }
-
-        return new BackuperInfo(name, source, maxVersions, updateOnBoot);
+        return new BackuperInfo(name, source, maxVersions);
 
     }
 

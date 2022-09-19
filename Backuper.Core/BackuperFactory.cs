@@ -75,7 +75,7 @@ public class BackuperFactory : IBackuperFactory {
                 name => {
                     var versioning = _versioningFactory.CreateVersioning(name);
                     var backupingService = _serviceFactory.CreateCorruptedService();
-                    return new Backuper(new BackuperInfo(name, "Unknown", 999, false), backupingService, _connection, versioning, _validator, _backuperLogger);
+                    return new Backuper(new BackuperInfo(name, "Unknown", 999), backupingService, _connection, versioning, _validator, _backuperLogger);
                 },
 
                 () => {

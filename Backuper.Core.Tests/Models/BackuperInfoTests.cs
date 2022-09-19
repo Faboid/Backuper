@@ -13,17 +13,17 @@ namespace Backuper.Core.Tests.Models {
         [InlineData(-1)]
         [InlineData(-50)]
         public void ThrowsOnZeroOrNegativeMaxVersions(int maxVersions) {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new BackuperInfo("ValidName", @"C:\ValidPath", maxVersions, false));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new BackuperInfo("ValidName", @"C:\ValidPath", maxVersions));
         }
 
         [Theory]
-        [InlineData("name", @"T:\path", 5, true)]
-        [InlineData("SomeName", @"D:\Here", 1, false)]
-        [InlineData("AnotherName", @"C:\Place", 500, false)]
-        public void ToStringAndParse(string name, string path, int maxVer, bool updateOnBoot) {
+        [InlineData("name", @"T:\path", 5)]
+        [InlineData("SomeName", @"D:\Here", 1)]
+        [InlineData("AnotherName", @"C:\Place", 500)]
+        public void ToStringAndParse(string name, string path, int maxVer) {
 
             //arrange
-            BackuperInfo info = new(name, path, maxVer, updateOnBoot);
+            BackuperInfo info = new(name, path, maxVer);
 
             //act
             var asString = info.ToString();
@@ -33,7 +33,6 @@ namespace Backuper.Core.Tests.Models {
             Assert.Equal(info.Name, infoParsed.Name);
             Assert.Equal(info.SourcePath, infoParsed.SourcePath);
             Assert.Equal(info.MaxVersions, infoParsed.MaxVersions);
-            Assert.Equal(info.UpdateOnBoot, infoParsed.UpdateOnBoot);
 
         }
 
