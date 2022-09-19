@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Backuper.Utils;
+using System.Text;
 
 namespace Backuper.Core.Models;
 
@@ -55,6 +56,27 @@ public class BackuperInfo {
 
     public static BackuperInfo Parse(string[] values) {
         return new(values[0], values[1], int.Parse(values[2]), bool.Parse(values[3]));
+    }
+
+    public static Option<BackuperInfo> TryParse(string[] values) {
+
+        if(values.Length != 4) {
+            return Option.None<BackuperInfo>();
+        }
+
+        var name = values[0];
+        var source = values[1];
+
+        if(!int.TryParse(values[2], out var maxVersions) || maxVersions < 1) {
+            return Option.None<BackuperInfo>();
+        }
+
+        if(!bool.TryParse(values[3], out var updateOnBoot)) { 
+            return Option.None<BackuperInfo>();
+        }
+
+        return new BackuperInfo(name, source, maxVersions, updateOnBoot);
+
     }
 
 }
