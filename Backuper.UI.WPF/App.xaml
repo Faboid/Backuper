@@ -1,0 +1,24 @@
+﻿<Application x:Class="Backuper.UI.WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Backuper.UI.WPF"
+             >
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--Pure Styles-->
+                <ResourceDictionary x:Name="DefaultButton" Source="pack://application:,,,/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultDataGrid" Source="pack://application:,,,/Styles/DataGridStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultScrollbar" Source="pack://application:,,,/Styles/ScrollbarStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultTextBox" Source="pack://application:,,,/Styles/TextBoxStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultTextBlock" Source="pack://application:,,,/Styles/TextBlockStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultComboBox" Source="pack://application:,,,/Styles/ComboBoxStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultLabel" Source="pack://application:,,,/Styles/LabelStyle.xaml"/>
+
+                <!--Custom Control Styles-->
+                <ResourceDictionary x:Name="DefaultTextBoxWithPreview" Source="pack://application:,,,/Components/TextBoxWithPreviewStyle.xaml"/>
+                <ResourceDictionary x:Name="DefaultTextBoxWithButton" Source="pack://application:,,,/Components/TextBoxWithButtonStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

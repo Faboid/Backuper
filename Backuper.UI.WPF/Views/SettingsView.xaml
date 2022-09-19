@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="Backuper.UI.WPF.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
+             xmlns:local="clr-namespace:Backuper.UI.WPF.Views"
+             xmlns:converters="clr-namespace:Backuper.UI.WPF.Converters"
+             xmlns:components="clr-namespace:Backuper.UI.WPF.Components"
+             d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converters:BoolToYesOrNoSelectedIndexConverter x:Key="BoolToYesOrNoSelectedIndexConverter"/>
+    </UserControl.Resources>
+    
+    <Grid
+        Margin="5"
+        Background="#FF272121"
+        >
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+
+        <!--Head Buttons-->
+        <Grid
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Grid.Row="1"
+            Height="30"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Home Button-->
+            <Button
+                Content="Home"
+                Grid.Column="0"
+                Command="{Binding HomeButtonCommand}"
+                />
+
+            <!--Apply Changes Button-->
+            <Button
+                Content="Reset To Default"
+                Grid.Column="2"
+                Command="{Binding ResetToDefaultCommand}"
+                />
+
+        </Grid>
+
+        <!--AutoBoot Editor-->
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="0, 10"
+            >
+
+            <Label
+                Content="AutoBoot"
+                />
+
+            <ComboBox
+                FontSize="17"
+                SelectedIndex="{Binding AutoBoot, Converter={StaticResource BoolToYesOrNoSelectedIndexConverter}}"
+                >
+                <ComboBoxItem Content="No"/>
+                <ComboBoxItem Content="Yes"/>
+            </ComboBox>
+
+        </StackPanel>    
+
+        <!--Backups Folder Editor-->
+        <Grid
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Label
+                Content="Backups Folder"
+                Grid.Row="0"
+                Grid.Column="0"
+                />
+
+            <Button
+                Content="Apply Change"
+                Grid.Row="0"
+                Grid.Column="1"
+                Command="{Binding ChangeBackupersPathCommand}"
+                />
+
+            <components:TextBoxWithButton
+                FontSize="16"
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                PreviewText="{Binding CurrentBackupsFolder}"
+                Text="{Binding BackupsFolder}"
+                ButtonText="🔍"
+                ButtonCommand="{Binding OpenPathDialogCommand}"
+                />
+
+        </Grid>
+        
+        
+        
+    </Grid>
+</UserControl>

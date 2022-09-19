@@ -1,0 +1,218 @@
+﻿<UserControl x:Class="Backuper.UI.WPF.Views.OpenPathDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Backuper.UI.WPF.Views" 
+             xmlns:components="clr-namespace:Backuper.UI.WPF.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="GridSplitter">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Transparent"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <!--Top Layer-->
+        <Grid
+            Margin="1, 2"
+            Grid.Row="0"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Grid.Column="0"
+                HorizontalAlignment="Left"
+                Margin="6"
+                FontSize="16"
+                Content="←"
+                MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                MinHeight="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                Command="{Binding ParentFolderCommand}"
+                />
+
+            <TextBox
+                Grid.Column="1"
+                Margin="6"
+                FontSize="16"
+                Text="{Binding CurrentPath, UpdateSourceTrigger=PropertyChanged}"
+                />
+
+            <components:TextBoxWithPreview
+                Grid.Column="2"
+                Margin="6"
+                FontSize="16"
+                Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
+                VerticalContentAlignment="Center"
+                PreviewText="Search..."
+                />
+
+        </Grid>
+        
+        <!--Middle Layer-->
+        <Grid
+            Grid.Row="1"
+            Margin="0, 2">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <GridSplitter
+                Grid.Column="1"
+                Grid.RowSpan="3"
+                />
+
+            <GridSplitter
+                Grid.Column="3"
+                Grid.Row="1"
+                />
+
+            <!--Roots-->
+            <DataGrid
+                x:Name="RootsDataGrid"
+                Grid.Column="0"
+                Grid.RowSpan="3"
+                Margin="5, 5, 0, 0"
+                IsReadOnly="True"
+                ItemsSource="{Binding Roots}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
+                >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Roots" Binding="{Binding Name}" Width="*"/>
+                </DataGrid.Columns>
+                <DataGrid.InputBindings>
+                    <MouseBinding
+                        MouseAction="LeftDoubleClick"
+                        Command="{Binding RootsDoubleClickCommand}"
+                        CommandParameter="{Binding ElementName=RootsDataGrid, Path=SelectedItem}"
+                        />
+                </DataGrid.InputBindings>
+            </DataGrid>
+
+            <!--Folders-->
+            <DataGrid
+                x:Name="DirectoriesDataGrid"
+                Grid.Column="2"
+                Grid.Row="0"
+                Margin="0, 5, 5, 0"
+                IsReadOnly="True"
+                ItemsSource="{Binding Directories}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
+                >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Folder Name" Binding="{Binding Name}" Width="auto"/>
+                    <DataGridTextColumn Header="Full Path" Binding="{Binding FullName}" Width="*"/>
+                    <DataGridTextColumn Header="Last Update" Binding="{Binding LastWriteTime}" Width="auto"/>
+                </DataGrid.Columns>
+                <DataGrid.InputBindings>
+                    <MouseBinding
+                        MouseAction="LeftDoubleClick"
+                        Command="{Binding DirectoriesDoubleClickCommand}"
+                        CommandParameter="{Binding ElementName=DirectoriesDataGrid, Path=SelectedItem}"
+                        />
+                </DataGrid.InputBindings>
+            </DataGrid>
+
+            <!--Files-->
+            <DataGrid
+                x:Name="FilesDataGrid"
+                Grid.Column="2"
+                Grid.Row="2"
+                Margin="0, 0, 5, 0"
+                IsReadOnly="True"
+                ItemsSource="{Binding Files}"
+                SelectedItem="{Binding SelectedPath, Mode=OneWayToSource}"
+                >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="auto"/>
+                    <DataGridTextColumn Header="Full Path" Binding="{Binding FullName}" Width="*"/>
+                    <DataGridTextColumn Header="Last Update" Binding="{Binding LastWriteTime}" Width="auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Grid>
+        
+        <!--Lower Layer-->
+        <Grid
+            Grid.Row="2"
+            Margin="1, 2"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label
+                Grid.Column="0"
+                FontSize="16"
+                Content="Path: "
+                Margin="5, 0, 0, 0"
+                VerticalAlignment="Center"
+                />
+
+            <TextBox
+                IsReadOnly="True"
+                Grid.Column="1"
+                FontSize="16"
+                Grid.ColumnSpan="3"
+                Margin="0, 5, 5, 5"
+                Text="{Binding Selected, Mode=OneWay}"
+                />
+
+            <Button
+                Grid.Column="2"
+                Grid.Row="1"
+                Margin="5"
+                FontSize="16"
+                Padding="10, 3"
+                Content="Select"
+                Command="{Binding SubmitCommand}"
+                />
+
+            <Button
+                Grid.Column="3"
+                Grid.Row="1"
+                FontSize="16"
+                Content="Cancel"
+                Margin="5"
+                Padding="10, 3"
+                Command="{Binding CancelCommand}"
+                />
+
+        </Grid>
+        
+    </Grid>
+</UserControl>

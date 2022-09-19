@@ -1,0 +1,181 @@
+﻿<Window x:Class="Backuper.UI.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Backuper.UI.WPF" 
+        xmlns:views="clr-namespace:Backuper.UI.WPF.Views"
+        xmlns:vms="clr-namespace:Backuper.UI.WPF.ViewModels"             
+        xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" 
+        MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
+        MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
+        Height="450" 
+        Width="800"
+        MinHeight="300"
+        MinWidth="300"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        >
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+            CaptionHeight="30" 
+            ResizeBorderThickness="5"
+            />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    
+    <Grid 
+        Background="Black">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+
+        <!--topbar-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
+                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
+                <ColumnDefinition MinWidth="15" MaxWidth="30"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock 
+                Grid.Column="0" 
+                Text="Backuper"
+                FontSize="16"
+                Padding="0, 0, 0, 0"
+                Foreground="White"
+                Opacity="0.90"/>
+
+            <!--To get commands-->
+            <Button 
+                x:Name="MinimizeButton"
+                WindowChrome.IsHitTestVisibleInChrome="True"
+                Content="—"
+                Grid.Column="1" 
+                Command="{Binding MinimizeCommand}"
+                />
+
+            <Button 
+                x:Name="ResizeButton"
+                WindowChrome.IsHitTestVisibleInChrome="True"
+                Content="▢"
+                Grid.Column="2"
+                Command="{Binding ResizeCommand}"
+                />
+
+            <Button 
+                Style="{StaticResource CloseButton}"
+                x:Name="CloseButton"
+                WindowChrome.IsHitTestVisibleInChrome="True"
+                Content="✖"
+                Grid.Column="3"
+                Command="{Binding CloseCommand}"
+                />
+
+        </Grid>
+
+        <DockPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Background="#FF121212"
+            >
+
+            <DockPanel.Resources>
+                <DataTemplate DataType="{x:Type vms:BackuperListingViewModel}">
+                    <views:BackuperListingView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:CreateBackuperViewModel}">
+                    <views:CreateBackuperView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:EditBackuperViewModel}">
+                    <views:EditBackuperView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:OpenPathDialogViewModel}">
+                    <views:OpenPathDialogView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:BackupingResultsViewModel}">
+                    <views:BackupingResultsView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:SettingsViewModel}">
+                    <views:SettingsView/>
+                </DataTemplate>
+            </DockPanel.Resources>
+
+            <ContentControl 
+                Margin="15"
+                Content="{Binding CurrentViewModel}"/>
+            
+        </DockPanel>
+
+        <Rectangle
+            Grid.Row="2"
+            Grid.Column="1"
+            Fill="Black"
+            Opacity="0.4"
+            Visibility="{Binding MessageBoxVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+            />
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1"
+            Background="#FF272121"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="{Binding MessageBoxVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding Message}"
+                Foreground="White"
+                Opacity="0.80"
+                Margin="5"
+                TextWrapping="Wrap"
+                />
+
+            <Button
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Content="Ok"
+                Width="70"
+                Height="20"
+                Margin="5"
+                Command="{Binding CloseMessageCommand}"
+                />
+
+        </Grid>
+
+    </Grid>
+</Window>
