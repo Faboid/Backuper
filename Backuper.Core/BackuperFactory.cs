@@ -64,9 +64,9 @@ public class BackuperFactory : IBackuperFactory {
 
     public async IAsyncEnumerable<IBackuper> LoadBackupers() {
 
-        await foreach(var info in _connection.GetAllBackupersAsync()) {
+        await foreach(var optionInfo in _connection.GetAllBackupersAsync()) {
 
-            yield return info.Match(
+            yield return optionInfo.Match(
                 some => {
                     var versioning = _versioningFactory.CreateVersioning(some.Name);
                     var backupingService = _serviceFactory.CreateBackuperService(some.SourcePath);
@@ -79,8 +79,11 @@ public class BackuperFactory : IBackuperFactory {
                     return new Backuper(new BackuperInfo(name, "Unknown", 3, false), backupingService, _connection, versioning, _validator, _backuperLogger);
                 },
 
-                () => throw new InvalidOperationException("LoadBackupers tried to resolve an Option.None")
-            );
+                () => {
+                    //as it's needed to have the name to create a backuper, this is impossible to resolve
+                    _logger.LogError("LoadBackupers tried to resolve an Option.None");
+                    throw new InvalidOperationException("LoadBackupers tried to resolve an Option.None");
+                });
         }
     }
 
