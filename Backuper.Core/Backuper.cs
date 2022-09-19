@@ -60,6 +60,7 @@ public class Backuper : IBackuper {
                 _logger?.LogInformation("Failed to backup {Name}. Reason: {Reason}", Name, result.ToString());
                 return result switch {
                     BackupResult.Hibernating => BackupResponseCode.Hibernating,
+                    BackupResult.Corrupted => BackupResponseCode.Corrupted,
                     _ => BackupResponseCode.Failure,
                 };
             }
@@ -156,7 +157,8 @@ public enum BackupResponseCode {
     AlreadyUpdated,
     Cancelled,
     Failure,
-    Hibernating
+    Hibernating,
+    Corrupted
 }
 
 public enum EditBackuperResponseCode {
