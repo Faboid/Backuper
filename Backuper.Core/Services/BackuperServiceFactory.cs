@@ -37,6 +37,8 @@ public class BackuperServiceFactory : IBackuperServiceFactory {
 
     }
 
+    public IBackuperService CreateCorruptedService() => new CorruptedBackuperService();
+
     private static bool IsPathValid(string newPath) {
 
         return

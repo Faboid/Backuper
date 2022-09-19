@@ -15,5 +15,6 @@ public interface IBackuperService {
 public enum BackupResult {
     Failure,
     Success,
-    Hibernating
+    Hibernating,
+    Corrupted
 }

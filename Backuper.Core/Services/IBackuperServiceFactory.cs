@@ -2,5 +2,6 @@
 
 public interface IBackuperServiceFactory {
     IBackuperService CreateBackuperService(string sourcePath);
+    IBackuperService CreateCorruptedService();
 }
 
