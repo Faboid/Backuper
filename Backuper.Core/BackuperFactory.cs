@@ -62,11 +62,26 @@ public class BackuperFactory : IBackuperFactory {
 
     }
 
-    public IAsyncEnumerable<IBackuper> LoadBackupers() {
-        return _connection
-            .GetAllBackupersAsync()
-            .Select(x => (info: x, versioning: _versioningFactory.CreateVersioning(x.Name), service: _serviceFactory.CreateBackuperService(x.SourcePath)))
-            .Select(x => new Backuper(x.info, x.service, _connection, x.versioning, _validator, _backuperLogger));
+    public async IAsyncEnumerable<IBackuper> LoadBackupers() {
+
+        await foreach(var info in _connection.GetAllBackupersAsync()) {
+
+            yield return info.Match(
+                some => {
+                    var versioning = _versioningFactory.CreateVersioning(some.Name);
+                    var backupingService = _serviceFactory.CreateBackuperService(some.SourcePath);
+                    return new Backuper(some, backupingService, _connection, versioning, _validator, _backuperLogger);
+                },
+
+                name => {
+                    var versioning = _versioningFactory.CreateVersioning(name);
+                    var backupingService = _serviceFactory.CreateCorruptedService();
+                    return new Backuper(new BackuperInfo(name, "Unknown", 3, false), backupingService, _connection, versioning, _validator, _backuperLogger);
+                },
+
+                () => throw new InvalidOperationException("LoadBackupers tried to resolve an Option.None")
+            );
+        }
     }
 
     public enum CreateBackuperFailureCode {

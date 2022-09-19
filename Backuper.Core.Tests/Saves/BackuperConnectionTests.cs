@@ -88,15 +88,17 @@ public class BackuperConnectionTests {
         //act
         var actual = await _sut
             .GetAllBackupersAsync()
+            .Select(x => x.Or(null))
             .ToListAsync();
 
         //assert
         Enumerable
             .Range(0, backupers.Length)
-            .ForEach(x => AssertEqualInfo(backupers[x], actual[x]));
+            .ForEach(x => AssertEqualInfo(backupers[x], actual[x]!));
     }
 
     private static void AssertEqualInfo(BackuperInfo expected, BackuperInfo actual) {
+        Assert.NotNull(actual);
         Assert.Equal(expected.Name, actual.Name);
         Assert.Equal(expected.SourcePath, actual.SourcePath);
         Assert.Equal(expected.MaxVersions, actual.MaxVersions);

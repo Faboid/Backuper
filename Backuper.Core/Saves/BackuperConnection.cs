@@ -1,6 +1,6 @@
 ﻿using Backuper.Core.Models;
 using Backuper.Core.Saves.DBConnections;
-using Backuper.Extensions;
+using Backuper.Utils;
 
 namespace Backuper.Core.Saves;
 
@@ -27,11 +27,20 @@ public class BackuperConnection : IBackuperConnection {
         return BackuperInfo.Parse(lines);
     }
 
-    public IAsyncEnumerable<BackuperInfo> GetAllBackupersAsync() {
-        return dbConnection
-            .EnumerateNames()
-            .SelectAsync(x => dbConnection.ReadAllLinesAsync(x))
-            .Select(x => BackuperInfo.Parse(x)); //todo - error handling in case the data of that backuper was corrupted
+    //Option<Info, name>
+    public async IAsyncEnumerable<Option<BackuperInfo, string>> GetAllBackupersAsync() {
+        var names = dbConnection.EnumerateNames();
+        foreach (var name in names) {
+
+            var lines = await dbConnection.ReadAllLinesAsync(name);
+            var info = BackuperInfo.TryParse(lines).Or(null);
+            if(info != null) {
+                yield return info;
+            } else {
+                yield return name;
+            }
+
+        }
     }
 
     public async Task OverwriteAsync(string name, BackuperInfo info) {
