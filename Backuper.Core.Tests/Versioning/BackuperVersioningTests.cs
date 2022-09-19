@@ -58,7 +58,7 @@ public class BackuperVersioningTests {
         //arrange
         ResetFileSystem();
         string backuperName = "SomeName";
-        var backuperPath = _pathsBuilderService.GetBackuperDirectory(backuperName);
+        var backuperPath = _pathsBuilderService.GetBackupsDirectory(backuperName);
         var lastVerDir = _pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName);
         string filePath = Path.Combine(lastVerDir, "Hello.txt");
         string[] fileText = new string[] { "Header", "Body", "Footer" };
@@ -88,7 +88,7 @@ public class BackuperVersioningTests {
         //arrange
         ResetFileSystem();
         string backuperName = "SomeName";
-        var backuperPath = _pathsBuilderService.GetBackuperDirectory(backuperName);
+        var backuperPath = _pathsBuilderService.GetBackupsDirectory(backuperName);
         var lastVerDir = _pathsBuilderService.GenerateNewBackupVersionDirectory(backuperName);
         string filePath = Path.Combine(lastVerDir, "Hello.txt");
         string[] fileText = new string[] { "Header", "Body", "Footer" };
@@ -104,7 +104,7 @@ public class BackuperVersioningTests {
 
         //assert
         Assert.False(_fileSystem.DirectoryExists(backuperPath));
-        Assert.True(_fileSystem.DirectoryExists(_pathsBuilderService.GetBackuperDirectory(newName)));
+        Assert.True(_fileSystem.DirectoryExists(_pathsBuilderService.GetBackupsDirectory(newName)));
         Assert.True(_fileSystem.DirectoryExists(lastVerDir.Replace(backuperName, newName)));
         Assert.True(_fileSystem.FileExists(expectedNewFilePath));
         Assert.Equal(fileText, _fileSystem.ReadFile(expectedNewFilePath));
@@ -118,7 +118,7 @@ public class BackuperVersioningTests {
     public void DeleteExtraVersions_DeletesExtra(int maxVersions) {
         int GetCurrentVersions(string name)
             => _directoryInfoProvider
-                .FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(name))
+                .FromDirectoryPath(_pathsBuilderService.GetBackupsDirectory(name))
                 .EnumerateDirectories()
                 .Count();
 
@@ -149,7 +149,7 @@ public class BackuperVersioningTests {
 
         //arrange
         Mock<IPathsBuilderService> _mockPathsBuilderService = new();
-        _mockPathsBuilderService.Setup(x => x.GetBackuperDirectory(It.IsAny<string>())).Returns<string>(x => x);
+        _mockPathsBuilderService.Setup(x => x.GetBackupsDirectory(It.IsAny<string>())).Returns<string>(x => x);
         _mockPathsBuilderService.Setup(x => x.GetBinDirectory(It.IsAny<string>())).Returns<string>(x => x);
         BackuperVersioning sut = new(backuperName, _mockPathsBuilderService.Object, _directoryInfoProvider);
 
@@ -165,6 +165,5 @@ public class BackuperVersioningTests {
         var settingsFile = _pathsHandler.GetSettingsFile();
         _fileSystem.Reset();
         _fileSystem.CreateFile(settingsFile, Array.Empty<string>());
-        _fileSystem.CreateDirectory(_pathsHandler.GetBackupsDirectory());
     }
 }

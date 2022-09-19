@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Backuper.Core.Services; 
 
-namespace Backuper.Core.Services {
-    public interface IPathsBuilderService {
+public interface IPathsBuilderService {
 
-        event Action? BackupersPathChanged;
+    event Action? BackupersPathChanged;
 
-        DateTime VersionNameToDateTime(string versionPath);
-        string GenerateNewBackupVersionDirectory(string backuperName);
-        string GetBackuperDirectory(string name);
-        string GetBinDirectory(string name);
+    DateTime VersionNameToDateTime(string versionPath);
+    string GenerateNewBackupVersionDirectory(string backuperName);
+    string GetBackupsDirectory(string name);
+    string GetBinDirectory(string name);
 
-    }
 }

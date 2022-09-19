@@ -24,7 +24,7 @@ public class PathsBuilderServiceTests {
     public void GenerateCorrectDirectories() {
 
         //arrange
-        string mainDir = _pathsHandler.GetBackupersDirectory();
+        string mainDir = _pathsHandler.GetBackupsDirectory();
         string bcpName = "Heyyo";
         var paths = new PathsBuilderService(_pathsHandler, _dateTimeProvider, _directoryInfoProvider);
 
@@ -35,7 +35,7 @@ public class PathsBuilderServiceTests {
 
         //assert
         Assert.Equal(expectedBin, paths.GetBinDirectory(bcpName));
-        Assert.Equal(expectedBackups, paths.GetBackuperDirectory(bcpName));
+        Assert.Equal(expectedBackups, paths.GetBackupsDirectory(bcpName));
 
     }
 
@@ -45,14 +45,14 @@ public class PathsBuilderServiceTests {
         //arrange
         var name = "SomeName";
         var paths = new PathsBuilderService(_pathsHandler, _dateTimeProvider, _directoryInfoProvider);
-        var backupsDirectory = paths.GetBackuperDirectory(name);
+        var backupsDirectory = paths.GetBackupsDirectory(name);
 
         //act
         var version = paths.GenerateNewBackupVersionDirectory(backupsDirectory);
         DateTime parsedTime = paths.VersionNameToDateTime(version);
 
         //assert
-        Assert.StartsWith(paths.GetBackuperDirectory(name), version);
+        Assert.StartsWith(paths.GetBackupsDirectory(name), version);
         Assert.NotEqual(default, parsedTime);
 
     }

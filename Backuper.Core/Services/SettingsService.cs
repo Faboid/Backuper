@@ -22,10 +22,10 @@ public class SettingsService {
     }
 
     public string GetSettingsFile() => _pathsHandler.GetSettingsFile();
-    public string GetBackupsDirectory() => _pathsHandler.GetBackupsDirectory();
     public string GetBackupersDirectory() => _pathsHandler.GetBackupersDirectory();
-    public Task<BackupersMigrationResult> ResetBackupersDirectory() => _pathsHandler.ResetBackupersDirectory();
-    public Task<BackupersMigrationResult> SetBackupersDirectoryAsync(string newPath) => _pathsHandler.SetBackupersDirectoryAsync(newPath);
+    public string GetBackupsDirectory() => _pathsHandler.GetBackupsDirectory();
+    public Task<BackupersMigrationResult> ResetBackupsDirectory() => _pathsHandler.ResetBackupsDirectory();
+    public Task<BackupersMigrationResult> SetBackupsDirectoryAsync(string newPath) => _pathsHandler.SetBackupsDirectoryAsync(newPath);
     
     
     public bool GetAutoBoot() => _autoBootService.Get();

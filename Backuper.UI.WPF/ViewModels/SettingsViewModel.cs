@@ -43,7 +43,7 @@ public class SettingsViewModel : ViewModelBase {
     public SettingsViewModel(SettingsService settingsService, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
         _settingsService = settingsService;
         _notificationService = notificationService;
-        _currentBackupsFolder = _settingsService.GetBackupersDirectory();
+        _currentBackupsFolder = _settingsService.GetBackupsDirectory();
         _autoBoot = _settingsService.GetAutoBoot();
         ChangeBackupersPathCommand = new AsyncRelayCommand(ChangePath);
         ResetToDefaultCommand = new AsyncRelayCommand(ResetToDefault);
@@ -54,13 +54,13 @@ public class SettingsViewModel : ViewModelBase {
 
     private async Task ResetToDefault() {
 
-        var result = await _settingsService.ResetBackupersDirectory();
+        var result = await _settingsService.ResetBackupsDirectory();
         if(result is not PathsHandler.BackupersMigrationResult.AlreadyThere and not PathsHandler.BackupersMigrationResult.Success) {
             var message = ConvertResultToMessage(result);
             _notificationService.Send(message);
         }
         BackupsFolder = "";
-        CurrentBackupsFolder = _settingsService.GetBackupersDirectory();
+        CurrentBackupsFolder = _settingsService.GetBackupsDirectory();
 
         _settingsService.SetAutoBoot(true);
         _autoBoot = true;
@@ -70,7 +70,7 @@ public class SettingsViewModel : ViewModelBase {
 
     private async Task ChangePath() {
 
-        var result = await _settingsService.SetBackupersDirectoryAsync(BackupsFolder);
+        var result = await _settingsService.SetBackupsDirectoryAsync(BackupsFolder);
         var message = ConvertResultToMessage(result);
         _notificationService.Send(message);
 

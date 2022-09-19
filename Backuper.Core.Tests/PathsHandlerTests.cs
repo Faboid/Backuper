@@ -14,7 +14,7 @@ public class PathsHandlerTests {
     public async Task InvalidPaths(string newPath) {
 
 		var sut = GetCleanPathsHandler();
-		var result = await sut.SetBackupersDirectoryAsync(newPath);
+		var result = await sut.SetBackupsDirectoryAsync(newPath);
 		Assert.Equal(PathsHandler.BackupersMigrationResult.InvalidPath, result);
 
 	}
@@ -26,8 +26,8 @@ public class PathsHandlerTests {
 		var sut = GetCleanPathsHandler();
 
 		//assert
-		Assert.Equal(DefaultPaths.BackupsDirectory, sut.GetBackupsDirectory());
 		Assert.Equal(DefaultPaths.BackupersDirectory, sut.GetBackupersDirectory());
+		Assert.Equal(DefaultPaths.BackupsDirectory, sut.GetBackupsDirectory());
 
 	}
 
@@ -39,15 +39,15 @@ public class PathsHandlerTests {
 		var newPath = NewValidPath;
 
 		//act
-		var result = await sut.SetBackupersDirectoryAsync(newPath);
-		var actualNewPath = sut.GetBackupersDirectory();
-		var resetResult = await sut.ResetBackupersDirectory();
+		var result = await sut.SetBackupsDirectoryAsync(newPath);
+		var actualNewPath = sut.GetBackupsDirectory();
+		var resetResult = await sut.ResetBackupsDirectory();
 
         //assert
         Assert.Equal(PathsHandler.BackupersMigrationResult.Success, result);
         Assert.Equal(PathsHandler.BackupersMigrationResult.Success, resetResult);
         Assert.Equal(newPath, actualNewPath);
-        Assert.Equal(DefaultPaths.BackupersDirectory, sut.GetBackupersDirectory());
+        Assert.Equal(DefaultPaths.BackupsDirectory, sut.GetBackupsDirectory());
 
 	}
 
@@ -64,7 +64,7 @@ public class PathsHandlerTests {
         var pathsHandler = new PathsHandler(directoryInfoProviderMock.Object, fileInfoProvider);
 
 		//act
-		var result = await pathsHandler.SetBackupersDirectoryAsync(NewValidPath);
+		var result = await pathsHandler.SetBackupsDirectoryAsync(NewValidPath);
 
 		//assert
 		Assert.Equal(PathsHandler.BackupersMigrationResult.Success, result);
@@ -86,11 +86,11 @@ public class PathsHandlerTests {
         var pathsHandler = new PathsHandler(directoryInfoProviderMock.Object, fileInfoProvider);
 
 		//act
-		var result = await pathsHandler.SetBackupersDirectoryAsync(NewValidPath);
+		var result = await pathsHandler.SetBackupsDirectoryAsync(NewValidPath);
 
 		//assert
 		Assert.Equal(PathsHandler.BackupersMigrationResult.Failure, result);
-		Assert.Equal(DefaultPaths.BackupersDirectory, pathsHandler.GetBackupersDirectory());
+		Assert.Equal(DefaultPaths.BackupsDirectory, pathsHandler.GetBackupsDirectory());
 
     }
 

@@ -19,17 +19,18 @@ public class PathsHandler {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
         _logger = logger;
+        _directoryInfoProvider.FromDirectoryPath(DefaultPaths.DataDirectory).Create();
         _settings = new(_fileInfoProvider.FromFilePath(DefaultPaths.SettingsFile));
     }
 
     public string GetSettingsFile() => DefaultPaths.SettingsFile;
-    public string GetBackupsDirectory() => _settings.Get(backupsDirectoryKey).Or(DefaultPaths.BackupsDirectory)!;
     public string GetBackupersDirectory() => _settings.Get(backupersDirectoryKey).Or(DefaultPaths.BackupersDirectory)!;
-    public Task<BackupersMigrationResult> ResetBackupersDirectory() => SetBackupersDirectoryAsync(DefaultPaths.BackupersDirectory);
+    public string GetBackupsDirectory() => _settings.Get(backupsDirectoryKey).Or(DefaultPaths.BackupsDirectory)!;
+    public Task<BackupersMigrationResult> ResetBackupsDirectory() => SetBackupsDirectoryAsync(DefaultPaths.BackupsDirectory);
 
-    public async Task<BackupersMigrationResult> SetBackupersDirectoryAsync(string newPath) {
+    public async Task<BackupersMigrationResult> SetBackupsDirectoryAsync(string newPath) {
 
-        if(newPath == GetBackupersDirectory()) {
+        if(newPath == GetBackupsDirectory()) {
             return BackupersMigrationResult.AlreadyThere;
         }
 
@@ -42,7 +43,7 @@ public class PathsHandler {
             return BackupersMigrationResult.TargetDirectoryIsNotEmpty;
         }
         
-        var currentPath = GetBackupersDirectory();
+        var currentPath = GetBackupsDirectory();
 
         try {
             _logger?.LogInformation("Beginning to set new main backups directory.");
@@ -51,8 +52,8 @@ public class PathsHandler {
             await currDir.CopyToAsync(newPath);
             _logger?.LogInformation("Migrated successfully from {OldPath} to {NewPath}", currentPath, newPath);
             _logger?.LogInformation("Saving new path to settings.");
-            _settings.Set(backupersDirectoryKey, newPath);
-            _logger?.LogInformation("Saved new backupers path successfully.");
+            _settings.Set(backupsDirectoryKey, newPath);
+            _logger?.LogInformation("Saved new backups path successfully.");
             _logger?.LogInformation("Deleting old backups...");
             currDir.Delete(true);
             _logger?.LogInformation("Deleted old backups successfully.");
@@ -93,9 +94,29 @@ public class PathsHandler {
 
 public static class DefaultPaths {
 
-    public static readonly string WorkingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
-    public static readonly string BackupsDirectory = Path.Combine(WorkingDirectory, "Backups");
-    public static readonly string BackupersDirectory = Path.Combine(WorkingDirectory, "Backupers");
-    public static readonly string SettingsFile = Path.Combine(WorkingDirectory, "Settings.txt");
+    /// <summary>
+    /// The directory that contains the exe this application is running from.
+    /// </summary>
+    public static string WorkingDirectory { get; } = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
+
+    /// <summary>
+    /// The directory that contains all data related to this application.
+    /// </summary>
+    public static string DataDirectory { get; } = Path.Combine(WorkingDirectory, "Data");
+
+    /// <summary>
+    /// Directory that contains all the backuper's data.
+    /// </summary>
+    public static string BackupersDirectory { get; } = Path.Combine(DataDirectory, "Backupers");
+
+    /// <summary>
+    /// Directory that contains all backups.
+    /// </summary>
+    public static string BackupsDirectory { get; } = Path.Combine(DataDirectory, "BackupSaves");
+
+    /// <summary>
+    /// The settings file.
+    /// </summary>
+    public static string SettingsFile { get; } = Path.Combine(DataDirectory, "Config.txt");
 
 }

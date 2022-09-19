@@ -26,7 +26,7 @@ internal class BackuperVersioning : IBackuperVersioning {
 
     [MemberNotNull(nameof(_backupsDirectory), nameof(_binDirectory))]
     private void SetDirectories() {
-        _backupsDirectory = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(_backuperName));
+        _backupsDirectory = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackupsDirectory(_backuperName));
         _binDirectory = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBinDirectory(_backuperName));
 
         //if the directories don't exist, create them
@@ -39,7 +39,7 @@ internal class BackuperVersioning : IBackuperVersioning {
     }
 
     public async Task MigrateTo(string newName) {
-        IDirectoryInfo newDir = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackuperDirectory(newName));
+        IDirectoryInfo newDir = _directoryInfoProvider.FromDirectoryPath(_pathsBuilderService.GetBackupsDirectory(newName));
 
         _logger?.LogInformation("Migrating backuper {Name}, to {NewName}", _backuperName, newName);
         await _backupsDirectory.CopyToAsync(newDir.FullName);

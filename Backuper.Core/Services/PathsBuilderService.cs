@@ -19,10 +19,10 @@ public class PathsBuilderService : IPathsBuilderService {
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly PathsHandler _pathsHandler;
-    private const string _backuper = "Backuper";
+    private const string _backuper = "Backuper"; //todo - remove this "Backuper" from the paths
 
-    public string GetBackuperDirectory(string name) => Path.Combine(_pathsHandler.GetBackupersDirectory(), _backuper, "Backups", name);
-    public string GetBinDirectory(string name) => Path.Combine(_pathsHandler.GetBackupersDirectory(), _backuper, "Bin", name);
+    public string GetBackupsDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), _backuper, "Backups", name);
+    public string GetBinDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), _backuper, "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
         var name = _directoryInfoProvider.FromDirectoryPath(versionPath).Name.Replace('—', ':');
@@ -35,7 +35,7 @@ public class PathsBuilderService : IPathsBuilderService {
     }
 
     internal string GenerateNewBackupVersionDirectory(string backuperName, DateTime dateTime) {
-        var backupsDirectory = GetBackuperDirectory(backuperName);
+        var backupsDirectory = GetBackupsDirectory(backuperName);
         var dateAsString = dateTime.ToString(format.UniversalSortableDateTimePattern).Replace(':', '—');
         var version = $"[{GetLatestVersionNumber(backupsDirectory) + 1}]{dateAsString}";
         return Path.Combine(backupsDirectory, version);
