@@ -47,9 +47,11 @@ public class FileBackuperServiceTests {
         //arrange
         string sourceName = "SomeFile.rar";
         var versionPath = Path.Combine(Directory.GetCurrentDirectory(), "VersionDirectory");
+        var directoryProviderMock = new Mock<IDirectoryInfoProvider>();
+        directoryProviderMock.Setup(x => x.FromDirectoryPath(versionPath)).Returns(Mock.Of<IDirectoryInfo>());
         var fileMock = new Mock<IFileInfo>();
         fileMock.Setup(x => x.Name).Returns(sourceName);
-        var sut = new FileBackuperService(fileMock.Object, Mock.Of<IDirectoryInfoProvider>());
+        var sut = new FileBackuperService(fileMock.Object, directoryProviderMock.Object);
 
         //act
         await sut.BackupAsync(versionPath);
