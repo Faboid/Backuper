@@ -105,7 +105,6 @@ public class BackuperStore : IDisposable {
         var infoName = newName ?? backuper.Name;
         var infoSource = backuper.SourcePath;
         var infoVersions = newMaxVersions ?? backuper.MaxVersions;
-        var infoUpdateOnBoot = newUpdateOnBoot ?? backuper.UpdateOnBoot;
 
         var info = new BackuperInfo(infoName, infoSource, infoVersions);
         return await UpdateBackuperAsync(backuper, info);

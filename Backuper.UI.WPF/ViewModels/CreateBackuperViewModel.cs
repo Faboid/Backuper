@@ -57,12 +57,6 @@ public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         }
     }
 
-    private bool _updateOnBoot;
-    public bool UpdateOnBoot {
-        get => _updateOnBoot;
-        set => SetAndRaise(nameof(UpdateOnBoot), ref _updateOnBoot, value);
-    }
-
     public ICommand SubmitCommand { get; }
     public ICommand CancelCommand { get; }
     public ICommand OpenPathDialogCommand { get; }

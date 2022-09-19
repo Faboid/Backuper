@@ -21,7 +21,6 @@ public class Backuper : IBackuper {
     public string Name => _info.Name;
     public string SourcePath => _info.SourcePath;
     public int MaxVersions => _info.MaxVersions;
-    public bool UpdateOnBoot => true; //todo - remove. It's kept only to not break everything in the UI
 
     internal Backuper(
                 BackuperInfo info,
@@ -92,15 +91,15 @@ public class Backuper : IBackuper {
         var isValid = _validator.IsValid(newInfo);
         if(isValid != BackuperValid.Valid) {
 
-                return isValid switch {
+            return isValid switch {
                 BackuperValid.NameIsEmpty => EditBackuperResponseCode.NewNameIsEmptyOrWhiteSpaces,
                 BackuperValid.NameHasIllegalCharacters => EditBackuperResponseCode.NameContainsIllegalCharacters,
                 //BackuperValid.SourceIsEmpty => EditBackuperResponseCode.SourceIsEmptyOrWhiteSpaces,
                 //BackuperValid.SourceDoesNotExist => EditBackuperResponseCode.NewSourceDoesNotExist,
                 BackuperValid.ZeroOrNegativeMaxVersions => EditBackuperResponseCode.NewMaxVersionsIsZeroOrNegative,
                 _ => EditBackuperResponseCode.Unknown
-                };
-            }
+            };
+        }
 
         if(newInfo.Name != Name && _connection.Exists(newInfo.Name)) {
             return EditBackuperResponseCode.NewNameIsOccupied;

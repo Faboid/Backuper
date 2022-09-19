@@ -24,8 +24,7 @@ public class EditBackuperCommand : AsyncCommandBase {
         var result = await _backuperStore.UpdateBackuperAsync(
             _editBackuperViewModel.PreviousName,
             _editBackuperViewModel.BackuperName,
-            _editBackuperViewModel.MaxVersions,
-            _editBackuperViewModel.UpdateOnBoot
+            _editBackuperViewModel.MaxVersions
             );
 
         var newName = _editBackuperViewModel.BackuperName ?? _editBackuperViewModel.PreviousName;

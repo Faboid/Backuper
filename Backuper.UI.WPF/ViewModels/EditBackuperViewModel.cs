@@ -46,12 +46,6 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
         }
     }
 
-    private bool _updateOnBoot;
-    public bool UpdateOnBoot {
-        get => _updateOnBoot;
-        set => SetAndRaise(nameof(UpdateOnBoot), ref _updateOnBoot, value);
-    }
-
     public bool CanEdit => !HasErrors;
 
     public ICommand SubmitCommand { get; }
@@ -63,7 +57,6 @@ public class EditBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
 
         BackuperName = backuper.Name;
         MaxVersions = backuper.MaxVersions;
-        UpdateOnBoot = backuper.UpdateOnBoot;
 
         SubmitCommand = new EditBackuperCommand(this, backuperStore, notificationService, navigatorToBackuperListingViewModel);
         CancelCommand = new NavigateCommand<BackuperListingViewModel>(true, navigatorToBackuperListingViewModel);

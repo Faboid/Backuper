@@ -9,7 +9,6 @@ public interface IBackuper : IDisposable {
     public string Name { get; }
     public string SourcePath { get; }
     public int MaxVersions { get; }
-    public bool UpdateOnBoot { get; }
 
     Task<BackupResponseCode> BackupAsync(CancellationToken token = default);
     Task<EditBackuperResponseCode> EditAsync(BackuperInfo newInfo);

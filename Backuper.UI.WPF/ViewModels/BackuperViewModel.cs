@@ -15,7 +15,6 @@ public class BackuperViewModel : ViewModelBase {
     private readonly BackuperStore _backuperStore;
 
     public bool Updated => _backuper.IsUpdated();
-    public bool UpdateOnBoot => _backuper.UpdateOnBoot;
     public string MaxVersions => _backuper.MaxVersions.ToString();
     public string Name => _backuper.Name;
     public string SourcePath => _backuper.SourcePath;

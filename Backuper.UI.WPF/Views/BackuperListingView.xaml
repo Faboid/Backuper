@@ -70,7 +70,6 @@
 
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Updated" Width="60" Binding="{Binding Updated, Mode=OneWay}"/>
-                <DataGridCheckBoxColumn Header="Autoupdate" Width="75" Binding="{Binding UpdateOnBoot, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Name" Width="100" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header="Source Path" MinWidth="30" Width="1*" Binding="{Binding SourcePath}"/>
                 <DataGridTemplateColumn Header="Start Backup" MaxWidth="100">

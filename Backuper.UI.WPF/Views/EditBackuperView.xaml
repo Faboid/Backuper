@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Backuper.UI.WPF.Views" 
              xmlns:converters="clr-namespace:Backuper.UI.WPF.Converters"
+             xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:EditBackuperViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -70,24 +72,6 @@
             Grid.Column="2"
             Text="{Binding MaxVersions, UpdateSourceTrigger=PropertyChanged}"
             />
-
-        <Label
-            Grid.Row="3"
-            Grid.Column="1"
-            Content="UpdateOnBoot: "
-            />
-
-        <ComboBox
-            Grid.Row="3"
-            Grid.Column="2"
-            FontSize="17"
-            SelectedIndex="{Binding UpdateOnBoot, Converter={StaticResource BoolToYesOrNoSelectedIndexConverter}}"
-            >
-            <ComboBoxItem Content="No"/>
-            <ComboBoxItem Content="Yes" 
-                          IsSelected="{Binding UpdateOnBoot, Mode=OneWayToSource}"
-                          />
-        </ComboBox>
 
         <Grid
             Grid.Row="5"
