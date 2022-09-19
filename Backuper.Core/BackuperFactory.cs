@@ -3,7 +3,6 @@ using Backuper.Core.Saves;
 using Backuper.Core.Services;
 using Backuper.Core.Validation;
 using Backuper.Core.Versioning;
-using Backuper.Extensions;
 using Backuper.Utils;
 using Microsoft.Extensions.Logging;
 
@@ -11,8 +10,8 @@ namespace Backuper.Core;
 
 public class BackuperFactory : IBackuperFactory {
 
-    private readonly ILogger<IBackuperFactory> _logger;
-    private readonly ILogger<IBackuper> _backuperLogger;
+    private readonly ILogger<IBackuperFactory>? _logger;
+    private readonly ILogger<IBackuper>? _backuperLogger;
     private readonly IBackuperVersioningFactory _versioningFactory;
     private readonly IBackuperServiceFactory _serviceFactory;
     private readonly IBackuperConnection _connection;
@@ -22,8 +21,8 @@ public class BackuperFactory : IBackuperFactory {
                             IBackuperServiceFactory serviceFactory, 
                             IBackuperConnection connection, 
                             IBackuperValidator validator, 
-                            ILogger<IBackuperFactory> logger, 
-                            ILogger<IBackuper> backuperLogger) {
+                            ILogger<IBackuperFactory>? logger = null, 
+                            ILogger<IBackuper>? backuperLogger = null) {
         _versioningFactory = versioningFactory;
         _serviceFactory = serviceFactory;
         _connection = connection;
@@ -53,7 +52,7 @@ public class BackuperFactory : IBackuperFactory {
 
         //create backuper in db
         await _connection.SaveAsync(info);
-        _logger.LogInformation("A new backuper, {Name}, has been created.", info.Name);
+        _logger?.LogInformation("A new backuper, {Name}, has been created.", info.Name);
 
         var service = _serviceFactory.CreateBackuperService(info.SourcePath);
         var versioning = _versioningFactory.CreateVersioning(info.Name);
@@ -76,12 +75,12 @@ public class BackuperFactory : IBackuperFactory {
                 name => {
                     var versioning = _versioningFactory.CreateVersioning(name);
                     var backupingService = _serviceFactory.CreateCorruptedService();
-                    return new Backuper(new BackuperInfo(name, "Unknown", 3, false), backupingService, _connection, versioning, _validator, _backuperLogger);
+                    return new Backuper(new BackuperInfo(name, "Unknown", 999, false), backupingService, _connection, versioning, _validator, _backuperLogger);
                 },
 
                 () => {
                     //as it's needed to have the name to create a backuper, this is impossible to resolve
-                    _logger.LogError("LoadBackupers tried to resolve an Option.None");
+                    _logger?.LogError("LoadBackupers tried to resolve an Option.None");
                     throw new InvalidOperationException("LoadBackupers tried to resolve an Option.None");
                 });
         }
