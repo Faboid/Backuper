@@ -19,10 +19,9 @@ public class PathsBuilderService : IPathsBuilderService {
     private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly PathsHandler _pathsHandler;
-    private const string _backuper = "Backuper"; //todo - remove this "Backuper" from the paths
 
-    public string GetBackupsDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), _backuper, "Backups", name);
-    public string GetBinDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), _backuper, "Bin", name);
+    public string GetBackupsDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), "Backups", name);
+    public string GetBinDirectory(string name) => Path.Combine(_pathsHandler.GetBackupsDirectory(), "Bin", name);
 
     public DateTime VersionNameToDateTime(string versionPath) {
         var name = _directoryInfoProvider.FromDirectoryPath(versionPath).Name.Replace('—', ':');

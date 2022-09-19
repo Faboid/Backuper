@@ -29,7 +29,6 @@ public class PathsBuilderServiceTests {
         var paths = new PathsBuilderService(_pathsHandler, _dateTimeProvider, _directoryInfoProvider);
 
         //act
-        mainDir = Path.Combine(mainDir, "Backuper");
         var expectedBin = Path.Combine(mainDir, "Bin", bcpName);
         var expectedBackups = Path.Combine(mainDir, "Backups", bcpName);
 
