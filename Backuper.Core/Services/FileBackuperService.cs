@@ -5,13 +5,16 @@ namespace Backuper.Core.Services;
 
 public class FileBackuperService : IBackuperService {
 
+    private readonly IDirectoryInfoProvider _directoryInfoProvider;
     private readonly IFileInfo _source;
 
-    public FileBackuperService(IFileInfo source) {
+    public FileBackuperService(IFileInfo source, IDirectoryInfoProvider directoryInfoProvider) {
         _source = source;
+        _directoryInfoProvider = directoryInfoProvider;
     }
 
     public async Task<BackupResult> BackupAsync(string newVersionPath, CancellationToken token = default) {
+        _directoryInfoProvider.FromDirectoryPath(newVersionPath).Create(); //todo - add tests to ensure this folder gets created
         var filePath = Path.Combine(newVersionPath, _source.Name);
         await _source.CopyToAsync(filePath);
         return BackupResult.Success;

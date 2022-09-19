@@ -30,7 +30,7 @@ public class BackuperServiceFactory : IBackuperServiceFactory {
 
         var fileInfo = _fileInfoProvider.FromFilePath(sourcePath);
         if(fileInfo.Exists) {
-            return new FileBackuperService(fileInfo);
+            return new FileBackuperService(fileInfo, _directoryInfoProvider);
         }
 
         return new HibernatingBackuperService();

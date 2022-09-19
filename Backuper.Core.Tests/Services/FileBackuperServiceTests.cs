@@ -10,12 +10,11 @@ public class FileBackuperServiceTests {
     public async Task CallsCopyToWithCorrectArguments() {
 
         //arrange
-
         string sourceName = "SomeFile.rar";
         var versionPath = Path.Combine(Directory.GetCurrentDirectory(), "VersionDirectory");
         var fileMock = new Mock<IFileInfo>();
         fileMock.Setup(x => x.Name).Returns(sourceName);
-        var sut = new FileBackuperService(fileMock.Object);
+        var sut = new FileBackuperService(fileMock.Object, Mock.Of<IDirectoryInfoProvider>());
 
         //act
         await sut.BackupAsync(versionPath);
@@ -33,7 +32,7 @@ public class FileBackuperServiceTests {
         var expected = new DateTime(2000, 2, 2);
         var fileMock = new Mock<IFileInfo>();
         fileMock.Setup(x => x.LastWriteTimeUtc).Returns(expected);
-        var sut = new FileBackuperService(fileMock.Object);
+        var sut = new FileBackuperService(fileMock.Object, Mock.Of<IDirectoryInfoProvider>());
 
         //act
         var actual = sut.GetSourceLastWriteTimeUTC();
