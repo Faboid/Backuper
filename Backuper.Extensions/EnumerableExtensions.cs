@@ -25,6 +25,13 @@ public static class EnumerableExtensions {
         return enumerable;
     }
 
+    public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> enumerable) {
+        foreach(var item in enumerable) {
+            yield return item;
+        }
+        await Task.CompletedTask;
+    }
+
     public static async IAsyncEnumerable<Y> SelectAsync<T, Y>(this IEnumerable<T> enumerable, Func<T, Task<Y>> func) {
         foreach(var item in enumerable) {
             yield return await func.Invoke(item);
