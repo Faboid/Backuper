@@ -2,6 +2,7 @@ using Backuper.Core.Models;
 using Backuper.Core.Saves;
 using Backuper.Core.Saves.DBConnections;
 using Backuper.Extensions;
+using Moq;
 
 namespace Backuper.Core.Tests.Saves;
 
@@ -95,6 +96,28 @@ public class BackuperConnectionTests {
         Enumerable
             .Range(0, backupers.Length)
             .ForEach(x => AssertEqualInfo(backupers[x], actual[x]!));
+    }
+
+    [Theory]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5", "notValidBool")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "5", "true", "tooManyLines")]
+    [InlineData("SomeName", "SomeName", "D:\\SomePath", "five", "true")]
+    public async Task ReturnNameForCorruptedBackupers(string name, params string[] values) {
+
+        //arrange
+        var dbMock = new Mock<IDBConnection>();
+        var sut = new BackuperConnection(dbMock.Object);
+
+        dbMock.Setup(x => x.EnumerateNames()).Returns(new string[] { name });
+        dbMock.Setup(x => x.ReadAllLinesAsync(name)).Returns<string>(x => Task.FromResult(values));
+
+        //act
+        var result = (await sut.GetAllBackupersAsync().ToListAsync()).First();
+
+        //assert
+        Assert.Equal(name, result);
+
     }
 
     private static void AssertEqualInfo(BackuperInfo expected, BackuperInfo actual) {
