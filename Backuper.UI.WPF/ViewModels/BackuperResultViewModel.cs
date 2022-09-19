@@ -36,6 +36,8 @@ public class BackuperResultViewModel : ViewModelBase {
                 BackupResponseCode.Success => BackupingStatus.Success,
                 BackupResponseCode.AlreadyUpdated => BackupingStatus.AlreadyUpdated,
                 BackupResponseCode.Cancelled => BackupingStatus.Stopped,
+                BackupResponseCode.Hibernating => BackupingStatus.Hibernating,
+                BackupResponseCode.Corrupted => BackupingStatus.Corrupted,
                 _ => BackupingStatus.Failed,
             };
 
@@ -52,6 +54,8 @@ public class BackuperResultViewModel : ViewModelBase {
         Success,
         Failed,
         Stopped,
+        Hibernating,
+        Corrupted,
     }
 
 }

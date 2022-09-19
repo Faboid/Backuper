@@ -44,6 +44,8 @@ public class BackuperViewModel : ViewModelBase {
             BackupResponseCode.AlreadyUpdated => $"{Name} is already up to date.",
             BackupResponseCode.Cancelled => $"{Name}'s backup has been stopped.",
             BackupResponseCode.Failure => $"{Name}'s backup has failed.",
+            BackupResponseCode.Hibernating => $"{Name}'s backup has failed because the source is missing.",
+            BackupResponseCode.Corrupted => $"{Name}'s backup has failed because the backuper's values are corrupted. It's suggested to delete and create this backuper again.",
             _ => $"{Name}'s backup has failed for an unknown reason.",
         };
 
