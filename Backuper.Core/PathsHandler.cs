@@ -97,7 +97,7 @@ public static class DefaultPaths {
     /// <summary>
     /// The directory that contains the exe this application is running from.
     /// </summary>
-    public static string WorkingDirectory { get; } = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
+    public static string WorkingDirectory { get; } = AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
     /// The directory that contains all data related to this application.
