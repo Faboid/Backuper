@@ -18,7 +18,7 @@ internal class BackuperVersioning : IBackuperVersioning {
     public BackuperVersioning(string backuperName, IPathsBuilderService pathsBuilderService, IDirectoryInfoProvider directoryInfoProvider, ILogger<IBackuperVersioning>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
         _pathsBuilderService = pathsBuilderService;
-        _pathsBuilderService.BackupersPathChanged += SetDirectories;
+        _pathsBuilderService.BackupsPathChanged += SetDirectories;
         _backuperName = backuperName;
         _logger = logger;
         SetDirectories();

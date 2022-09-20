@@ -2,7 +2,10 @@
 
 public interface IPathsBuilderService {
 
-    event Action? BackupersPathChanged;
+    /// <summary>
+    /// Raises an event when the backups path is changed.
+    /// </summary>
+    event Action? BackupsPathChanged;
 
     DateTime VersionNameToDateTime(string versionPath);
     string GenerateNewBackupVersionDirectory(string backuperName);

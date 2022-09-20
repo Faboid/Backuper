@@ -13,7 +13,7 @@ public class PathsHandler {
     private const string backupersDirectoryKey = "BackupersDirectory";
     private const string backupsDirectoryKey = "BackupsDirectory";
 
-    public event Action? BackupersPathChanged;
+    public event Action? BackupsPathChanged;
 
     public PathsHandler(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<PathsHandler>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
@@ -64,7 +64,7 @@ public class PathsHandler {
         }
 
         _logger?.LogInformation("The main backups directory has been migrated successfully.");
-        OnBackupersPathChanged();
+        OnBackupsPathChanged();
         return BackupersMigrationResult.Success;
 
     }
@@ -79,7 +79,7 @@ public class PathsHandler {
 
     }
 
-    private void OnBackupersPathChanged() => BackupersPathChanged?.Invoke();
+    private void OnBackupsPathChanged() => BackupsPathChanged?.Invoke();
 
     public enum BackupersMigrationResult {
         Unknown,
