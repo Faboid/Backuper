@@ -19,7 +19,7 @@ public class AutoBootService {
     private readonly IShortcut _shortcut;
     private static readonly string _pathToExe = Environment.ProcessPath!;
     private static readonly string _startupPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-    private static readonly string _shortcutPath = Path.Combine(_startupPath, "TempBackuper.lnk"); //todo - remove "temp"
+    private static readonly string _shortcutPath = Path.Combine(_startupPath, "Backuper.lnk");
 
     /// <summary>
     /// The argument given when the application gets booted automatically.
