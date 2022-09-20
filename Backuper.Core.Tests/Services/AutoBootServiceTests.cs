@@ -10,7 +10,7 @@ public class AutoBootServiceTests {
     public void PointsToStartupFolder() {
 
         //arrange
-        string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "TempBackuper.lnk");
+        string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Backuper.lnk");
         string exePath = Environment.ProcessPath!;
         var shortcutProviderMock = new Mock<IShortcutProvider>();
         shortcutProviderMock.Setup(x => x.FromShortcutPaths(It.IsAny<string>(), It.IsAny<string>())).Returns(GetShortcutMock().Object);
