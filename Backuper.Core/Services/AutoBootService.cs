@@ -8,6 +8,11 @@ namespace Backuper.Core.Services;
 /// </summary>
 public class AutoBootService {
 
+    /// <summary>
+    /// Instances <see cref="AutoBootService"/>.
+    /// </summary>
+    /// <param name="shortcutProvider"></param>
+    /// <param name="logger"></param>
     public AutoBootService(IShortcutProvider shortcutProvider, ILogger<AutoBootService>? logger = null) {
         _shortcut = shortcutProvider.FromShortcutPaths(_shortcutPath, _pathToExe)
             .SetArguments(StartupArguments)
