@@ -105,6 +105,11 @@ public static class DefaultPaths {
     public static string DataDirectory { get; } = Path.Combine(WorkingDirectory, "Data");
 
     /// <summary>
+    /// The directory that contains all logs.
+    /// </summary>
+    public static string LogsDirectory { get; } = Path.Combine(DataDirectory, "Logs");
+
+    /// <summary>
     /// Directory that contains all the backuper's data.
     /// </summary>
     public static string BackupersDirectory { get; } = Path.Combine(DataDirectory, "Backupers");

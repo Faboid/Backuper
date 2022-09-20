@@ -9,6 +9,7 @@ using System.Windows;
 using Serilog;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using Backuper.Core;
 
 namespace Backuper.UI.WPF;
 /// <summary>
@@ -23,7 +24,7 @@ public partial class App : Application, IDisposable {
             .UseSerilog((host, loggerConfiguration) => {
                 loggerConfiguration
                     .WriteTo.Debug()
-                    .WriteTo.File(Path.Combine("Logs", "Log.txt"), rollingInterval: RollingInterval.Day);
+                    .WriteTo.File(Path.Combine(DefaultPaths.LogsDirectory, "Log.txt"), rollingInterval: RollingInterval.Day);
 
                 loggerConfiguration.MinimumLevel.Debug();
             })
