@@ -14,7 +14,7 @@ public class FileBackuperService : IBackuperService {
     }
 
     public async Task<BackupResult> BackupAsync(string newVersionPath, CancellationToken token = default) {
-        _directoryInfoProvider.FromDirectoryPath(newVersionPath).Create(); //todo - add tests to ensure this folder gets created
+        _directoryInfoProvider.FromDirectoryPath(newVersionPath).Create();
         var filePath = Path.Combine(newVersionPath, _source.Name);
         await _source.CopyToAsync(filePath);
         return BackupResult.Success;
