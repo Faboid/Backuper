@@ -1,5 +1,8 @@
 namespace Backuper.Abstractions.TestingHelpers;
 
+/// <summary>
+/// This class is used to mimick the behavior of the search pattern used for files and directories.
+/// </summary>
 public class SearchPattern {
 
     public SearchPattern(string searchPattern) {
@@ -8,11 +11,22 @@ public class SearchPattern {
 
     private readonly string _searchPattern;
 
+    /// <summary>
+    /// Returns whether the given <paramref name="path"/> matches <see cref="_searchPattern"/>.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     public bool Match(string path) => Match(path, _searchPattern);
 
     public const char Wildcard = '*';
     public const char OneCharWildcard = '?';
 
+    /// <summary>
+    /// Returns whether the given <paramref name="path"/> matches the <paramref name="searchPattern"/>.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="searchPattern"></param>
+    /// <returns></returns>
     public static bool Match(string path, string searchPattern) {
         searchPattern = searchPattern.Trim();
 
