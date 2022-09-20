@@ -10,8 +10,6 @@ namespace Backuper.Core.Tests;
 
 public class BackuperTests {
 
-    //todo - this class tests the implementation of the interfaces through the Backuper class
-    //it might be a good idea to implement tests for the results, not the implementation
     private static readonly string _existingDirectoryPath = Directory.GetCurrentDirectory();
 
     [Fact]

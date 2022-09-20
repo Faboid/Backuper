@@ -1,10 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace Backuper.Core.Saves;
 
-//sets visible to Moq
-[assembly:InternalsVisibleTo("DynamicProxyGenAssembly2")]
-namespace Backuper.Core.Saves;
-
-internal interface IDBConnection {
+public interface IDBConnection {
 
     bool Exists(string name);
     IEnumerable<string> EnumerateNames();

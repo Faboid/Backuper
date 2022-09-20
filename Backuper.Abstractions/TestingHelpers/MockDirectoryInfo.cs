@@ -38,6 +38,8 @@ public class MockDirectoryInfo : IDirectoryInfo {
     }
 
     public Task CopyToAsync(string path) {
+        _fileSystem.CreateDirectory(path);
+
         _fileSystem
             .EnumerateDirectories(FullName, "*", SearchOption.AllDirectories)
             .Select(x => x.FullName.Replace(FullName, path))
