@@ -39,6 +39,7 @@ public class SettingsViewModel : ViewModelBase {
     public ICommand ResetToDefaultCommand { get; }
     public ICommand OpenPathDialogCommand { get; }
     public ICommand HomeButtonCommand { get; }
+    public ICommand OpenBackupsFolder { get; }
 
     public SettingsViewModel(SettingsService settingsService, INotificationService notificationService, NavigationStore navigationStore, NavigationService<BackuperListingViewModel> navigateToBackuperListingViewModel) {
         _settingsService = settingsService;
@@ -47,6 +48,7 @@ public class SettingsViewModel : ViewModelBase {
         _autoBoot = _settingsService.GetAutoBoot();
         ChangeBackupersPathCommand = new AsyncRelayCommand(ChangePath);
         ResetToDefaultCommand = new AsyncRelayCommand(ResetToDefault);
+        OpenBackupsFolder = new RelayCommand(() => Explorer.TryOpenFolder(CurrentBackupsFolder));
         var navigateToSelf = new NavigationService<ViewModelBase>(navigationStore, () => this);
         OpenPathDialogCommand = new NavigateCommand<OpenPathDialogViewModel>(false, new(navigationStore, () => new(navigateToSelf, (s) => BackupsFolder = s)));
         HomeButtonCommand = new NavigateCommand<BackuperListingViewModel>(true, navigateToBackuperListingViewModel);

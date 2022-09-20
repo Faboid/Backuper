@@ -24,6 +24,7 @@
             <ColumnDefinition Width="20"/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -38,7 +39,7 @@
         <!--Head Buttons-->
         <Grid
             Grid.Column="1"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="3"
             Grid.Row="1"
             Height="30"
             >
@@ -69,7 +70,7 @@
         <StackPanel
             Grid.Row="2"
             Grid.Column="1"
-            Margin="0, 10"
+            Margin="0, 5"
             >
 
             <Label
@@ -90,9 +91,10 @@
         <Grid
             Grid.Row="4"
             Grid.Column="1"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="3"
             >
             <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
@@ -108,9 +110,16 @@
                 />
 
             <Button
-                Content="Apply Change"
+                Content="Open Folder"
                 Grid.Row="0"
                 Grid.Column="1"
+                Command="{Binding OpenBackupsFolder}"
+                />
+
+            <Button
+                Content="Apply Change"
+                Grid.Row="0"
+                Grid.Column="2"
                 Command="{Binding ChangeBackupersPathCommand}"
                 />
 
@@ -118,7 +127,7 @@
                 FontSize="16"
                 Grid.Row="1"
                 Grid.Column="0"
-                Grid.ColumnSpan="2"
+                Grid.ColumnSpan="3"
                 PreviewText="{Binding CurrentBackupsFolder}"
                 Text="{Binding BackupsFolder}"
                 ButtonText="🔍"
