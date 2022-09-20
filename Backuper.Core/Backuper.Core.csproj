@@ -16,4 +16,9 @@
     <ProjectReference Include="..\Backuper.Utils\Backuper.Utils.csproj" />
   </ItemGroup>
 
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+    </PropertyGroup>
+
 </Project>

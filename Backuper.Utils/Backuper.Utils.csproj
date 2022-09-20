@@ -10,4 +10,9 @@
     <ProjectReference Include="..\Backuper.Abstractions\Backuper.Abstractions.csproj" />
   </ItemGroup>
 
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+    </PropertyGroup>
+
 </Project>
