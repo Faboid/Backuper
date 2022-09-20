@@ -75,6 +75,7 @@ public class SettingsViewModel : ViewModelBase {
         var result = await _settingsService.SetBackupsDirectoryAsync(BackupsFolder);
         var message = ConvertResultToMessage(result);
         _notificationService.Send(message);
+        CurrentBackupsFolder = BackupsFolder;
 
     }
 
