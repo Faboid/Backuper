@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Backuper.Core;
 
+/// <summary>
+/// Provides methods to get and set the paths used throughout the application.
+/// </summary>
 public class PathsHandler {
 
     private readonly ILogger<PathsHandler>? _logger;
@@ -13,8 +16,17 @@ public class PathsHandler {
     private const string backupersDirectoryKey = "BackupersDirectory";
     private const string backupsDirectoryKey = "BackupsDirectory";
 
-    public event Action? BackupersPathChanged;
+    /// <summary>
+    /// Raises an event when the backups' path is changed.
+    /// </summary>
+    public event Action? BackupsPathChanged;
 
+    /// <summary>
+    /// Instances <see cref="PathsHandler"/>.
+    /// </summary>
+    /// <param name="directoryInfoProvider"></param>
+    /// <param name="fileInfoProvider"></param>
+    /// <param name="logger"></param>
     public PathsHandler(IDirectoryInfoProvider directoryInfoProvider, IFileInfoProvider fileInfoProvider, ILogger<PathsHandler>? logger = null) {
         _directoryInfoProvider = directoryInfoProvider;
         _fileInfoProvider = fileInfoProvider;
@@ -23,11 +35,35 @@ public class PathsHandler {
         _settings = new(_fileInfoProvider.FromFilePath(DefaultPaths.SettingsFile));
     }
 
+    /// <summary>
+    /// Retrieves the settings file path.
+    /// </summary>
+    /// <returns></returns>
     public string GetSettingsFile() => DefaultPaths.SettingsFile;
+
+    /// <summary>
+    /// Retrieves the backupers directory path.
+    /// </summary>
+    /// <returns></returns>
     public string GetBackupersDirectory() => _settings.Get(backupersDirectoryKey).Or(DefaultPaths.BackupersDirectory)!;
+
+    /// <summary>
+    /// Retrieves the backups directory path.
+    /// </summary>
+    /// <returns></returns>
     public string GetBackupsDirectory() => _settings.Get(backupsDirectoryKey).Or(DefaultPaths.BackupsDirectory)!;
+
+    /// <summary>
+    /// Tries to reset the backups directory path to <see cref="DefaultPaths.BackupsDirectory"/>.
+    /// </summary>
+    /// <returns></returns>
     public Task<BackupersMigrationResult> ResetBackupsDirectory() => SetBackupsDirectoryAsync(DefaultPaths.BackupsDirectory);
 
+    /// <summary>
+    /// Sets a new path for the backups directory. Tries to migrate all existing backups to it, then returns the result.
+    /// </summary>
+    /// <param name="newPath"></param>
+    /// <returns></returns>
     public async Task<BackupersMigrationResult> SetBackupsDirectoryAsync(string newPath) {
 
         if(newPath == GetBackupsDirectory()) {
@@ -64,7 +100,7 @@ public class PathsHandler {
         }
 
         _logger?.LogInformation("The main backups directory has been migrated successfully.");
-        OnBackupersPathChanged();
+        OnBackupsPathChanged();
         return BackupersMigrationResult.Success;
 
     }
@@ -79,7 +115,7 @@ public class PathsHandler {
 
     }
 
-    private void OnBackupersPathChanged() => BackupersPathChanged?.Invoke();
+    private void OnBackupsPathChanged() => BackupsPathChanged?.Invoke();
 
     public enum BackupersMigrationResult {
         Unknown,
@@ -92,6 +128,9 @@ public class PathsHandler {
 
 }
 
+/// <summary>
+/// Provides a set of static readonly paths.
+/// </summary>
 public static class DefaultPaths {
 
     /// <summary>

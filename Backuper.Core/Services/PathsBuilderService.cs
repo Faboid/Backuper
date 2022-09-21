@@ -5,13 +5,13 @@ namespace Backuper.Core.Services;
 
 public class PathsBuilderService : IPathsBuilderService {
 
-    public event Action? BackupersPathChanged;
+    public event Action? BackupsPathChanged;
 
     public PathsBuilderService(PathsHandler pathsHandler, IDateTimeProvider dateTimeProvider, IDirectoryInfoProvider directoryInfoProvider) {
         _pathsHandler = pathsHandler;
         _dateTimeProvider = dateTimeProvider;
         _directoryInfoProvider = directoryInfoProvider;
-        _pathsHandler.BackupersPathChanged += () => BackupersPathChanged?.Invoke();
+        _pathsHandler.BackupsPathChanged += () => BackupsPathChanged?.Invoke();
     }
 
     private static readonly DateTimeFormatInfo format = new();

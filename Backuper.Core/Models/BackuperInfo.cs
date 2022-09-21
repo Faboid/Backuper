@@ -3,8 +3,18 @@ using System.Text;
 
 namespace Backuper.Core.Models;
 
+/// <summary>
+/// Contains all the info required for the functioning of a <see cref="Backuper"/>.
+/// </summary>
 public class BackuperInfo {
 
+    /// <summary>
+    /// Instances a <see cref="BackuperInfo"/> with the given values.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="sourcePath"></param>
+    /// <param name="maxVersions"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public BackuperInfo(string name, string sourcePath, int maxVersions) {
 
         if(maxVersions < 1) {
@@ -39,19 +49,39 @@ public class BackuperInfo {
             .ToString();
     }
 
+    /// <summary>
+    /// Returns a <see cref="string[]"/> that represents the current object.
+    /// </summary>
+    /// <returns></returns>
     public string[] ToStrings() {
         return new string[] { Name, SourcePath, MaxVersions.ToString() };
     }
 
+    /// <summary>
+    /// Converts the string representation of a <see cref="BackuperInfo"/> into its instanced equivalent.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public static BackuperInfo Parse(string s) {
         var values = s.Split(separator, StringSplitOptions.None);
         return Parse(values);
     }
 
+    /// <summary>
+    /// Converts the string[] representation of a <see cref="BackuperInfo"/> into its instanced equivalent.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <returns></returns>
     public static BackuperInfo Parse(string[] values) {
         return new(values[0], values[1], int.Parse(values[2]));
     }
 
+    /// <summary>
+    /// Tries to converts the string[] representation of a <see cref="BackuperInfo"/> into its instanced equivalent.
+    /// If it fails, it returns <see cref="Option.None{TValue}"/>
+    /// </summary>
+    /// <param name="values"></param>
+    /// <returns></returns>
     public static Option<BackuperInfo> TryParse(string[] values) {
 
         if(values.Length != 3) {
