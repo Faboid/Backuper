@@ -80,6 +80,7 @@ public class PathsHandler {
         }
         
         var currentPath = GetBackupsDirectory();
+        using var threadsHandler = ThreadsHandler.SetScopedForeground();
 
         try {
             _logger?.LogInformation("Beginning to set new main backups directory.");
