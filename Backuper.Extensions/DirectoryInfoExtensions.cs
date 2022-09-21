@@ -2,6 +2,11 @@
 
 public static class DirectoryInfoExtensions {
 
+    /// <summary>
+    /// Copies to another directory. All subdirectories and files will be copied to it with their relative paths.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="path"></param>
     public static void CopyTo(this DirectoryInfo info, string path) {
         Directory.CreateDirectory(path);
 
@@ -18,6 +23,12 @@ public static class DirectoryInfoExtensions {
             .ForEach(x => x.File.CopyTo(x.NewPath));
     }
 
+    /// <summary>
+    /// Copies to another directory asynchronously. All subdirectories and files will be copied to it with their relative paths.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
     public static async Task CopyToAsync(this DirectoryInfo info, string path) {
         Directory.CreateDirectory(path);
 

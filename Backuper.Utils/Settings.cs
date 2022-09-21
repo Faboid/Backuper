@@ -2,10 +2,17 @@ using Backuper.Abstractions;
 
 namespace Backuper.Utils;
 
+/// <summary>
+/// Provides methods to save a key-value pair collection throughout sessions.
+/// </summary>
 public class Settings {
 
     private readonly IFileInfo _settingsFile;
 
+    /// <summary>
+    /// Initializes <see cref="Settings"/>. Will create the settings file if it doesn't exist.
+    /// </summary>
+    /// <param name="settingsFile"></param>
     public Settings(IFileInfo settingsFile) {
         _settingsFile = settingsFile;
         if(!_settingsFile.Exists) {
@@ -15,6 +22,11 @@ public class Settings {
 
     private const string _separator = "%&$$!(%!";
 
+    /// <summary>
+    /// Sets <paramref name="key"/> to <paramref name="value"/>. If it exists already, it will be overwritten.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
     public void Set(string key, string value) {
         var pairs = _settingsFile
             .ReadLines()
@@ -34,6 +46,11 @@ public class Settings {
 
     }
 
+    /// <summary>
+    /// If it exists, returns the <paramref name="key"/>'s value. If it doesn't, it returns <see cref="Option.None{TValue}"/>.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public Option<string> Get(string key) {
         return _settingsFile
             .ReadLines()
