@@ -24,7 +24,7 @@ public class CreateBackuperViewModel : ViewModelBase, INotifyDataErrorInfo {
             if(_backuperStore.BackuperExists(_backuperName)) {
                 _errorsViewModel.AddError(nameof(BackuperName), "The given name is already in use.");
             }
-            if(string.IsNullOrEmpty(_backuperName)) {
+            if(string.IsNullOrWhiteSpace(_backuperName)) {
                 _errorsViewModel.AddError(nameof(BackuperName), "The name cannot be empty.");
             }
         }
