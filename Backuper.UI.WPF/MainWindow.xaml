@@ -9,7 +9,7 @@
         xmlns:viewmodels="clr-namespace:Backuper.UI.WPF.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" 
+        Title="Backuper"
         MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
         MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
         Height="450" 
