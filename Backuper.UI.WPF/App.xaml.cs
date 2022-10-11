@@ -10,6 +10,7 @@ using Serilog;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Backuper.Core;
+using System.Threading;
 
 namespace Backuper.UI.WPF;
 /// <summary>
@@ -55,6 +56,9 @@ public partial class App : Application, IDisposable {
 
         if(e.Args.Length == 1 && e.Args[0] == SettingsService.StartupArguments) {
             logger.LogInformation("Application started from boot.");
+            //in case there are huge backups to complete,
+            //delay them to ensure that the pc's regular booting operations are prioritized
+            Thread.Sleep(30000);
             startingVM = _host.Services.GetRequiredService<BackupingResultsViewModel>();
         } else {
             logger.LogInformation("Application started manually.");
