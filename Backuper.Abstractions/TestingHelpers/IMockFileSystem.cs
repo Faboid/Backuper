@@ -89,6 +89,13 @@ public interface IMockFileSystem {
     bool FileExists(string path);
 
     /// <summary>
+    /// <inheritdoc cref="Directory.GetLastWriteTimeUtc(string)"/>
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    DateTime? GetDirectoryLastWriteTimeUTC(string path);
+
+    /// <summary>
     /// <inheritdoc cref="File.ReadLines(string)"/> Throws <see cref="KeyNotFoundException"/> if the file doesn't exist.
     /// </summary>
     /// <param name="path"></param>

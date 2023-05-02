@@ -7,7 +7,11 @@ public class MockDirectoryInfo : IDirectoryInfo {
     private readonly DirectoryInfo _info;
     private readonly DateTime _customTime;
 
-    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem) : this(path, mockFileSystem, DateTime.Now) { }
+    public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem) {
+        _info = new DirectoryInfo(path);
+        _fileSystem = mockFileSystem;
+        _customTime = mockFileSystem.GetDirectoryLastWriteTimeUTC(path) ?? DateTime.Now;
+    }
 
     public MockDirectoryInfo(string path, IMockFileSystem mockFileSystem, DateTime customTime) {
         _info = new DirectoryInfo(path);

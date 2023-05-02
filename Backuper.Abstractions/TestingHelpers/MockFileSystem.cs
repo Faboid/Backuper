@@ -46,6 +46,10 @@ public class MockFileSystem : IMockFileSystem {
         return _files[path].Text;
     }
 
+    public DateTime? GetDirectoryLastWriteTimeUTC(string path) {
+        return _directories.TryGetValue(path, out var date) ? date : null;
+    }
+
     public IEnumerable<IFileInfo> EnumerateFiles(string path) {
         return _files.Values
             .Where(x => x.Path.StartsWith(path) && new FileInfo(x.Path).DirectoryName == path)

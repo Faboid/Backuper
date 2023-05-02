@@ -74,17 +74,18 @@ public class DirectoryBackuperServiceTests {
         var sut = _sutFactory.CreateBackuperService(_mainSourceDirectory);
 
         //act
-        var actual = sut.GetSourceLastWriteTimeUTC();
+        var actual = sut.GetSourceLastWriteTimeUTC().Or(default);
+        var expected = ExpectedSourceLastWriteTimeUTC();
 
         //assert
-        Assert.Equal(ExpectedSourceLastWriteTimeUTC(), actual);
+        Assert.Equal(expected, actual);
 
     }
 
 
     private void SetUpSource() {
         _fileSystem.Reset();
-        _fileSystem.CreateDirectory(_mainSourceDirectory, default);
+        _fileSystem.CreateDirectory(_mainSourceDirectory, _mainSourceDirectoryLastWriteTimeUTC);
         _sourceDirectoriesFullPath.ForEach(x => _fileSystem.CreateDirectory(x.Path, x.LastWriteTime));
         _sourceFilesFullPath.ForEach(x => _fileSystem.CreateFile(x.Path, x.Text, x.LastWriteTime));
     }
